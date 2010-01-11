@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RSS阅读器</string>
+
+    <string name="dialog_title_no_feed_found">没有发现Feed</string>
+    <string name="dialog_message_no_feed_found">没有发现Feed或者无需添加Feed。</string>
+
+    <string name="dialog_title_feed_found">发现Feed</string>
+    <string name="dialog_message_feed_found">已添加%1$d个新的订阅。</string>
+
+    <string name="dialog_title_loading">正在加载……</string>
+    <string name="dialog_message_loading">正在加载Feed……</string>
+
+    <string name="dialog_title_add_sub">添加订阅</string>
+    <string name="dialog_message_add_sub">从URL添加订阅：</string>
+    <string name="dialog_message_malformed_url">URL地址无效，请重试！</string>
+
+    <string name="dialog_title_del_sub">删除订阅</string>
+    <string name="dialog_message_del_sub">您确定要删除订阅&apos;%1$s&apos;？</string>
+
+    <string name="list_message_empty_item">没有任何阅读项</string>
+    <string name="list_message_empty_subs">没有任何订阅</string>
+
+    <string name="title_subs">管理订阅</string>
+    <string name="title_pref">选项</string>
+
+    <string name="menu_refresh">刷新</string>
+    <string name="menu_subs">订阅</string>
+    <string name="menu_pref">选项</string>
+
+    <string name="menu_add">添加</string>
+    <string name="menu_del">删除</string>
+
+    <string name="menu_orig_link">原文链接</string>
+
+    <string name="pref_radio_prompt">显示阅读项：</string>
+    <string name="pref_fetch_prompt">抓取频率：</string>
+    <string name="pref_delete_prompt">删除过期的阅读项：</string>
+
+    <string name="radio_items_unread">仅未读项</string>
+    <string name="radio_items_all">所有项</string>
+
+    <string name="unit_minute">分钟</string>
+    <string name="unit_week">周</string>
+</resources>

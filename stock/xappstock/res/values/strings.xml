@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+
+	<string name="Del">Delete</string>
+	<string name="Add">Add</string>
+	<string name="Update">Update</string>
+	<string name="Setting">Setting</string>
+
+	<string name="Yes">Yes</string>
+	<string name="No">No</string>	
+	<string name="OK">OK</string>	
+
+
+	<string name="Name">Name</string>
+    <string name="Price">Price</string>
+	<string name="Open">Open</string>
+	<string name="High">High</string>
+	<string name="Low">Low</string>
+	<string name="Change">Change</string>
+	<string name="PE">PE</string>
+	<string name="EPS">EPS</string>
+    <string name="MaketValue">Maket Value</string>
+    <string name="Time">Time</string>	
+
+
+    <string name="no_stock_match">"No stock found!"</string>	
+	<string name="ask_add_stock">"Do you want to add this stock?"</string>	
+	<string name="add_stock_fail_title">"Add Stock Failed !"</string>	
+	<string name="add_stock_fail_content">"You might have already added it, please try again."</string>	
+	<string name="no_network">"Network is not available!"</string>	
+	
+	
+	
+    
+    
+</resources>

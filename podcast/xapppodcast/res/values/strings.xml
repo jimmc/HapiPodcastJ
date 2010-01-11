@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Podcast</string>
+
+    <string name="dialog_title_no_feed_found">No Feed Found</string>
+    <string name="dialog_message_no_feed_found">No feed found or need to add.</string>
+
+    <string name="dialog_title_feed_found">Feed Found</string>
+    <string name="dialog_message_feed_found">%1$d new subscription(s) added.</string>
+
+    <string name="dialog_title_loading">Loading</string>
+    <string name="dialog_message_loading">Loading feeds...</string>
+
+    <string name="dialog_title_add_sub">Add Subscription</string>
+    <string name="dialog_message_add_sub">Add subscription from URL:</string>
+    <string name="dialog_message_malformed_url">URL is invalid, please retry!</string>
+    <string name="dialog_message_url_exist">URL exist, please retry!</string>
+	
+    <string name="dialog_title_del_sub">Delete Subscription</string>
+    <string name="dialog_message_del_sub">Are you sure you want to delete &apos;%1$s&apos;?</string>
+
+    <string name="list_message_empty_item">No items.</string>
+    <string name="list_message_empty_subs">No subscriptions.</string>
+
+    <string name="title_subs">Manage Subscriptions</string>
+    <string name="title_pref">Preferences</string>
+
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_subs">Subscriptions</string>
+    <string name="menu_pref">Preferences</string>
+    <string name="menu_downloading">Downloading</string>
+	<string name="menu_downloaded">Downloaded</string>
+		
+    <string name="menu_add">Add</string>
+    <string name="menu_del">Delete</string>
+
+    <string name="menu_orig_link">Original Link</string>
+
+    <string name="pref_radio_prompt">Display items:</string>
+    <string name="pref_fetch_prompt">Fetch frequency:</string>
+    <string name="pref_delete_prompt">Delete items after:</string>
+
+    <string name="radio_items_unread">Unread items</string>
+    <string name="radio_items_all">All items</string>
+
+    <string name="unit_minute">minute(s)</string>
+    <string name="unit_week">week(s)</string>
+</resources>

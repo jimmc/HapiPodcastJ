@@ -1,0 +1,53 @@
+PLAN:
+1 reading service
+2 fetch
+3 parser
+4 provider
+
+
+----------------------
+NOTES:
+
+1 UI
+	MAIN
+	PREF
+	WEBVIEW(READ)
+	SUBS
+	
+*2  FETCHER
+
+3  PROVIDER
+	*READIND_PROVIDER
+	
+	---------------------------
+	DB STRUCTURE
+	TABLE:
+	 SUBS : _ID,URL CHAR(1024), TITLE, CHAR(256), DESCRIPTION CHAR(1024) 
+			LAST_UPDATED INT, FREQUENCY INT
+	 ITEM : _ID,SUBS_ID  INT, PUBLISHED  INT, UNREAD  INT,URL CHAR(1024), 
+			TITLECHAR(256),  AUTHOR CHAR(256), CONTENT TEXT,
+			
+	INDEX
+		SUBS_URL
+		SUBS_TITLE
+		ITEM_URL
+		ITEM_PUBLISHED
+		
+		
+		
+	 
+4  PARSER
+
+5  SERVICE 
+
+	timer:
+		a remove old item
+		b update feed
+			-fetch
+			-parser
+			-compare
+			-add item
+			
+	pref
+
+	

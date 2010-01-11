@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="6dip"
+    android:paddingRight="6dip"
+>
+    <TextView
+        android:id="@+android:id/text_reading_prompt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pref_radio_prompt"
+    />
+    <RadioGroup
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+    >
+        <RadioButton android:id="@+android:id/radio_reading_unread"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:text="@string/radio_items_unread"
+        />
+        <RadioButton android:id="@+android:id/radio_reading_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:text="@string/radio_items_all"
+        />
+    </RadioGroup>
+    <TextView
+        android:id="@+android:id/text_freq_prompt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pref_fetch_prompt"
+    />
+    <Spinner android:id="@+android:id/spinner_freq"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+    />
+    <TextView
+        android:id="@+android:id/text_expires_prompt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pref_delete_prompt"
+    />
+    <Spinner android:id="@+android:id/spinner_expires"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+    />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:paddingLeft="6dip"
+        android:paddingRight="6dip"
+    >
+        <Button android:id="@+android:id/pref_button_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@android:string/ok"
+        />
+        <Button android:id="@+android:id/pref_button_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@android:string/cancel"
+        />
+    </LinearLayout>
+</LinearLayout>
