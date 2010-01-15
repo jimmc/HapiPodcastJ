@@ -102,7 +102,7 @@ public class DownloadingActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        setTitle(getResources().getString(R.string.app_name));
+        setTitle("Downloading");
         
         getListView().setOnCreateContextMenuListener(this);
         

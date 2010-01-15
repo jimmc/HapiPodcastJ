@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ReadingOpenHelper extends SQLiteOpenHelper {
 
     public ReadingOpenHelper(Context context) {
-        super(context, "reader.db", null, 5);
+        super(context, "reader.db", null, 8);
     }
 
     @Override
@@ -22,6 +22,9 @@ public class ReadingOpenHelper extends SQLiteOpenHelper {
         db.execSQL(ItemColumns.sql_index_item_created);
 
         db.execSQL(SubscriptionColumns.sql_insert_default);
+        db.execSQL(SubscriptionColumns.sql_insert_default2);
+        db.execSQL(SubscriptionColumns.sql_insert_default3);
+        
     }
 
     @Override

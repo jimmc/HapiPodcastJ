@@ -1,5 +1,7 @@
 package info.xuluan.podcast.parser;
 
+import info.xuluan.podcast.provider.FeedItem;
+
 import java.util.ArrayList;
 import java.util.List;
 

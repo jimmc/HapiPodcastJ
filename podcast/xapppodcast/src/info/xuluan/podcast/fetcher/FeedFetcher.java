@@ -1,6 +1,6 @@
 package info.xuluan.podcast.fetcher;
 
-import info.xuluan.podcast.provider.Item;
+import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 
 import java.io.ByteArrayOutputStream;
@@ -292,14 +292,12 @@ public class FeedFetcher {
 		this.canceled = canceled;
 	}
 
-	public static int download(Item item) {
-		String sURL = item.res;
+	public static int download(FeedItem item) {
+		String sURL = item.resource;
 		String pathname = item.pathname;
 
 		int nStartPos = item.offset;
 		int nRead = 0;
-
-		Log.w("RSS", "sURL = " + sURL);
 
 		RandomAccessFile oSavedFile = null;
 		InputStream input = null;
@@ -307,20 +305,9 @@ public class FeedFetcher {
 		try {
 			URL url = new URL(sURL);
 			Log.w("RSS", "url = " + url);
-
-			httpConnection = (HttpURLConnection) url.openConnection();
-
-			long nEndPos = 0;
-			if (item.offset == 0) {
-				
-				nEndPos = getFileSize(sURL);
-				if(nEndPos<0)
-					return 0;
-				item.length = nEndPos;
-			}
-			Log.w("RSS", "nEndPos = " + nEndPos);
 			oSavedFile = new RandomAccessFile(pathname, "rw");
 
+			httpConnection = (HttpURLConnection) url.openConnection();
 			httpConnection.setRequestProperty("User-Agent", "Internet Explorer");
 			if (nStartPos != 0) {
 				String sProperty = "bytes=" + nStartPos + "-";
@@ -328,6 +315,31 @@ public class FeedFetcher {
 				System.out.println(sProperty);
 				oSavedFile.seek(nStartPos); 
 			}
+			
+			int responseCode = httpConnection.getResponseCode();
+				Log.w("RSS", "Error Code : " + responseCode);			
+			if (responseCode >= 500) {
+				nStartPos = 0;
+				item.offset = 0;
+				throw new IOException("Error Code : " + responseCode);
+			}else if (responseCode >= 400){
+				throw new IOException("Error Code : " + responseCode);
+			}
+			
+			long nEndPos = 0;
+			if (item.offset == 0) {
+				
+				nEndPos = httpConnection.getContentLength();
+				if(nEndPos<0){
+				Log.w("RSS", "Cannot get content length: " + nEndPos);			
+				
+					throw new IOException("Cannot get content length: " + nEndPos);
+				}
+				item.length = nEndPos;
+			}
+			Log.w("RSS", "nEndPos = " + nEndPos);
+
+
 			input = httpConnection.getInputStream();
 			byte[] b = new byte[4096];
 
@@ -336,20 +348,27 @@ public class FeedFetcher {
 				nStartPos += nRead;
 			}
 			
-			item.status = ItemColumns.ITEM_STATUS_DOWNLOADED;
+			item.status = ItemColumns.ITEM_STATUS_NO_PLAY;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			httpConnection.disconnect();
+
+			try {
+			if(httpConnection!=null)
+				httpConnection.disconnect();
+			} catch (Exception e) {
+			}
 			
 			try {
-				input.close();
-			} catch (IOException e) {
+				if(input!=null)
+					input.close();
+			} catch (Exception e) {
 			}
 
 			try {
-				oSavedFile.close();
-			} catch (IOException e) {
+				if(oSavedFile!=null)
+					oSavedFile.close();
+			} catch (Exception e) {
 			}
 			
 		}
@@ -358,42 +377,5 @@ public class FeedFetcher {
 
 	}
 
-	// 获得文件长度
-	public static long getFileSize(String sURL) {
-		int nFileLength = -1;
-		HttpURLConnection httpConnection = null;
-		try {
-			URL url = new URL(sURL);
-			httpConnection = (HttpURLConnection) url
-					.openConnection();
-			httpConnection
-					.setRequestProperty("User-Agent", "Internet Explorer");
 
-			int responseCode = httpConnection.getResponseCode();
-			if (responseCode >= 400) {
-				System.err.println("Error Code : " + responseCode);
-				return -2; // -2 represent access is error
-			}
-			String sHeader;
-			for (int i = 1;; i++) {
-				sHeader = httpConnection.getHeaderFieldKey(i);
-				if (sHeader != null) {
-					if (sHeader.equalsIgnoreCase("Content-Length")) {
-						nFileLength = Integer.parseInt(httpConnection
-								.getHeaderField(sHeader));
-						break;
-					}
-				} else
-					break;
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally{
-			httpConnection.disconnect();
-		}
-		System.out.println(nFileLength);
-		return nFileLength;
-	}
 }

@@ -2,7 +2,6 @@ package info.xuluan.podcast.provider;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import android.content.ContentValues;
 import android.database.SQLException;
@@ -16,7 +15,9 @@ public class ItemColumns implements BaseColumns {
 	public static final int ITEM_STATUS_MAX_READING_VIEW = 10;	
 	public static final int ITEM_STATUS_DOWNLOADING = 20;
 	public static final int ITEM_STATUS_MAX_DOWNLOADING_VIEW = 30;		
-	public static final int ITEM_STATUS_DOWNLOADED = 50;
+	public static final int ITEM_STATUS_NO_PLAY = 50;
+	public static final int ITEM_STATUS_START_PLAY = 51;
+	public static final int ITEM_STATUS_PLAYED = 52;	
 	
 	public static final Uri URI = Uri.parse("content://"
 			+ ReadingProvider.AUTHORITY + "/items");
@@ -50,10 +51,12 @@ public class ItemColumns implements BaseColumns {
 	public static final String PATHNAME = "path";
 
 	public static final String FAIL_COUNT = "fail";
+	
+	public static final String MEDIA_URI ="uri";
 
 	public static final String[] ALL_COLUMNS = { _ID, SUBS_ID, TITLE,
 			AUTHOR, DATE, CREATED_DATE, CONTENT, STATUS, URL, RESOURCE, DURATION,
-			LENGTH, OFFSET, PATHNAME, FAIL_COUNT };
+			LENGTH, OFFSET, PATHNAME, FAIL_COUNT, MEDIA_URI };
 	
 	public static final String DEFAULT_SORT_ORDER = CREATED_DATE + " DESC";
 
@@ -72,7 +75,8 @@ public class ItemColumns implements BaseColumns {
             + LENGTH + " INTEGER, "
             + OFFSET + " INTEGER, "   
             + PATHNAME + " VARCHAR(1024), "              
-            + FAIL_COUNT + " INTEGER "            
+            + FAIL_COUNT + " INTEGER, "
+            + MEDIA_URI + " VARCHAR(1024) "
             + ");";
 
 
@@ -156,6 +160,9 @@ public class ItemColumns implements BaseColumns {
 			values.put(FAIL_COUNT, 0);
 		}		
 
+		if (values.containsKey(MEDIA_URI) == false) {
+			values.put(MEDIA_URI, "");
+		}		
 		return values;
 	}
 

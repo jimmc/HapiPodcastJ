@@ -1,14 +1,18 @@
 package info.xuluan.podcast;
 
 import info.xuluan.podcast.provider.ItemColumns;
-import info.xuluan.podcast.provider.SubscriptionColumns;
+import info.xuluan.podcast.service.ReadingService;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
@@ -38,6 +42,22 @@ public class ReadActivity extends Activity {
     private final Log log = Utils.getLog(getClass());
     private String url = null;
 
+    ComponentName service = null;
+    
+    private ReadingService serviceBinder = null;
+    
+
+    private ServiceConnection serviceConnection = new ServiceConnection() {
+        public void onServiceConnected(ComponentName className, IBinder service) {
+            serviceBinder = ((ReadingService.ReadingBinder)service).getService();
+        }
+
+        public void onServiceDisconnected(ComponentName className) {
+            serviceBinder = null;
+        }
+    };
+    
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_MORE, 0, getResources().getString(R.string.menu_orig_link)).setIcon(android.R.drawable.ic_menu_more);
@@ -58,6 +78,7 @@ public class ReadActivity extends Activity {
             cv.put(ItemColumns.STATUS, ItemColumns.ITEM_STATUS_DOWNLOADING);
             getContentResolver().update(ItemColumns.URI, cv, "_ID=?",
 					new String[] { item_id });
+            serviceBinder.download_res();
         }
         return true;
     }
@@ -124,7 +145,20 @@ public class ReadActivity extends Activity {
                 "UTF-8",
                 null
         );
+        
+        service = startService(new Intent(this, ReadingService.class));
+
+        // bind service:
+        Intent bindIntent = new Intent(this, ReadingService.class);
+        bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);        
     }
+    
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(serviceConnection);
+        //stopService(new Intent(this, service.getClass()));
+    }    
 
     void show404() {
         WebView web = (WebView) this.findViewById(R.id.webview);

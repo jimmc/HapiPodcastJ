@@ -1,5 +1,7 @@
 package info.xuluan.podcast.parser;
 
+import info.xuluan.podcast.provider.FeedItem;
+
 import org.xml.sax.SAXException;
 
 

@@ -1,5 +1,7 @@
 package info.xuluan.podcast.parser;
 
+import info.xuluan.podcast.provider.FeedItem;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;

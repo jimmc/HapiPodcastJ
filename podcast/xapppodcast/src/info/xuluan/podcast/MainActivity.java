@@ -2,7 +2,6 @@ package info.xuluan.podcast;
 
 
 import info.xuluan.podcast.provider.ItemColumns;
-import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.service.ReadingService;
 
 
@@ -13,7 +12,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.view.Menu;
@@ -110,7 +112,30 @@ public class MainActivity extends ListActivity {
 			startActivity(new Intent(Intent.ACTION_EDIT, uri));
 		}        
     }
+	private boolean getWifiStatus(){
+		log.warn("getWifiStatus");
+		WifiManager wifiManager = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+		log.warn("type: "+wifiManager.isWifiEnabled());
 
+		
+        
+		
+		ConnectivityManager cm = (ConnectivityManager)this.getSystemService(CONNECTIVITY_SERVICE);
+		NetworkInfo info = cm.getActiveNetworkInfo();
+
+		
+		log.warn("type: "+info.getType());
+		log.warn("name: "+info.getTypeName());
+		log.warn("connect: "+info.isConnected());
+		log.warn("available: "+info.isAvailable ());		
+	
+		if(info.isConnected()){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -132,7 +157,7 @@ public class MainActivity extends ListActivity {
         setListAdapter(mAdapter);
         
         service = startService(new Intent(this, ReadingService.class));
-
+        
         // bind service:
         Intent bindIntent = new Intent(this, ReadingService.class);
         bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);

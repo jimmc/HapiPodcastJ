@@ -1,12 +1,14 @@
 package info.xuluan.podcast;
 
 
+import java.io.File;
+import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
-import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.service.ReadingService;
 
 
 import android.app.ListActivity;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
 import android.content.ContentUris;
 import android.content.Context;
@@ -16,6 +18,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.provider.MediaStore.Audio.Media;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -89,20 +92,81 @@ public class PlayListActivity extends ListActivity {
     protected void onListItemClick(ListView l, View v, int position, long id) {
        
 		Uri uri = ContentUris.withAppendedId(getIntent().getData(), id);
-		String action = getIntent().getAction();
-		if (Intent.ACTION_PICK.equals(action)
-				|| Intent.ACTION_GET_CONTENT.equals(action)) {
-			setResult(RESULT_OK, new Intent().setData(uri));
-		} else {
-			startActivity(new Intent(Intent.ACTION_EDIT, uri));
-		}        
+		Cursor cursor = managedQuery(uri, ItemColumns.ALL_COLUMNS, null, null ,null);
+		if(cursor.moveToFirst()){
+			FeedItem item = new FeedItem(cursor);
+			cursor.close();
+			
+		Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+		//getContentResolver().query("content://media/external/audio/media"
+	    //			ItemColumns.ALL_COLUMNS, where, null, null);
+		//Uri data = Media.getContentUriForPath("file://"+item.pathname);
+		 //log.warn("Uri =  " + data);	
+				//Uri data = Uri.parse("file://"+item.pathname);
+		Uri data = Uri.parse(item.uri);
+		
+				intent.setDataAndType(data,"audio/mp3"); 
+	    		 log.warn("palying " + item.pathname);				
+				try { 
+						  startActivity(intent); 
+				   } catch (ActivityNotFoundException e) { 
+						  e.printStackTrace(); 
+				   } 
+		}
+		
+		if(cursor!=null)
+			cursor.close();
+		
     }
+    
+	 private void openFile(File aFile) { 
+  		if (aFile==null){
+  	    		 log.warn("file object is null");
+  	    		 return;  				
+  		}
+  			
+    	 if (!aFile.exists()) {
+    		 log.warn("file is not exist" + aFile.getName());
+    		 return;
+    	 }
+    	 
+          Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+
+
+          Uri data =  Uri.fromFile(aFile);
+          String type = "audio/mp3";
+          intent.setDataAndType(data, type);
+
+     	 // Were we in GET_CONTENT mode?
+     	 Intent originalIntent = getIntent();
+     	 
+     	 if (originalIntent != null && originalIntent.getAction() != null && originalIntent.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+    		 // In that case, we should probably just return the requested data.
+     		 setResult(RESULT_OK, intent);
+     		 finish();
+    		 return;
+    	 }
+    	 
+
+          
+          try {
+        	  //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        	  intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        	  //intent.addFlags(intent.FLAG_ACTIVITY_SINGLE_TOP );
+        	  
+        	  
+        	  startActivity(intent); 
+
+          } catch (Exception e) {
+     		 log.warn("Exception " +e);
+          };
+     }     
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-        setTitle(getResources().getString(R.string.app_name));
+        setTitle("Play List");
         
         getListView().setOnCreateContextMenuListener(this);
         
@@ -123,6 +187,7 @@ public class PlayListActivity extends ListActivity {
         // bind service:
         Intent bindIntent = new Intent(this, ReadingService.class);
         bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        
     }
 
     @Override
