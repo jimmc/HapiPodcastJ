@@ -1,10 +1,13 @@
 package info.xuluan.podcast;
 
+import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.service.ReadingService;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -13,16 +16,20 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.TextView;
 
 public class ReadActivity extends Activity {
 
     static final int MENU_MORE = Menu.FIRST + 1;
     static final int MENU_DOWNLOAD = Menu.FIRST + 2;
-    
+    static final int MENU_PLAY = Menu.FIRST + 6;
+    static final int MENU_BACK = Menu.FIRST+5;
+    static final int MENU_PREF = Menu.FIRST + 3;	    
     String item_id;
 
     static final String CSS;
@@ -60,27 +67,71 @@ public class ReadActivity extends Activity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_MORE, 0, getResources().getString(R.string.menu_orig_link)).setIcon(android.R.drawable.ic_menu_more);
-        menu.add(0, MENU_DOWNLOAD, 1, getResources().getString(R.string.menu_downloading)).setIcon(android.R.drawable.ic_menu_save);
+        menu.add(0, MENU_MORE, 0, getResources().getString(R.string.menu_orig_link)).setIcon(android.R.drawable.ic_menu_directions);
+        menu.add(0, MENU_DOWNLOAD, 1, getResources().getString(R.string.menu_downloading)).setIcon(android.R.drawable.ic_menu_set_as);
+        //menu.add(0, MENU_PLAY, 2, getResources().getString(R.string.menu_play)).setIcon(android.R.drawable.ic_menu_slideshow);
         
+        menu.add(0, MENU_PREF, 3, getResources().getString(R.string.menu_pref)).setIcon(android.R.drawable.ic_menu_preferences);
+        menu.add(0, MENU_BACK, 4, getResources().getString(R.string.menu_back)).setIcon(android.R.drawable.ic_menu_revert);
+         
         return true;
     }
+    
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
 
+        MenuItem item = menu.findItem(MENU_DOWNLOAD);
+        FeedItem feed_item = new FeedItem(getContentResolver(),Integer.parseInt(item_id));
+        if(feed_item.status < ItemColumns.ITEM_STATUS_MAX_READING_VIEW){
+            item.setEnabled(true);
+        	
+        }else{
+            item.setEnabled(false);
+        	
+        }
+        /*
+        item = menu.findItem(MENU_PLAY);
+        
+        if(feed_item.status > ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW){
+            item.setEnabled(true);        
+        	
+        }else{
+            item.setEnabled(false);        
+        	
+        }
+        */
+
+        return true;
+    }
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId()==MENU_MORE) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             startActivity(intent);
+            return true;
         }else if(item.getItemId()==MENU_DOWNLOAD){
 
             ContentValues cv = new ContentValues();
 
-            cv.put(ItemColumns.STATUS, ItemColumns.ITEM_STATUS_DOWNLOADING);
+            cv.put(ItemColumns.STATUS, ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE);
             getContentResolver().update(ItemColumns.URI, cv, "_ID=?",
 					new String[] { item_id });
-            serviceBinder.download_res();
+            serviceBinder.start_download();
+            return true;
+        }else if(item.getItemId()==MENU_BACK){
+            finish();
+            return true;
+        }else if(item.getItemId()==MENU_PREF){
+        	startActivity(new Intent(this, Pref.class));
+        	return true;
+        }else if(item.getItemId()==MENU_PLAY){
+        	play(Integer.parseInt(item_id));
+        	return true;
         }
-        return true;
+
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -105,7 +156,7 @@ public class ReadActivity extends Activity {
 
         // set title:
         setTitle(title);
-
+/*
         // load html:
         StringBuilder html = new StringBuilder(content.length()+200);
         html.append("<html><head><title>")
@@ -128,9 +179,12 @@ public class ReadActivity extends Activity {
         String baseUrl = getBaseUrl(url);
         log.info(url);
         log.info("base url:" + baseUrl);
-
+*/
         WebView web = (WebView) this.findViewById(R.id.webview);
-        web.getSettings().setJavaScriptEnabled(true);
+        
+        web.loadData(content, "text/html", "utf-8");
+/*        
+        //web.getSettings().setJavaScriptEnabled(true);
         web.setWebViewClient(new WebViewClient() {
             @Override
             public void onLoadResource(WebView view, String url) {
@@ -145,7 +199,11 @@ public class ReadActivity extends Activity {
                 "UTF-8",
                 null
         );
-        
+*/	
+/*        
+        TextView contentView = (TextView) findViewById(R.id.content);  
+        	contentView.setText(Html.fromHtml(content));	
+*/        	
         service = startService(new Intent(this, ReadingService.class));
 
         // bind service:
@@ -161,6 +219,7 @@ public class ReadActivity extends Activity {
     }    
 
     void show404() {
+  	
         WebView web = (WebView) this.findViewById(R.id.webview);
         web.loadData(
                 "<html><body><h1>404 Not Found</h1><p>The item was deleted.</p></body></html>",
@@ -176,5 +235,49 @@ public class ReadActivity extends Activity {
         }
         return url + "/";
     }
-
+    private void play(long id){
+        
+		Uri uri = ContentUris.withAppendedId(ItemColumns.URI, id);
+		Cursor cursor = managedQuery(uri, ItemColumns.ALL_COLUMNS, null, null ,null);
+		if(cursor.moveToFirst()){
+			FeedItem item = new FeedItem(cursor);
+			cursor.close();
+			
+			if( (item!=null) &&(item.status==ItemColumns.ITEM_STATUS_NO_PLAY)){
+				item.status = ItemColumns.ITEM_STATUS_PLAYED;
+				item.update(getContentResolver());
+			}			
+		Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+		//getContentResolver().query("content://media/external/audio/media"
+	    //			ItemColumns.ALL_COLUMNS, where, null, null);
+		//Uri data = Media.getContentUriForPath("file://"+item.pathname);
+		 //log.warn("Uri =  " + data);	
+				//Uri data = Uri.parse("file://"+item.pathname);
+		Uri data = Uri.parse(item.uri);
+		
+				intent.setDataAndType(data,"audio/mp3"); 
+	    		 log.warn("palying " + item.pathname);				
+				try { 
+						  startActivity(intent); 
+				   } catch (ActivityNotFoundException e) { 
+						  e.printStackTrace(); 
+							Intent intent2 = new Intent(android.content.Intent.ACTION_VIEW);
+						  
+						  data = Uri.parse("file://"+item.pathname);
+							intent2.setDataAndType(data,"audio/mp3");
+							try{
+								startActivity(intent2); 
+								
+							}catch (Exception e2){
+								  e2.printStackTrace(); 
+								
+							}
+						  
+				   } 
+		}
+		
+		if(cursor!=null)
+			cursor.close();
+    	
+    }
 }

@@ -6,6 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -63,6 +65,7 @@ class FeedParserHandler extends DefaultHandler {
 
     private final FeedParserListener listener;
     private boolean feedTitleLoaded = false;
+    private String  feedTitle = "";
     private boolean feedDescriptionLoaded = false;
 
     private int type = TYPE_UNKNOWN;
@@ -87,9 +90,13 @@ class FeedParserHandler extends DefaultHandler {
 
 
         if ((type==TYPE_RSS && "item".equalsIgnoreCase(localName)) || (type==TYPE_FEED && "entry".equalsIgnoreCase(localName))) {
-            checkItem(currentItem);
+        	currentItem = checkItem(currentItem);
+        	currentItem.sub_title = feedTitle;
+        	
             if(currentItem!=null)
             	listener.onItemLoad(currentItem);
+            else
+            	Log.d("FEED_PARSER ", "item=null ");
             currentItem = null;
             return;
         }
@@ -101,6 +108,7 @@ class FeedParserHandler extends DefaultHandler {
                         if (!feedTitleLoaded) {
                             feedTitleLoaded = true;
                             listener.onFeedTitleLoad(cache.toString());
+                            feedTitle = cache.toString();
                         }
                     }
                     else if (NODE_RSS_DESCRIPTION.equalsIgnoreCase(localName)) {
@@ -141,10 +149,12 @@ class FeedParserHandler extends DefaultHandler {
                         currentItem.content = cache.toString();
                     else if (NODE_RSS_PUBDATE.equalsIgnoreCase(localName))
                         currentItem.date = cache.toString();
-                    else if (NODE_RSS_SUMMARY.equalsIgnoreCase(localName))
-                        currentItem.content = cache.toString();
-                    else if (NODE_RSS_DURATION.equalsIgnoreCase(localName))
+                    else if (NODE_RSS_SUMMARY.equalsIgnoreCase(localName)){
+                    	if(currentItem.content==null)
+                            currentItem.content = txt2html(cache.toString());                    	
+                    }else if (NODE_RSS_DURATION.equalsIgnoreCase(localName)){
                         currentItem.duration = cache.toString();
+                    }
                     
                 }
                 else if (type==TYPE_FEED) {
@@ -165,14 +175,13 @@ class FeedParserHandler extends DefaultHandler {
         throw new SAXException("Stop parse!");
     }
 
-    void checkItem(FeedItem item) throws SAXException {
+    FeedItem checkItem(FeedItem item) throws SAXException {
         if (item.title==null)
             item.title = "(Untitled)";
         
         if (item.resource==null){
         	Log.w("NO RESOURCE", "item have not a resource link: "+item.title);
-        	item = null;
-        	return;
+        	return null;
         }
         if (item.author==null)
             item.author = "(Unknown)";
@@ -186,6 +195,8 @@ class FeedParserHandler extends DefaultHandler {
 		     item.date = formatter.format(currentTime);
 	        Log.w("RSS", "item.date: "+item.date);
         }
+        
+        return item;
     }
 
     @Override
@@ -219,7 +230,17 @@ class FeedParserHandler extends DefaultHandler {
             return;
         }
         if (type==TYPE_RSS && "enclosure".equals(localName) && currentItem!=null) {
-            	currentItem.resource = attributes.getValue("url");
+        		String type= attributes.getValue("type");
+            	if(type==null){
+            		currentItem.resource = attributes.getValue("url");
+            		currentItem.type = "audio/mp3";
+            	}
+        		Pattern p = Pattern.compile("^audio");
+        		Matcher m = p.matcher(type);
+        		if (m.find()){
+        			currentItem.type = type;
+            		currentItem.resource = attributes.getValue("url");
+        		}
             	//Log.d("res", currentItem.resource);
 
             return;
@@ -228,6 +249,12 @@ class FeedParserHandler extends DefaultHandler {
             cache = new StringBuilder(1024);
         else
             cache = null;
+    }
+    
+    String txt2html(String in){
+		Pattern p = Pattern.compile("\n");
+		Matcher m = p.matcher(in);
+		return m.replaceAll("<br/>");
     }
 
 }

@@ -1,11 +1,14 @@
 package info.xuluan.podcast.provider;
 
+import java.util.HashMap;
+
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.util.Log;
@@ -21,6 +24,9 @@ public  class ReadingProvider extends ContentProvider {
 
     private ReadingOpenHelper mHelper = null;
 
+    private static HashMap<String, String> sItemProjectionMap = null ;
+    private static HashMap<String, String> sSubProjectionMap = null ;
+	
     private static final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
 
     static {
@@ -33,44 +39,73 @@ public  class ReadingProvider extends ContentProvider {
     @Override
     public boolean onCreate() {
         mHelper = new ReadingOpenHelper(getContext());
-        
+        if(sItemProjectionMap ==null){
+        	sItemProjectionMap = new HashMap<String, String>();
+				for(int i=0;i<ItemColumns.ALL_COLUMNS.length;i++){
+				    sItemProjectionMap.put(ItemColumns.ALL_COLUMNS[i],ItemColumns.ALL_COLUMNS[i]);
+				}
+
+		
+		}
+        if(sSubProjectionMap==null){
+        	sSubProjectionMap = new HashMap<String, String>();        	
+			for(int i=0;i<SubscriptionColumns.ALL_COLUMNS.length;i++){
+				sSubProjectionMap.put(SubscriptionColumns.ALL_COLUMNS[i],SubscriptionColumns.ALL_COLUMNS[i]);
+			}        	
+		}		
         return true;
     }
 
     @Override
     public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sort) {
-        SQLiteDatabase db = mHelper.getReadableDatabase();
-        Cursor c = null;
-        String orderBy;
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+
+        String orderBy = null;
         
         switch (matcher.match(uri)) {
         case TYPE_ALL_SUBSCRIPTIONS:
+            qb.setTables(SubscriptionColumns.TABLE_NAME);
+            qb.setProjectionMap(sSubProjectionMap);
+
             if (TextUtils.isEmpty(sort)) {
                 orderBy = SubscriptionColumns.DEFAULT_SORT_ORDER;
             } else {
                 orderBy = sort;
             }        	
-            c = db.query(SubscriptionColumns.TABLE_NAME, projection, selection, selectionArgs, null, null, orderBy);
+            //c = db.query(SubscriptionColumns.TABLE_NAME, projection, selection, selectionArgs, null, null, orderBy);
             break;
         case TYPE_SINGLE_SUBSCRIPTION:
-            String s_id = uri.getPathSegments().get(1);
-            c =  db.query(SubscriptionColumns.TABLE_NAME, projection, SubscriptionColumns._ID + "=" + s_id, null, null, null, null);
+            qb.setTables(SubscriptionColumns.TABLE_NAME);        	
+        	qb.setProjectionMap(sSubProjectionMap);
+            qb.appendWhere(SubscriptionColumns._ID + "=" + uri.getPathSegments().get(1));
+        	
+            //String s_id = uri.getPathSegments().get(1);
+            //c =  db.query(SubscriptionColumns.TABLE_NAME, projection, SubscriptionColumns._ID + "=" + s_id, null, null, null, null);
             break;
         case TYPE_ALL_ITEMS:
+            qb.setTables(ItemColumns.TABLE_NAME);
+            qb.setProjectionMap(sItemProjectionMap);
+        	
             if (TextUtils.isEmpty(sort)) {
                 orderBy = ItemColumns.DEFAULT_SORT_ORDER;
             } else {
                 orderBy = sort;
             }          	
-        	c =  db.query(ItemColumns.TABLE_NAME, projection, selection, selectionArgs, null, null, orderBy);
+        	//c =  db.query(ItemColumns.TABLE_NAME, projection, selection, selectionArgs, null, null, orderBy);
         	break;
         case TYPE_SINGLE_ITEM:
-            String i_id = uri.getPathSegments().get(1);
-            c =  db.query(ItemColumns.TABLE_NAME, projection, ItemColumns._ID + "=" + i_id, null, null, null, null);
+            qb.setTables(ItemColumns.TABLE_NAME);
+            qb.setProjectionMap(sItemProjectionMap);
+            qb.appendWhere(ItemColumns._ID + "=" + uri.getPathSegments().get(1));            
+            //String i_id = uri.getPathSegments().get(1);
+            //c =  db.query(ItemColumns.TABLE_NAME, projection, ItemColumns._ID + "=" + i_id, null, null, null, null);
             break;
         default:
             throw new IllegalArgumentException("Unknown URI " + uri);            
         }
+        SQLiteDatabase db = mHelper.getReadableDatabase();
+        Cursor c = qb.query(db, projection, selection, selectionArgs, null, null, orderBy);
+        
         c.setNotificationUri(getContext().getContentResolver(), uri);
         return c;
     } 

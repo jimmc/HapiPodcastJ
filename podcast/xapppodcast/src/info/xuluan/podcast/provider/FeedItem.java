@@ -32,9 +32,14 @@ public class FeedItem {
     
     public long length;    
     
-    public long created;    
+    public long update;    
     
     public String uri;
+    
+    public String sub_title;
+    public long created;
+    
+    public String type;
     
 
     static String[] DATE_FORMATS = {
@@ -58,6 +63,7 @@ public class FeedItem {
         duration = null;    
         pathname = null;  
         uri = null;
+        type =null;
         
 
         
@@ -66,27 +72,32 @@ public class FeedItem {
     	status = -1 ;
     	failcount = -1 ;
     	length = -1 ;
-    	created = -1 ;  	
+    	update = -1 ;  	
+    	
+    	created = -1;
+    	sub_title = null;
     	
     }
-    public FeedItem(Cursor cursor) {
-    	id = cursor.getLong(cursor.getColumnIndex(ItemColumns._ID));
-        resource  =  cursor.getString(cursor.getColumnIndex(ItemColumns.RESOURCE));    	
-        pathname  =  cursor.getString(cursor.getColumnIndex(ItemColumns.PATHNAME));   
-        offset  =  cursor.getInt(cursor.getColumnIndex(ItemColumns.OFFSET));
-        status  =  cursor.getInt(cursor.getColumnIndex(ItemColumns.STATUS));
-        failcount  =  cursor.getInt(cursor.getColumnIndex(ItemColumns.FAIL_COUNT));
-        
-        length  =  cursor.getLong(cursor.getColumnIndex(ItemColumns.LENGTH));
-        
-        url  =  cursor.getString(cursor.getColumnIndex(ItemColumns.URL));
-        title  =  cursor.getString(cursor.getColumnIndex(ItemColumns.TITLE));
-        author  =  cursor.getString(cursor.getColumnIndex(ItemColumns.AUTHOR)); 
-        date  =  cursor.getString(cursor.getColumnIndex(ItemColumns.DATE));
-        content  =  cursor.getString(cursor.getColumnIndex(ItemColumns.CONTENT));
-        duration  =  cursor.getString(cursor.getColumnIndex(ItemColumns.DURATION));  
-        uri = cursor.getString(cursor.getColumnIndex(ItemColumns.MEDIA_URI));   
-        
+	public FeedItem(ContentResolver context, long id ) {
+		Cursor cursor = null;
+		try {
+			String where = ItemColumns._ID + " = " + id ;
+
+			cursor = context.query(ItemColumns.URI,
+					ItemColumns.ALL_COLUMNS, where, null, null);
+			if (cursor.moveToFirst()) {
+				fetchFromCursor(cursor);
+				cursor.close();
+			}
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+
+
+	}    
+    public FeedItem(Cursor cursor){
+    		fetchFromCursor(cursor);
     }   
     
     public void update(ContentResolver context){
@@ -102,12 +113,17 @@ public class FeedItem {
                 	cv.put(ItemColumns.STATUS, status);
                 if(failcount>=0)
                 	cv.put(ItemColumns.FAIL_COUNT, failcount);
+                
+                update = Long.valueOf(System.currentTimeMillis());
+                cv.put(ItemColumns.LAST_UPDATE, update);
                 if(created>=0)
-                	cv.put(ItemColumns.CREATED_DATE, created);
+                	cv.put(ItemColumns.CREATED, created);                
                 if(length>=0)
                 	cv.put(ItemColumns.LENGTH, length);
                 if(uri!=null)
                 	cv.put(ItemColumns.MEDIA_URI, uri);
+                if(type!=null)
+                	cv.put(ItemColumns.TYPE, type);                
                 
                 context.update(
                         ItemColumns.URI,
@@ -135,8 +151,8 @@ public class FeedItem {
                 	cv.put(ItemColumns.STATUS, status);
                 if(failcount>=0)
                 	cv.put(ItemColumns.FAIL_COUNT, failcount);
-                if(created>=0)
-                	cv.put(ItemColumns.CREATED_DATE, created);
+                if(update>=0)
+                	cv.put(ItemColumns.LAST_UPDATE, update);
                 if(length>=0)
                 	cv.put(ItemColumns.LENGTH, length);
                 
@@ -155,8 +171,15 @@ public class FeedItem {
                 	cv.put(ItemColumns.CONTENT, content);
                 if(resource!=null)
                 	cv.put(ItemColumns.RESOURCE, resource);
-                if(duration!=null)
+                if(duration!=null){
+        			//Log.w("ITEM","  duration: " + duration);
                 	cv.put(ItemColumns.DURATION, duration);
+                	
+                }
+                if(sub_title!=null){
+                	cv.put(ItemColumns.SUB_TITLE, sub_title);
+                	
+                }
                 if(uri!=null)
                 	cv.put(ItemColumns.MEDIA_URI, uri);                
 
@@ -184,10 +207,43 @@ public class FeedItem {
 
         return 0L;
     }
-
+    private void fetchFromCursor(Cursor cursor) {
+    	id = cursor.getLong(cursor.getColumnIndex(ItemColumns._ID));
+        resource  =  cursor.getString(cursor.getColumnIndex(ItemColumns.RESOURCE));    	
+        pathname  =  cursor.getString(cursor.getColumnIndex(ItemColumns.PATHNAME));   
+        offset  =  cursor.getInt(cursor.getColumnIndex(ItemColumns.OFFSET));
+        status  =  cursor.getInt(cursor.getColumnIndex(ItemColumns.STATUS));
+        failcount  =  cursor.getInt(cursor.getColumnIndex(ItemColumns.FAIL_COUNT));
+        
+        length  =  cursor.getLong(cursor.getColumnIndex(ItemColumns.LENGTH));
+        
+        url  =  cursor.getString(cursor.getColumnIndex(ItemColumns.URL));
+        title  =  cursor.getString(cursor.getColumnIndex(ItemColumns.TITLE));
+        author  =  cursor.getString(cursor.getColumnIndex(ItemColumns.AUTHOR)); 
+        date  =  cursor.getString(cursor.getColumnIndex(ItemColumns.DATE));
+        content  =  cursor.getString(cursor.getColumnIndex(ItemColumns.CONTENT));
+        duration  =  cursor.getString(cursor.getColumnIndex(ItemColumns.DURATION));  
+        uri = cursor.getString(cursor.getColumnIndex(ItemColumns.MEDIA_URI)); 
+ 
+        created = cursor.getLong(cursor.getColumnIndex(ItemColumns.CREATED));
+        sub_title = cursor.getString(cursor.getColumnIndex(ItemColumns.SUB_TITLE));
+        type = cursor.getString(cursor.getColumnIndex(ItemColumns.TYPE));
+    }
 
     @Override
     public String toString() {
         return title;
+    }
+    
+    public String getType(){
+    	if(type == null){
+    		return "audio/mp3";
+    	}
+
+		if(!type.equalsIgnoreCase("")){
+			return type;
+		}  
+		
+		return "audio/mp3";
     }
 }

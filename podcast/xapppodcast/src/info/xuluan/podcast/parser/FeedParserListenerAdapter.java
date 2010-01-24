@@ -9,7 +9,7 @@ import org.xml.sax.SAXException;
 
 public class FeedParserListenerAdapter implements FeedParserListener {
 
-    public static final int MAX_SIZE = 11;
+    public static final int MAX_SIZE = 8;
 	
     private String feedTitle;
     private String feedDescription;

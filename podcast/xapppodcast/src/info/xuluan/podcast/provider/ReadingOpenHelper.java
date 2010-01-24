@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class ReadingOpenHelper extends SQLiteOpenHelper {
 
     public ReadingOpenHelper(Context context) {
-        super(context, "reader.db", null, 8);
+        super(context, "reader.db", null, 16);
     }
 
     @Override
@@ -22,6 +22,7 @@ public class ReadingOpenHelper extends SQLiteOpenHelper {
         db.execSQL(ItemColumns.sql_index_item_created);
 
         db.execSQL(SubscriptionColumns.sql_insert_default);
+        db.execSQL(SubscriptionColumns.sql_insert_default1);        
         db.execSQL(SubscriptionColumns.sql_insert_default2);
         db.execSQL(SubscriptionColumns.sql_insert_default3);
         
@@ -31,16 +32,11 @@ public class ReadingOpenHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion!=newVersion) {
             // drop db
-            db.execSQL(cat("DROP TABLE ", ItemColumns.TABLE_NAME));
-            db.execSQL(cat("DROP TABLE ", SubscriptionColumns.TABLE_NAME));
+            db.execSQL("DROP TABLE " + ItemColumns.TABLE_NAME);
+            db.execSQL("DROP TABLE " + SubscriptionColumns.TABLE_NAME);
             onCreate(db);
         }
     }
 
-    String cat(String... ss) {
-        StringBuilder sb = new StringBuilder(ss.length << 3);
-        for (String s : ss)
-            sb.append(s);
-        return sb.toString();
-    }
+
 }

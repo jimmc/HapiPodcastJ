@@ -13,17 +13,24 @@ public class ItemColumns implements BaseColumns {
 	public static final int ITEM_STATUS_UNREAD = 0;	
 	public static final int ITEM_STATUS_READ = 1;	
 	public static final int ITEM_STATUS_MAX_READING_VIEW = 10;	
-	public static final int ITEM_STATUS_DOWNLOADING = 20;
+	public static final int ITEM_STATUS_DOWNLOAD_PAUSE = 15;	
+	public static final int ITEM_STATUS_DOWNLOAD_QUEUE = 20;
+	public static final int ITEM_STATUS_DOWNLOADING_NOW = 21;
+	
 	public static final int ITEM_STATUS_MAX_DOWNLOADING_VIEW = 30;		
 	public static final int ITEM_STATUS_NO_PLAY = 50;
 	public static final int ITEM_STATUS_START_PLAY = 51;
-	public static final int ITEM_STATUS_PLAYED = 52;	
+
+	public static final int ITEM_STATUS_KEEP = 63;	
+	public static final int ITEM_STATUS_PLAYED = 66;		
 	
 	public static final Uri URI = Uri.parse("content://"
 			+ ReadingProvider.AUTHORITY + "/items");
+	
 
 	public static final String TABLE_NAME = "item";
 
+//feed	
 	public static final String SUBS_ID = "subs_id";
 
 	public static final String TITLE = "title";
@@ -32,10 +39,11 @@ public class ItemColumns implements BaseColumns {
 
 	public static final String DATE = "date";
 
-	public static final String CREATED_DATE = "created";
+	public static final String LAST_UPDATE = "last_update";
 
 	public static final String CONTENT = "content";
 
+// download	
 	public static final String STATUS = "status";
 
 	public static final String URL = "url";
@@ -51,22 +59,27 @@ public class ItemColumns implements BaseColumns {
 	public static final String PATHNAME = "path";
 
 	public static final String FAIL_COUNT = "fail";
-	
+
+//play	
 	public static final String MEDIA_URI ="uri";
 
-	public static final String[] ALL_COLUMNS = { _ID, SUBS_ID, TITLE,
-			AUTHOR, DATE, CREATED_DATE, CONTENT, STATUS, URL, RESOURCE, DURATION,
-			LENGTH, OFFSET, PATHNAME, FAIL_COUNT, MEDIA_URI };
+	public static final String SUB_TITLE ="sub_title";
+	public static final String CREATED ="created";
+	public static final String TYPE ="audio_type";	
 	
-	public static final String DEFAULT_SORT_ORDER = CREATED_DATE + " DESC";
+	public static final String[] ALL_COLUMNS = { _ID, SUBS_ID, TITLE,
+			AUTHOR, DATE, LAST_UPDATE, CONTENT, STATUS, URL, RESOURCE, DURATION,
+			LENGTH, OFFSET, PATHNAME, FAIL_COUNT, MEDIA_URI,SUB_TITLE, CREATED, TYPE };
+	
+	public static final String DEFAULT_SORT_ORDER = CREATED + " DESC";
 
 	public static final String sql_create_table = "CREATE TABLE " + TABLE_NAME + " (" 
             + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
             + SUBS_ID + " INTEGER, "
-            + TITLE + " VARCHAR(256), "
-            + AUTHOR + " VARCHAR(256), "
-            + DATE + " VARCHAR(256), "            
-            + CREATED_DATE + " INTEGER, "            
+            + TITLE + " VARCHAR(128), "
+            + AUTHOR + " VARCHAR(128), "
+            + DATE + " VARCHAR(64), "            
+            + LAST_UPDATE + " INTEGER, "            
             + CONTENT + " TEXT, "
             + STATUS + " INTEGER, "
             + URL + " VARCHAR(1024), "            
@@ -74,9 +87,12 @@ public class ItemColumns implements BaseColumns {
             + DURATION + " VARCHAR(16), "
             + LENGTH + " INTEGER, "
             + OFFSET + " INTEGER, "   
-            + PATHNAME + " VARCHAR(1024), "              
+            + PATHNAME + " VARCHAR(128), "              
             + FAIL_COUNT + " INTEGER, "
-            + MEDIA_URI + " VARCHAR(1024) "
+            + MEDIA_URI + " VARCHAR(128), "
+            + SUB_TITLE + " VARCHAR(128), " 
+            + TYPE + " VARCHAR(64), "            
+            + CREATED + " INTEGER "                        
             + ");";
 
 
@@ -88,9 +104,9 @@ public class ItemColumns implements BaseColumns {
 
 	public static final String sql_index_item_created = "CREATE INDEX IDX_"
             + TABLE_NAME + "_"
-            + CREATED_DATE + " ON "
+            + LAST_UPDATE + " ON "
             + TABLE_NAME + " ("
-            + CREATED_DATE + ");";
+            + LAST_UPDATE + ");";
 
 
 	public static ContentValues checkValues(ContentValues values, Uri uri) {
@@ -113,8 +129,8 @@ public class ItemColumns implements BaseColumns {
 
 		Long now = Long.valueOf(System.currentTimeMillis());
 
-		if (values.containsKey(CREATED_DATE) == false) {
-			values.put(CREATED_DATE, now);
+		if (values.containsKey(LAST_UPDATE) == false) {
+			values.put(LAST_UPDATE, now);
 		}
 		
 
@@ -141,7 +157,7 @@ public class ItemColumns implements BaseColumns {
 		}
 
 		if (values.containsKey(DURATION) == false) {
-			values.put(DURATION, "00:00");
+			values.put(DURATION, "");
 		}	
 		
 		if (values.containsKey(LENGTH) == false) {
@@ -162,7 +178,18 @@ public class ItemColumns implements BaseColumns {
 
 		if (values.containsKey(MEDIA_URI) == false) {
 			values.put(MEDIA_URI, "");
+		}
+		
+		if (values.containsKey(SUB_TITLE) == false) {
+			values.put(SUB_TITLE, "");
 		}		
+
+		if (values.containsKey(CREATED) == false) {
+			values.put(CREATED, now);
+		}		
+		if (values.containsKey(TYPE) == false) {
+			values.put(TYPE, "");
+		}			
 		return values;
 	}
 

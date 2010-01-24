@@ -1,6 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Podcast</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_play">Play</string>
+    <string name="menu_view">View</string>
+    <string name="menu_keep">Keep</string>
+    <string name="menu_download">Download</string>
+    <string name="menu_cancel">Cancel</string>
+    <string name="menu_pause">Pause</string>
+    <string name="menu_resume">Resume</string>	
+    <string name="menu_back">Back</string>	
+	
+    <string name="pref_download_only_wifi">Download file only when Wi-Fi connected</string>	
+    <string name="pref_connect_sel">Connect Sel</string>	
+	
 
     <string name="dialog_title_no_feed_found">No Feed Found</string>
     <string name="dialog_message_no_feed_found">No feed found or need to add.</string>
@@ -27,9 +40,9 @@
 
     <string name="menu_refresh">Refresh</string>
     <string name="menu_subs">Subscriptions</string>
-    <string name="menu_pref">Preferences</string>
+    <string name="menu_pref">Settings</string>
     <string name="menu_downloading">Downloading</string>
-	<string name="menu_downloaded">Downloaded</string>
+	<string name="menu_play_list">Play List</string>
 		
     <string name="menu_add">Add</string>
     <string name="menu_del">Delete</string>

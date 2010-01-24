@@ -12,4 +12,9 @@
         android:layout_height="fill_parent"
         android:background="@android:color/black"
     />
+	
+	<!---TextView  android:id="@+id/content"
+	android:textSize="14sp"
+	android:layout_width="fill_parent"
+    android:layout_height="fill_parent" /-->	
 </LinearLayout>

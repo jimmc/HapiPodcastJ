@@ -25,19 +25,28 @@ public class SubscriptionColumns implements BaseColumns {
 	
 	public static final String FAIL_COUNT = "fail";		
 
-	public static final String[] ALL_COLUMNS = { _ID, URL, LINK, TITLE, DESCRIPTION, LAST_UPDATED , LAST_ITEM_UPDATED, FAIL_COUNT};
+	public static final String STATUS = "status";		
+	
+	public static final String COMMENT = "comment";
+	public static final String RATING = "rating";
+
+	public static final String[] ALL_COLUMNS = { _ID, URL, LINK, TITLE, DESCRIPTION, LAST_UPDATED , 
+		LAST_ITEM_UPDATED, FAIL_COUNT, STATUS, COMMENT, RATING};
 
 	public static final String DEFAULT_SORT_ORDER = _ID + " ASC";
 	public static final String sql_create_table = "CREATE TABLE "
             + TABLE_NAME + " (" +
             _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + 
             URL + " VARCHAR(1024), " +
-            LINK + " VARCHAR(1024), " +
-            TITLE + " VARCHAR(256), " +
+            LINK + " VARCHAR(256), " +
+            TITLE + " VARCHAR(128), " +
             DESCRIPTION + " VARCHAR(1024), " +
             LAST_UPDATED + " INTEGER, " +
             LAST_ITEM_UPDATED + " INTEGER, " +
-            FAIL_COUNT + " INTEGER " +              
+            FAIL_COUNT + " INTEGER, " +   
+            STATUS + " INTEGER, " + 
+            COMMENT + " INTEGER, " +               
+            RATING + " VARCHAR(1024) " +                        
             ");";
 
 	public static final  String sql_index_subs_url = "CREATE UNIQUE INDEX IDX_"
@@ -64,9 +73,9 @@ public class SubscriptionColumns implements BaseColumns {
             + LAST_UPDATED + ","
             + FAIL_COUNT + ","
             + LAST_ITEM_UPDATED 
-            + ") VALUES ('http://www.npr.org/rss/podcast.php?id=1039', 'unknown', 'unknown', '', 0, 0, 0);";
+            + ") VALUES ('http://www.cbcradio3.com/podcast/', 'unknown', 'unknown', '', 0, 0, 0);";
 
-	public static final  String sql_insert_default2 = "INSERT INTO "
+	public static final  String sql_insert_default1 = "INSERT INTO "
         + TABLE_NAME + " ("
         + URL + ","
         + TITLE + ","
@@ -77,7 +86,7 @@ public class SubscriptionColumns implements BaseColumns {
         + LAST_ITEM_UPDATED 
         + ") VALUES ('http://www.justing.com.cn/justpod/justpod.xml', 'unknown', 'unknown', '', 0, 0, 0);";
 	
-	public static final  String sql_insert_default3 = "INSERT INTO "
+	public static final  String sql_insert_default2 = "INSERT INTO "
         + TABLE_NAME + " ("
         + URL + ","
         + TITLE + ","
@@ -87,6 +96,16 @@ public class SubscriptionColumns implements BaseColumns {
         + FAIL_COUNT + ","
         + LAST_ITEM_UPDATED 
         + ") VALUES ('http://feeds2.feedburner.com/qiangqiang', 'unknown', 'unknown', '', 0, 0, 0);";	
+	public static final  String sql_insert_default3 = "INSERT INTO "
+        + TABLE_NAME + " ("
+        + URL + ","
+        + TITLE + ","
+        + DESCRIPTION + ","
+        + LINK + ","
+        + LAST_UPDATED + ","
+        + FAIL_COUNT + ","
+        + LAST_ITEM_UPDATED 
+        + ") VALUES ('http://feeds.feedburner.com/EnglishAsASecondLanguagePodcast', 'unknown', 'unknown', '', 0, 0, 0);";		
 
     public static ContentValues checkValues(ContentValues values, Uri uri) {
         if (values.containsKey(URL) == false) {
