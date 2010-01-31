@@ -8,9 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import info.xuluan.podcast.DownloadItemListener;
-import info.xuluan.podcast.Log;
-import info.xuluan.podcast.Utils;
+import info.xuluan.podcast.fetcher.DownloadItemListener;
 import info.xuluan.podcast.fetcher.FeedFetcher;
 import info.xuluan.podcast.fetcher.Response;
 import info.xuluan.podcast.parser.FeedParser;
@@ -20,6 +18,7 @@ import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
+import info.xuluan.podcast.utils.Log;
 
 import android.app.Service;
 import android.content.ContentResolver;
@@ -36,107 +35,92 @@ import android.os.IBinder;
 import android.os.Message;
 import android.provider.MediaStore;
 
+public class PodcastService extends Service {
 
-public class ReadingService extends Service {
-	
 	public static final int NO_CONNECT = 1;
-	public static final int WIFI_CONNECT = 2;	
-	public static final int MOBILE_CONNECT = 4;	
+	public static final int WIFI_CONNECT = 2;
+	public static final int MOBILE_CONNECT = 4;
 
-	
-	public static final int MAX_DOWNLOAD_FAIL = 5;	
-	
+	public static final int MAX_DOWNLOAD_FAIL = 5;
 
 	private static final int MSG_TIMER = 0;
-	
+
 	private static final long ONE_MINUTE = 60L * 1000L;
 	private static final long ONE_HOUR = 60L * ONE_MINUTE;
 	private static final long ONE_DAY = 24L * ONE_HOUR;
 
-	
 	private static final long timer_freq = 3 * ONE_MINUTE;
-	
-	
+
 	private long pref_update = 2 * 60 * ONE_MINUTE;
-	
-	public  int pref_connection_sel = WIFI_CONNECT;	
-	
-	public  int pref_update_wifi = 0;
-	public  int pref_update_mobile = 0;
-	public  int pref_item_expire = 0;
-	public  int pref_download_file_expire = 0;
-	public  int pref_played_file_expire = 0;
-	
+
+	public int pref_connection_sel = WIFI_CONNECT;
+
+	public int pref_update_wifi = 0;
+	public int pref_update_mobile = 0;
+	public int pref_item_expire = 0;
+	public int pref_download_file_expire = 0;
+	public int pref_played_file_expire = 0;
+
 	private DownloadItemListener mDownloadListener = null;
 
 	private static boolean mDownloading = false;
-	
+	private FeedItem mDownloadingItem = null;
+	private static final ReentrantReadWriteLock mDownloadLock = new ReentrantReadWriteLock();
+
+	private static boolean mUpdate = false;
+	private static final ReentrantReadWriteLock mUpdateLock = new ReentrantReadWriteLock();
 	private static int mConnectStatus = NO_CONNECT;
-	private final ReentrantReadWriteLock mLock = new ReentrantReadWriteLock();
-	
-	
-	// public static final String BASE_DOWNLOAD_DIRECTORY =
-	// "/sdcard/xuluan.posdcast/download";
 
 	public static final String BASE_DOWNLOAD_DIRECTORY = "/sdcard/xuluan.podcast/download";
 
-	public static final int REQUEST_CODE_PREF_UNCHANGED = 1;
-	public static final int REQUEST_CODE_PREF_CHANGED = 2;
-
-
-
-	public static final String NOTIFY_NEW_ITEMS = ReadingService.class
-			.getName()
-			+ ".NOTIFY_NEW_ITEMS";
-	public static final String NOTIFY_PREF_CHANGED = ReadingService.class
-			.getName()
-			+ ".NOTIFY_PREF_CHANGED";
-	public static final String UPDATE_DOWNLOAD_STATUS = ReadingService.class
+	public static final String UPDATE_DOWNLOAD_STATUS = PodcastService.class
 			.getName()
 			+ ".UPDATE_DOWNLOAD_STATUS";
 
-	private final Log log = Utils.getLog(getClass());
+	private final Log log = Log.getLog(getClass());
 
-
-	
-	
 	class DisplayListener implements DownloadItemListener {
-		
-		private Intent set_intent(FeedItem item){
-	        Intent intent = new Intent(UPDATE_DOWNLOAD_STATUS);
-	        intent.putExtra(ItemColumns.TITLE, item.title);
-	        intent.putExtra(ItemColumns.LENGTH, item.length);
-	        intent.putExtra(ItemColumns.OFFSET, item.offset);
-	        intent.putExtra(ItemColumns.DURATION, item.duration);	
-	        return intent;
+
+		private Intent set_intent(FeedItem item) {
+			Intent intent = new Intent(UPDATE_DOWNLOAD_STATUS);
+			intent.putExtra(ItemColumns.TITLE, item.title);
+			intent.putExtra(ItemColumns.LENGTH, item.length);
+			intent.putExtra(ItemColumns.OFFSET, item.offset);
+			intent.putExtra(ItemColumns.DURATION, item.duration);
+			return intent;
 		}
-		
-		public void onBegin(FeedItem item){
-			
+
+		public void onBegin(FeedItem item) {
+
 			Intent intent = set_intent(item);
+			mDownloadingItem = item;
 
-	        sendBroadcast(intent);
-	    }		
+			sendBroadcast(intent);
+		}
 
-		public void onUpdate(FeedItem item){
-			
+		public void onUpdate(FeedItem item) {
+
 			Intent intent = set_intent(item);
+			mDownloadingItem = item;
 
-	        sendBroadcast(intent);
-	    }
+			sendBroadcast(intent);
+		}
 
-		public void onFinish(){
+		public void onFinish() {
 			FeedItem item = new FeedItem();
 			item.title = "";
 			item.offset = 0;
 			item.length = -1;
 			item.duration = "01:00";
-			
+
 			Intent intent = set_intent(item);
-	        sendBroadcast(intent);			
-	    	
-	    }
-	}	
+
+			sendBroadcast(intent);
+
+			mDownloadingItem = item;
+
+		}
+	}
 
 	private final Handler handler = new Handler() {
 		@Override
@@ -144,11 +128,13 @@ public class ReadingService extends Service {
 			switch (msg.what) {
 			case MSG_TIMER:
 				log.info("Message: MSG_TIMER.");
-				removeExpires();
 
-				if (updateConnectStatus()!=NO_CONNECT){
-					refreshFeeds();
-					start_download();				
+				if (updateConnectStatus() != NO_CONNECT) {
+					start_update();
+				}
+				removeExpires();
+				if (updateConnectStatus() != NO_CONNECT) {
+					start_download();
 				}
 
 				triggerNextTimer(timer_freq);
@@ -171,223 +157,30 @@ public class ReadingService extends Service {
 			ConnectivityManager cm = (ConnectivityManager) this
 					.getSystemService(CONNECTIVITY_SERVICE);
 			NetworkInfo info = cm.getActiveNetworkInfo();
-			if(info==null){
+			if (info == null) {
 				mConnectStatus = NO_CONNECT;
 				return mConnectStatus;
 
 			}
-			
-			//log.warn("type: " + info.getType());
-			//log.warn("name: " + info.getTypeName());
-			//log.warn("connect: " + info.isConnected());
-			//log.warn("available: " + info.isAvailable());
 
 			if (info.isConnected() && (info.getType() == 1)) {
 				mConnectStatus = WIFI_CONNECT;
 				pref_update = pref_update_wifi;
-				
+
 				return mConnectStatus;
 			} else {
 				mConnectStatus = MOBILE_CONNECT;
 				pref_update = pref_update_mobile;
-				
+
 				return mConnectStatus;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			mConnectStatus = NO_CONNECT;
-			
+
 			return mConnectStatus;
 		}
 
-
-	}
-
-	private FeedItem getDownloadItem() {
-		Cursor cursor = null;
-		try {
-			String where = ItemColumns.STATUS + ">"
-					+ ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE + " AND "
-					+ ItemColumns.STATUS + "<"
-					+ ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW;
-
-			log.info("getDownloadItem");
-			cursor = getContentResolver().query(ItemColumns.URI,
-					ItemColumns.ALL_COLUMNS, where, null, ItemColumns.STATUS + " DESC , " + ItemColumns.LAST_UPDATE + " ASC");
-			if (cursor.moveToFirst()) {
-				FeedItem item = new FeedItem(cursor);
-				cursor.close();
-				return item;
-			}
-		} finally {
-			if (cursor != null)
-				close(cursor);
-		}
-
-		return null;
-
-	}
-
-
-	public void start_download() {
-		
-	     mLock.readLock().lock();
-	 		if (mDownloading){
-	 		     mLock.readLock().unlock();
-	 		    return;
-	 			
-	 		}
-	 	mLock.readLock().unlock();
-	 	
-	 	mLock.writeLock().lock();
-	 		mDownloading = true;
-	 	mLock.writeLock().unlock();
-
-	 
-
-
-		new Thread() {
-			public void run() {
-				try {
-					while ((updateConnectStatus()& pref_connection_sel)>0) {
-						
-						FeedItem item = getDownloadItem();
-						if (item == null) {
-							break;
-						}	
-						File file = new File(BASE_DOWNLOAD_DIRECTORY);
-						if(!file.exists()){
-							break;
-						}
-
-
-
-						// log.info("start_download start");
-						if (item.pathname.equals("")) {
-							String path_name = BASE_DOWNLOAD_DIRECTORY
-									+ "/podcast_" + item.id + ".mp3";
-							item.pathname = path_name;
-						}
-						
-						//if(MAX_DOWNLOAD_FAIL<item.failcount){
-							
-							mDownloadListener.onBegin(item);
-							try{							
-								item.status = ItemColumns.ITEM_STATUS_DOWNLOADING_NOW;
-								item.update(getContentResolver());
-
-								FeedFetcher.download(item,mDownloadListener);
-								
-							}catch (Exception e) {
-								e.printStackTrace();
-							} finally {
-								if (item.status != ItemColumns.ITEM_STATUS_NO_PLAY) {
-									item.status =  ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
-								}
-								mDownloadListener.onFinish();
-								
-							}
-						//}
-							log.info(item.title +"  "+item.length+"  "+item.offset);
-							
-
-						if (item.status == ItemColumns.ITEM_STATUS_NO_PLAY) {
-
-							ContentValues values = new ContentValues(3);
-
-							values.put(MediaStore.Audio.Media.TITLE,
-									item.title);
-							values.put(MediaStore.Audio.Media.MIME_TYPE,
-									item.getType());
-							values.put(MediaStore.Audio.Media.DATA,
-									item.pathname);
-
-							Uri base = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-							Uri newUri = getContentResolver().insert(base,
-									values);
-							if (newUri != null)
-								item.uri = newUri.toString();
-							
-							item.created = Long.valueOf(System.currentTimeMillis());
-							
-							
-						}else{
-							item.failcount ++ ;
-							if(item.failcount > MAX_DOWNLOAD_FAIL){
-								item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE;
-								item.failcount = 0;
-							}
-						}
-
-						item.update(getContentResolver());
-	
-					}
-
-					// log.info("start_download end");
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					mDownloading = false;
-					
-				}
-				mDownloading = false;
-
-			}
-
-		}.start();
-
-	}
-
-	private void removeExpires() {
-		long expiredTime = System.currentTimeMillis() - pref_item_expire;
-		try {
-			String where = ItemColumns.CREATED + "<" + expiredTime
-					+ " and " + ItemColumns.STATUS + "<"
-					+ ItemColumns.ITEM_STATUS_MAX_READING_VIEW;
-
-			getContentResolver().delete(ItemColumns.URI, where, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		expiredTime = System.currentTimeMillis() - pref_played_file_expire;
-		try {
-			String where = ItemColumns.LAST_UPDATE + "<" + expiredTime
-					+ " and " + ItemColumns.STATUS + "="
-					+ ItemColumns.ITEM_STATUS_PLAYED;
-
-			getContentResolver().delete(ItemColumns.URI, where, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}		
-		
-		expiredTime = System.currentTimeMillis() - pref_download_file_expire;
-		try {
-			String where = ItemColumns.LAST_UPDATE + "<" + expiredTime
-					+ " and " + ItemColumns.STATUS + "="
-					+ ItemColumns.ITEM_STATUS_NO_PLAY;
-
-			getContentResolver().delete(ItemColumns.URI, where, null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}			
-	}
-
-	private void refreshFeeds() {
-		final String url = findSubscriptionUrlByFreq();
-		if (url == null) {
-			return;
-		}
-		new Thread() {
-			public void run() {
-				FeedParserListenerAdapter listener = fetchFeed(url);
-				if (listener != null)
-					updateFeed(url, listener);
-				else
-					updateFetch(url);
-			}
-
-		}.start();
 	}
 
 	private String findSubscriptionUrlByFreq() {
@@ -397,17 +190,11 @@ public class ReadingService extends Service {
 
 			String where = SubscriptionColumns.LAST_UPDATED + "<"
 					+ (now - pref_update);
-			// log.info("where = " + where);
-			// log.info("freq = " + freq);
-			// log.info("now = " + now);
 
 			cursor = getContentResolver().query(SubscriptionColumns.URI,
 					SubscriptionColumns.ALL_COLUMNS, where, null, null);
 			if (cursor.moveToFirst()) {
-				// long ldate = cursor.getLong(cursor
-				// .getColumnIndex(SubscriptionColumns.LAST_UPDATED));
 
-				// log.info("ldate = " + ldate);
 				String url = cursor.getString(cursor
 						.getColumnIndex(SubscriptionColumns.URL));
 				cursor.close();
@@ -422,6 +209,257 @@ public class ReadingService extends Service {
 
 	}
 
+	private FeedItem getDownloadItem() {
+		Cursor cursor = null;
+		try {
+			String where = ItemColumns.STATUS + ">"
+					+ ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE + " AND "
+					+ ItemColumns.STATUS + "<"
+					+ ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW;
+
+			cursor = getContentResolver().query(
+					ItemColumns.URI,
+					ItemColumns.ALL_COLUMNS,
+					where,
+					null,
+					ItemColumns.STATUS + " DESC , " + ItemColumns.LAST_UPDATE
+							+ " ASC");
+			if (cursor.moveToFirst()) {
+				FeedItem item = FeedItem.getByCursor(cursor);
+				cursor.close();
+				return item;
+			}
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+
+		return null;
+
+	}
+
+	public FeedItem getDownloadingItem() {
+		return mDownloadingItem;
+	}
+
+	public void start_update() {
+		log.info("start_update()");
+		mUpdateLock.readLock().lock();
+		if (mUpdate) {
+			mUpdateLock.readLock().unlock();
+			return;
+
+		}
+		mUpdateLock.readLock().unlock();
+
+		mUpdateLock.writeLock().lock();
+		mUpdate = true;
+		mUpdateLock.writeLock().unlock();
+
+		new Thread() {
+			public void run() {
+				try {
+
+					String url = findSubscriptionUrlByFreq();
+					while (url != null) {
+						FeedParserListenerAdapter listener = fetchFeed(url);
+						if (listener != null)
+							updateFeed(url, listener);
+						else
+							updateFetch(url);
+
+						url = findSubscriptionUrlByFreq();
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					mUpdateLock.writeLock().lock();
+					mUpdate = false;
+					mUpdateLock.writeLock().unlock();
+				}
+
+			}
+		}.start();
+	}
+
+	public void start_download() {
+
+		mDownloadLock.readLock().lock();
+		if (mDownloading) {
+			mDownloadLock.readLock().unlock();
+			return;
+
+		}
+		mDownloadLock.readLock().unlock();
+
+		mDownloadLock.writeLock().lock();
+		mDownloading = true;
+		mDownloadLock.writeLock().unlock();
+
+		new Thread() {
+			public void run() {
+				try {
+					while ((updateConnectStatus() & pref_connection_sel) > 0) {
+
+						FeedItem item = getDownloadItem();
+						if (item == null) {
+							break;
+						}
+						File file = new File(BASE_DOWNLOAD_DIRECTORY);
+						if (!file.exists()) {
+							break;
+						}
+
+						// log.info("start_download start");
+						if (item.pathname.equals("")) {
+							String path_name = BASE_DOWNLOAD_DIRECTORY
+									+ "/podcast_" + item.id + ".mp3";
+							item.pathname = path_name;
+						}
+
+						// if(MAX_DOWNLOAD_FAIL<item.failcount){
+
+						mDownloadListener.onBegin(item);
+						try {
+							item.status = ItemColumns.ITEM_STATUS_DOWNLOADING_NOW;
+							item.update(getContentResolver());
+
+							FeedFetcher.download(item, mDownloadListener);
+
+						} catch (Exception e) {
+							e.printStackTrace();
+						} finally {
+							if (item.status != ItemColumns.ITEM_STATUS_NO_PLAY) {
+								item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
+							}
+							mDownloadListener.onFinish();
+
+						}
+						// }
+						log.info(item.title + "  " + item.length + "  "
+								+ item.offset);
+
+						if (item.status == ItemColumns.ITEM_STATUS_NO_PLAY) {
+
+							ContentValues values = new ContentValues(3);
+
+							values
+									.put(MediaStore.Audio.Media.TITLE,
+											item.title);
+							values.put(MediaStore.Audio.Media.MIME_TYPE, item
+									.getType());
+							values.put(MediaStore.Audio.Media.DATA,
+									item.pathname);
+
+							Uri base = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+							Uri newUri = getContentResolver().insert(base,
+									values);
+							if (newUri != null)
+								item.uri = newUri.toString();
+
+							item.created = Long.valueOf(System
+									.currentTimeMillis());
+
+						} else {
+							item.failcount++;
+							if (item.failcount > MAX_DOWNLOAD_FAIL) {
+								item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE;
+								item.failcount = 0;
+							}
+						}
+
+						item.update(getContentResolver());
+
+					}
+
+					// log.info("start_download end");
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					mDownloadLock.writeLock().lock();
+					mDownloading = false;
+					mDownloadLock.writeLock().unlock();
+				}
+
+			}
+
+		}.start();
+
+	}
+
+	private void removeExpires() {
+		long expiredTime = System.currentTimeMillis() - pref_item_expire;
+		try {
+			String where = ItemColumns.CREATED + "<" + expiredTime + " and "
+					+ ItemColumns.STATUS + "<"
+					+ ItemColumns.ITEM_STATUS_MAX_READING_VIEW;
+
+			getContentResolver().delete(ItemColumns.URI, where, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		expiredTime = System.currentTimeMillis() - pref_played_file_expire;
+		try {
+			String where = ItemColumns.LAST_UPDATE + "<" + expiredTime
+					+ " and " + ItemColumns.STATUS + "="
+					+ ItemColumns.ITEM_STATUS_PLAYED;
+
+			Cursor cursor = getContentResolver().query(ItemColumns.URI,
+					ItemColumns.ALL_COLUMNS, where, null, null);
+			if (cursor.moveToFirst()) {
+				while (cursor.moveToNext()) {
+					String path = cursor.getString(cursor
+							.getColumnIndex(ItemColumns.PATHNAME));
+					try {
+						File file = new File(path);
+						boolean deleted = file.delete();
+
+					} catch (Exception e) {
+						log.warn("del file failed : " + path + "  " + e);
+
+					}
+				}
+
+			}
+			cursor.close();
+			getContentResolver().delete(ItemColumns.URI, where, null);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		expiredTime = System.currentTimeMillis() - pref_download_file_expire;
+		try {
+			String where = ItemColumns.LAST_UPDATE + "<" + expiredTime
+					+ " and " + ItemColumns.STATUS + "="
+					+ ItemColumns.ITEM_STATUS_NO_PLAY;
+
+			Cursor cursor = getContentResolver().query(ItemColumns.URI,
+					ItemColumns.ALL_COLUMNS, where, null, null);
+			if (cursor.moveToFirst()) {
+				while (cursor.moveToNext()) {
+					String path = cursor.getString(cursor
+							.getColumnIndex(ItemColumns.PATHNAME));
+					try {
+						File file = new File(path);
+						boolean deleted = file.delete();
+
+					} catch (Exception e) {
+						log.warn("del file failed : " + path + "  " + e);
+
+					}
+				}
+
+			}
+			cursor.close();
+			getContentResolver().delete(ItemColumns.URI, where, null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public FeedParserListenerAdapter fetchFeed(String url) {
 		log.info("fetchFeed start");
 
@@ -429,7 +467,7 @@ public class ReadingService extends Service {
 		FeedParserListenerAdapter listener = new FeedParserListenerAdapter();
 
 		try {
-			Response response = fetcher.fetch(url, 0L, null);
+			Response response = fetcher.fetch(url);
 
 			log.info("fetcher.fetch end");
 			if (response != null)
@@ -440,6 +478,8 @@ public class ReadingService extends Service {
 
 		} catch (Exception e) {
 			log.info("Parse XML error:", e);
+			// e.printStackTrace();
+
 		}
 
 		log.info("fetchFeed getFeedItemsSize = " + listener.getFeedItemsSize());
@@ -459,27 +499,14 @@ public class ReadingService extends Service {
 					SubscriptionColumns.ALL_COLUMNS, null, null,
 					SubscriptionColumns.LAST_UPDATED + " asc");
 			if (cursor.moveToFirst()) {
-				String sub_id = cursor.getString(cursor
-						.getColumnIndex(SubscriptionColumns._ID));
-				log.warn("Feed updated: "
-						+ cursor.getString(cursor
-								.getColumnIndex(SubscriptionColumns.URL)));
-				int fail_count = cursor.getInt(cursor
-						.getColumnIndex(SubscriptionColumns.FAIL_COUNT));
-				ContentValues cv = new ContentValues();
-
-				Long now = Long.valueOf(System.currentTimeMillis());
-				cv.put(SubscriptionColumns.LAST_UPDATED, now);
-				fail_count++;
-				cv.put(SubscriptionColumns.FAIL_COUNT, fail_count);
-
-				getContentResolver().update(SubscriptionColumns.URI, cv,
-						SubscriptionColumns._ID + "=" + sub_id, null);
-
+				Subscription sub = Subscription.getByCursor(cursor);
+				sub.fail_count++;
+				sub.update(getContentResolver());
 				log.info("updateFetch OK");
 			}
 		} finally {
-			close(cursor);
+			if (cursor != null)
+				cursor.close();
 		}
 	}
 
@@ -508,7 +535,9 @@ public class ReadingService extends Service {
 		 * 
 		 * log.warn("item_date: " + item.date); }
 		 */
-		Subscription subscription = querySubscriptionByUrl(url);
+		Subscription subscription = Subscription.getByUrl(getContentResolver(),
+				url);
+
 		if (subscription == null)
 			return;
 
@@ -526,76 +555,46 @@ public class ReadingService extends Service {
 				log.info("item date =" + item.date);
 				break;
 			}
-			log.info("subscription.id");
 			log.info("subscription.id : " + subscription.id);
 			String where = ItemColumns.SUBS_ID + "=" + subscription.id
 					+ " and " + ItemColumns.RESOURCE + "= '" + item.resource
 					+ "'";
-			log.info("where : " + where);
 
 			Cursor cursor = cr.query(ItemColumns.URI,
 					new String[] { ItemColumns._ID }, where, null, null);
-			log.info("cursor");
 
 			if (cursor.moveToFirst()) {
-				// exist, so no need continue:
 				cursor.close();
 				log.info("exist break");
 
 				break;
 			} else {
-				cursor.close();
-				// add to database:
+				if (cursor != null)
+					cursor.close();
 				log.info("add item = " + item.title);
 				added.add(item);
 			}
 
 		}
 		log.info("added size: " + added.size());
+		subscription.fail_count = 0;
+		subscription.update(getContentResolver());
+		subscription.title = feedTitle;
+		subscription.description = feedDescription;
 
-		ContentValues cv = new ContentValues();
-		cv.put(SubscriptionColumns.TITLE, feedTitle);
-		cv.put(SubscriptionColumns.DESCRIPTION, feedDescription);
-		cv.put(SubscriptionColumns.FAIL_COUNT, 0);
-		Long now = Long.valueOf(System.currentTimeMillis());
-
-		cv.put(SubscriptionColumns.LAST_UPDATED, now);
 		if (!added.isEmpty()) {
+			subscription.lastItemUpdated = added.get(0).getDate();
 			log.warn("MAX item date:==" + added.get(0).date);
-			cv.put(SubscriptionColumns.LAST_ITEM_UPDATED, added.get(0)
-					.getDate());
-
 		}
 
-		int n = getContentResolver().update(SubscriptionColumns.URI, cv,
-				SubscriptionColumns._ID + "=" + subscription.id, null);
+		int n = subscription.update(getContentResolver());
 		if (n == 1) {
 			log.warn("Feed updated: " + url);
 		}
 		if (added.isEmpty())
 			return;
-		addItems(subscription.id,added);
+		addItems(subscription.id, added);
 
-	}
-
-	public Subscription querySubscriptionByUrl(String feedUrl) {
-		Cursor cursor = null;
-		try {
-			cursor = getContentResolver().query(SubscriptionColumns.URI,
-					SubscriptionColumns.ALL_COLUMNS,
-					SubscriptionColumns.URL + "=?", new String[] { feedUrl },
-					null);
-			if (cursor.moveToFirst()) {
-				Subscription sub = new Subscription(cursor);
-				cursor.close();
-				return sub;
-			}
-		} catch (Exception e) {
-		}
-
-		if (cursor != null)
-			cursor.close();
-		return null;
 	}
 
 	void addItems(Long sub_id, List<FeedItem> items) {
@@ -605,8 +604,6 @@ public class ReadingService extends Service {
 
 			FeedItem item = items.get(i);
 			item.sub_id = sub_id;
-			log.info(" new item duration: " + item.duration);
-
 			Uri uri = item.insert(cr);
 			if (uri != null)
 				log.info("Inserted new item: " + uri.toString());
@@ -614,13 +611,14 @@ public class ReadingService extends Service {
 	}
 
 	public Uri addSubscription(String url) {
-		if (querySubscriptionByUrl(url) != null) {
+		Subscription sub = Subscription.getByUrl(getContentResolver(), url);
+
+		if (sub != null) {
 			return null;
 		}
 		ContentValues cv = new ContentValues();
 		cv.put(SubscriptionColumns.TITLE, url);
 		cv.put(SubscriptionColumns.URL, url);
-		cv.put(SubscriptionColumns.DESCRIPTION, url);
 		cv.put(SubscriptionColumns.LAST_UPDATED, 0L);
 		return getContentResolver().insert(SubscriptionColumns.URI, cv);
 
@@ -636,10 +634,10 @@ public class ReadingService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		log.info("ReadingService.onCreate()");
+		log.info("onCreate()");
 		updateSetting();
-		log.info("pref_update_mobile " +pref_update_mobile);
-		
+		log.info("pref_update_mobile " + pref_update_mobile);
+
 		File file = new File(BASE_DOWNLOAD_DIRECTORY);
 		boolean exists = (file.exists());
 		if (exists) {
@@ -655,7 +653,7 @@ public class ReadingService extends Service {
 		}
 
 		triggerNextTimer(1);
-		
+
 		mDownloadListener = new DisplayListener();
 
 	}
@@ -663,18 +661,20 @@ public class ReadingService extends Service {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
+		log.info("onStart()");
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
-		log.info("ReadingService.onDestroy()");
+
+		log.info("onDestroy()");
 	}
 
 	@Override
 	public void onLowMemory() {
 		super.onLowMemory();
-		log.info("ReadingService.onLowMemory()");
+		log.info("onLowMemory()");
 	}
 
 	@Override
@@ -682,44 +682,40 @@ public class ReadingService extends Service {
 		return binder;
 	}
 
-	private void close(Cursor cursor) {
-		if (cursor != null) {
-			cursor.close();
-		}
-	}
-
 	private final IBinder binder = new ReadingBinder();
 
 	public class ReadingBinder extends Binder {
-		public ReadingService getService() {
-			return ReadingService.this;
+		public PodcastService getService() {
+			return PodcastService.this;
 		}
 	}
-	
-	public void updateSetting(){
+
+	public void updateSetting() {
 		SharedPreferences pref = getSharedPreferences(
-				"info.xuluan.podcast_preferences",
-				Service.MODE_PRIVATE);
+				"info.xuluan.podcast_preferences", Service.MODE_PRIVATE);
 
 		boolean b = pref.getBoolean("pref_download_only_wifi", true);
-		pref_connection_sel = b? WIFI_CONNECT:(WIFI_CONNECT|MOBILE_CONNECT);
-		
-		pref_update_wifi = Integer.parseInt(pref.getString("pref_update_wifi", "60"));
+		pref_connection_sel = b ? WIFI_CONNECT
+				: (WIFI_CONNECT | MOBILE_CONNECT);
+
+		pref_update_wifi = Integer.parseInt(pref.getString("pref_update_wifi",
+				"60"));
 		pref_update_wifi *= ONE_MINUTE;
 
-		pref_update_mobile = Integer.parseInt(pref.getString("pref_update_mobile", "120"));
+		pref_update_mobile = Integer.parseInt(pref.getString(
+				"pref_update_mobile", "120"));
 		pref_update_mobile *= ONE_MINUTE;
-		
-		pref_item_expire = Integer.parseInt(pref.getString("pref_item_expire", "7"));
+
+		pref_item_expire = Integer.parseInt(pref.getString("pref_item_expire",
+				"7"));
 		pref_item_expire *= ONE_DAY;
-		pref_download_file_expire = Integer.parseInt(pref.getString("pref_download_file_expire", "7"));
+		pref_download_file_expire = Integer.parseInt(pref.getString(
+				"pref_download_file_expire", "7"));
 		pref_download_file_expire *= ONE_DAY;
-		pref_played_file_expire = Integer.parseInt(pref.getString("pref_played_file_expire", "24"));
+		pref_played_file_expire = Integer.parseInt(pref.getString(
+				"pref_played_file_expire", "24"));
 		pref_played_file_expire *= ONE_HOUR;
 
-
-	
 	}
-	
 
 }

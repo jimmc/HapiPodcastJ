@@ -12,7 +12,7 @@
     <string name="menu_back">Back</string>	
 	
     <string name="pref_download_only_wifi">Download file only when Wi-Fi connected</string>	
-    <string name="pref_connect_sel">Connect Sel</string>	
+    <string name="pref_connect_sel">Download only Wi-Fi</string>	
 	
 
     <string name="dialog_title_no_feed_found">No Feed Found</string>
@@ -32,8 +32,8 @@
     <string name="dialog_title_del_sub">Delete Subscription</string>
     <string name="dialog_message_del_sub">Are you sure you want to delete &apos;%1$s&apos;?</string>
 
-    <string name="list_message_empty_item">No items.</string>
-    <string name="list_message_empty_subs">No subscriptions.</string>
+    <string name="list_message_empty_item">No data, please waiting ...</string>
+    <string name="list_message_empty_subs">No channel, please add one...</string>
 
     <string name="title_subs">Manage Subscriptions</string>
     <string name="title_pref">Preferences</string>

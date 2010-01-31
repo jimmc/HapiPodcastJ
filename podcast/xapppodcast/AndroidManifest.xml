@@ -28,7 +28,7 @@
         <activity android:name=".Pref" android:label="Setting"></activity>		
         <activity android:name=".DownloadingActivity" android:label="Downloading"></activity>		
         <activity android:name=".PlayListActivity" android:label="Playlist"></activity>				
-        <service android:enabled="true" android:name=".service.ReadingService"></service>
-        <provider android:name=".provider.ReadingProvider" android:authorities="info.xuluan.podcast.provider.readingprovider"></provider>
+        <service android:enabled="true" android:name=".service.PodcastService"></service>
+        <provider android:name=".provider.PodcastProvider" android:authorities="info.xuluan.podcast.provider.podcastprovider"></provider>
     </application>
 </manifest> 

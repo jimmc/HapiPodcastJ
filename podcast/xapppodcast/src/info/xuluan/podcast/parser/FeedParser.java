@@ -11,41 +11,37 @@ import org.xml.sax.SAXException;
 
 public class FeedParser {
 
-    static final FeedParser instance = new FeedParser();
+	static final FeedParser instance = new FeedParser();
 
-    public static FeedParser getDefault() {
-        return instance;
-    }
+	public static FeedParser getDefault() {
+		return instance;
+	}
 
-    SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
+	SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
 
-    public FeedParser() {
-        //
-    }
+	public FeedParser() {
+		//
+	}
 
-    public void parse(InputStream input, FeedParserListener listener) {
-        FeedParserHandler handler = new FeedParserHandler(listener);
-        try {
-            SAXParser parser = saxParserFactory.newSAXParser();
-            parser.parse(input, handler);
-        }
-        catch (SAXException e) {
-            throw new RuntimeException(e);
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        catch (ParserConfigurationException e) {
-            throw new RuntimeException(e);
-        }
-        finally {
-            if (input!=null) {
-                try {
-                    input.close();
-                }
-                catch (IOException e) {}
-            }
-        }
-    }
+	public void parse(InputStream input, FeedParserListener listener) {
+		FeedParserHandler handler = new FeedParserHandler(listener);
+		try {
+			SAXParser parser = saxParserFactory.newSAXParser();
+			parser.parse(input, handler);
+		} catch (SAXException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (ParserConfigurationException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+				}
+			}
+		}
+	}
 
 }

@@ -6,15 +6,15 @@
     android:paddingLeft="6dip"
     android:paddingRight="6dip"
 >
-    <WebView
+    <!---WebView
         android:id="@+android:id/webview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:background="@android:color/black"
-    />
+    /-->
 	
-	<!---TextView  android:id="@+id/content"
+	<TextView  android:id="@+id/content"
 	android:textSize="14sp"
 	android:layout_width="fill_parent"
-    android:layout_height="fill_parent" /-->	
+    android:layout_height="fill_parent" />	
 </LinearLayout>

@@ -16,67 +16,63 @@
 
 package info.xuluan.podcast;
 
-
-
-
-import info.xuluan.podcast.service.ReadingService;
+import info.xuluan.podcast.service.PodcastService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.IBinder;
-
-import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
-
 
 public class Pref extends PreferenceActivity {
 
-    private ReadingService serviceBinder = null;
-    ComponentName service = null;
+	private PodcastService serviceBinder = null;
+	ComponentName service = null;
 
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-            public void onServiceConnected(ComponentName className, IBinder service) {
-                serviceBinder = ((ReadingService.ReadingBinder)service).getService();
-            }
+	private ServiceConnection serviceConnection = new ServiceConnection() {
+		public void onServiceConnected(ComponentName className, IBinder service) {
+			serviceBinder = ((PodcastService.ReadingBinder) service)
+					.getService();
+		}
 
-            public void onServiceDisconnected(ComponentName className) {
-                serviceBinder = null;
-            }
-    };
-    
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+		public void onServiceDisconnected(ComponentName className) {
+			serviceBinder = null;
+		}
+	};
 
-        super.onCreate(savedInstanceState);
-        
-        // Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.preferences);
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
 
-        service = startService(new Intent(this, ReadingService.class));
+		super.onCreate(savedInstanceState);
 
-        Intent bindIntent = new Intent(this, ReadingService.class);
-        bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();  
+		// Load the preferences from an XML resource
+		addPreferencesFromResource(R.xml.preferences);
 
-    }
+		service = startService(new Intent(this, PodcastService.class));
 
-    
-    @Override
-    protected void onPause() {
-    	
-        super.onPause();
-        serviceBinder.updateSetting();  
-    }    
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbindService(serviceConnection);
-        //stopService(new Intent(this, service.getClass()));
-    }
+		Intent bindIntent = new Intent(this, PodcastService.class);
+		bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+	}
+
+	@Override
+	protected void onPause() {
+
+		super.onPause();
+		serviceBinder.updateSetting();
+	}
+
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		unbindService(serviceConnection);
+		// stopService(new Intent(this, service.getClass()));
+	}
 
 }
