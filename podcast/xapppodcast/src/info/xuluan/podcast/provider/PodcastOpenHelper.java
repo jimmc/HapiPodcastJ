@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class PodcastOpenHelper extends SQLiteOpenHelper {
 
 	public PodcastOpenHelper(Context context) {
-		super(context, "reader.db", null, 18);
+		super(context, "podcast.db", null, 1);
 	}
 
 	@Override

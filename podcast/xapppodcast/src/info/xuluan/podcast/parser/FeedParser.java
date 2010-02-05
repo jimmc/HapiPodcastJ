@@ -8,6 +8,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 public class FeedParser {
 
@@ -20,11 +21,14 @@ public class FeedParser {
 	SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
 
 	public FeedParser() {
+
 		//
 	}
 
-	public void parse(InputStream input, FeedParserListener listener) {
-		FeedParserHandler handler = new FeedParserHandler(listener);
+	public void parse(InputStream input,DefaultHandler handler){
+		//FeedParserListener listener) {
+	
+		//FeedParserHandler handler = new FeedParserHandler(listener);
 		try {
 			SAXParser parser = saxParserFactory.newSAXParser();
 			parser.parse(input, handler);

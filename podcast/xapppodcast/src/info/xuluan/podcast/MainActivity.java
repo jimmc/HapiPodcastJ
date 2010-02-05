@@ -28,6 +28,9 @@ public class MainActivity extends PodcastBaseActivity {
 	private static final int MENU_PREF = Menu.FIRST + 3;
 	private static final int MENU_DOWNLOADING = Menu.FIRST + 4;
 	private static final int MENU_DOWNLOADED = Menu.FIRST + 5;
+	
+	private static final int MENU_SEARCH = Menu.FIRST + 6;
+	
 
 	private static final int MENU_ITEM_START_DOWNLOAD = Menu.FIRST + 10;
 
@@ -67,16 +70,20 @@ public class MainActivity extends PodcastBaseActivity {
 		menu.add(0, MENU_REFRESH, 0,
 				getResources().getString(R.string.menu_refresh)).setIcon(
 				android.R.drawable.ic_menu_rotate);
-		menu.add(0, MENU_SUBS, 1, getResources().getString(R.string.menu_subs))
+		menu.add(0, MENU_SEARCH, 1, "Search")
+		.setIcon(android.R.drawable.ic_menu_search);		
+		menu.add(0, MENU_SUBS, 2, getResources().getString(R.string.menu_subs))
 				.setIcon(android.R.drawable.ic_menu_agenda);
-		menu.add(0, MENU_PREF, 2, getResources().getString(R.string.menu_pref))
+		menu.add(0, MENU_PREF, 3, getResources().getString(R.string.menu_pref))
 				.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, MENU_DOWNLOADING, 3,
+		menu.add(0, MENU_DOWNLOADING, 4,
 				getResources().getString(R.string.menu_downloading)).setIcon(
 				android.R.drawable.ic_menu_set_as);
-		menu.add(0, MENU_DOWNLOADED, 4,
+		menu.add(0, MENU_DOWNLOADED, 5,
 				getResources().getString(R.string.menu_play_list)).setIcon(
 				android.R.drawable.ic_menu_slideshow);
+		
+		
 		return true;
 	}
 
@@ -100,6 +107,11 @@ public class MainActivity extends PodcastBaseActivity {
 			return true;
 		case MENU_DOWNLOADED:
 			intent = new Intent(this, PlayListActivity.class);
+			startActivity(intent);
+			return true;
+
+		case MENU_SEARCH:
+			intent = new Intent(this, AddChannel.class);
 			startActivity(intent);
 			return true;
 

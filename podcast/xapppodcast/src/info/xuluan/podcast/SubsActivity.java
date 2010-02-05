@@ -1,9 +1,9 @@
 package info.xuluan.podcast;
 
+
 import info.xuluan.podcast.parser.FeedParserListenerAdapter;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -31,6 +31,7 @@ public class SubsActivity extends PodcastBaseActivity {
 	private final int MENU_ADD = Menu.FIRST + 2;
 	private final int MENU_PREF = Menu.FIRST + 3;
 
+	
 	private final int MENU_ITEM_DELETE = Menu.FIRST + 10;
 
 	private ProgressDialog progress = null;
@@ -59,11 +60,11 @@ public class SubsActivity extends PodcastBaseActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_ADD, 0, getResources().getString(R.string.menu_add))
 				.setIcon(android.R.drawable.ic_menu_add);
-		menu.add(0, MENU_PREF, 1, getResources().getString(R.string.menu_pref))
+		menu.add(0, MENU_PREF, 7, getResources().getString(R.string.menu_pref))
 				.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, MENU_BACK, 2, getResources().getString(R.string.menu_back))
+		menu.add(0, MENU_BACK, 8, getResources().getString(R.string.menu_back))
 				.setIcon(android.R.drawable.ic_menu_revert);
-
+	
 		return true;
 	}
 
@@ -81,6 +82,7 @@ public class SubsActivity extends PodcastBaseActivity {
 		case MENU_PREF:
 			startActivity(new Intent(this, Pref.class));
 			return true;
+
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -168,12 +170,9 @@ public class SubsActivity extends PodcastBaseActivity {
 		int fail_res = 0;
 		try {
 			url = formatURL(value);
-			// if(!url.equals(value)){
-			log.info("OLD URL =" + value);
-			log.info("NEW URL =" + url);
+
 			if (Subscription.getByUrl(getContentResolver(), url) != null)
 				fail_res = R.string.dialog_message_url_exist;
-			// }
 		} catch (MalformedURLException e) {
 			fail_res = R.string.dialog_message_malformed_url;
 		}
@@ -200,7 +199,7 @@ public class SubsActivity extends PodcastBaseActivity {
 			protected FeedParserListenerAdapter doInBackground(String... params) {
 
 				url = params[0];
-				// log.info("doInBackground URL ="+url);
+				// log.debug("doInBackground URL ="+url);
 				return mServiceBinder.fetchFeed(url);
 			}
 

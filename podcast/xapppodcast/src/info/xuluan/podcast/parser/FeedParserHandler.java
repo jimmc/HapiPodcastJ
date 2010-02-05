@@ -14,7 +14,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-class FeedParserHandler extends DefaultHandler {
+public class FeedParserHandler extends DefaultHandler {
 
 	private static final int TYPE_UNKNOWN = 0;
 	private static final int TYPE_RSS = 1;
@@ -283,7 +283,7 @@ class FeedParserHandler extends DefaultHandler {
 	}
 
 	String txt2html(String in) {
-		Pattern p = Pattern.compile("\n");
+		Pattern p = Pattern.compile("\\n");
 		Matcher m = p.matcher(in);
 		return m.replaceAll("<br/>");
 	}

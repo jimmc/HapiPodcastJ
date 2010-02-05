@@ -73,16 +73,28 @@ public class ItemColumns implements BaseColumns {
 
 	public static final String DEFAULT_SORT_ORDER = CREATED + " DESC";
 
-	public static final String sql_create_table = "CREATE TABLE " + TABLE_NAME
-			+ " (" + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + SUBS_ID
-			+ " INTEGER, " + TITLE + " VARCHAR(128), " + AUTHOR
-			+ " VARCHAR(128), " + DATE + " VARCHAR(64), " + LAST_UPDATE
-			+ " INTEGER, " + CONTENT + " TEXT, " + STATUS + " INTEGER, " + URL
-			+ " VARCHAR(1024), " + RESOURCE + " VARCHAR(1024), " + DURATION
-			+ " VARCHAR(16), " + LENGTH + " INTEGER, " + OFFSET + " INTEGER, "
-			+ PATHNAME + " VARCHAR(128), " + FAIL_COUNT + " INTEGER, "
-			+ MEDIA_URI + " VARCHAR(128), " + SUB_TITLE + " VARCHAR(128), "
-			+ TYPE + " VARCHAR(64), " + CREATED + " INTEGER " + ");";
+	public static final String sql_create_table = "CREATE TABLE " 
+		+ TABLE_NAME + " (" 
+		+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " 
+		+ SUBS_ID + " INTEGER, " 
+		+ TITLE + " VARCHAR(128), " 
+		+ AUTHOR + " VARCHAR(128), " 
+		+ DATE + " VARCHAR(64), " 
+		+ LAST_UPDATE + " INTEGER, " 
+		+ CONTENT + " TEXT, " 
+		+ STATUS + " INTEGER, " 
+		+ URL + " VARCHAR(1024), " 
+		+ RESOURCE + " VARCHAR(1024), " 
+		+ DURATION + " VARCHAR(16), " 
+		+ LENGTH + " INTEGER, " 
+		+ OFFSET + " INTEGER, "
+		+ PATHNAME + " VARCHAR(128), " 
+		+ FAIL_COUNT + " INTEGER, "
+		+ MEDIA_URI + " VARCHAR(128), " 
+		+ SUB_TITLE + " VARCHAR(128), "
+		+ TYPE + " VARCHAR(64), " 
+		+ CREATED + " INTEGER " 
+		+ ");";
 
 	public static final String sql_index_item_res = "CREATE INDEX IDX_"
 			+ TABLE_NAME + "_" + RESOURCE + " ON " + TABLE_NAME + " ("

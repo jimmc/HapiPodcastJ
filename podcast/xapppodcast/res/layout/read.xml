@@ -12,9 +12,14 @@
         android:layout_height="fill_parent"
         android:background="@android:color/black"
     /-->
-	
+<ScrollView 
+android:id="@+id/readscrollview" 
+android:orientation="vertical" 
+android:layout_width="fill_parent" 
+android:layout_height="fill_parent"> 	
 	<TextView  android:id="@+id/content"
 	android:textSize="14sp"
 	android:layout_width="fill_parent"
-    android:layout_height="fill_parent" />	
+    android:layout_height="wrap_content" />
+</ScrollView> 	
 </LinearLayout>

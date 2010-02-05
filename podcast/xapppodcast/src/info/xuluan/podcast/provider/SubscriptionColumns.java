@@ -32,20 +32,34 @@ public class SubscriptionColumns implements BaseColumns {
 	public static final String RATING = "rating";
 	public static final String USERNAME = "user";
 	public static final String PASSWORD = "pwd";
+	public static final String SERVERID = "serverid";
+	public static final String SYNC = "sync";	
+	public static final String AUTO_DOWNLOAD = "auto_download";		
 
 	public static final String[] ALL_COLUMNS = { _ID, URL, LINK, TITLE,
 			DESCRIPTION, LAST_UPDATED, LAST_ITEM_UPDATED, FAIL_COUNT, STATUS,
-			COMMENT, RATING, USERNAME, PASSWORD };
+			COMMENT, RATING, USERNAME, PASSWORD, SERVERID, SYNC, AUTO_DOWNLOAD };
 
 	public static final String DEFAULT_SORT_ORDER = _ID + " ASC";
-	public static final String sql_create_table = "CREATE TABLE " + TABLE_NAME
-			+ " (" + _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + URL
-			+ " VARCHAR(1024), " + LINK + " VARCHAR(256), " + TITLE
-			+ " VARCHAR(128), " + DESCRIPTION + " VARCHAR(1024), "
-			+ LAST_UPDATED + " INTEGER, " + LAST_ITEM_UPDATED + " INTEGER, "
-			+ FAIL_COUNT + " INTEGER, " + STATUS + " INTEGER, " + COMMENT
-			+ " INTEGER, " + RATING + " VARCHAR(1024) , " + USERNAME
-			+ " VARCHAR(32) , " + PASSWORD + " VARCHAR(32) " + ");";
+	public static final String sql_create_table = "CREATE TABLE " 
+		+ TABLE_NAME + " (" 
+		+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " 
+		+ URL + " VARCHAR(1024), " 
+		+ LINK + " VARCHAR(256), " 
+		+ TITLE	+ " VARCHAR(128), " 
+		+ DESCRIPTION + " VARCHAR(1024), "
+		+ LAST_UPDATED + " INTEGER, " 
+		+ LAST_ITEM_UPDATED + " INTEGER, "
+		+ FAIL_COUNT + " INTEGER, " 
+		+ STATUS + " INTEGER, " 
+		+ COMMENT + " VARCHAR(1024) , " 
+		+ RATING + " INTEGER, " 
+		+ USERNAME	+ " VARCHAR(32) , " 
+		+ PASSWORD + " VARCHAR(32) , " 
+		+ SERVERID + " INTEGER , " 
+		+ SYNC + " INTEGER , " 		
+		+ AUTO_DOWNLOAD + " INTEGER " 				
+		+ ");";
 
 	public static final String sql_index_subs_url = "CREATE UNIQUE INDEX IDX_"
 			+ TABLE_NAME + "_" + URL + " ON " + TABLE_NAME + " (" + URL + ");";

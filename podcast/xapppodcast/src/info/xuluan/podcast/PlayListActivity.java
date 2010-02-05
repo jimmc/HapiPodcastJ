@@ -118,7 +118,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 			Uri data = Uri.parse(item.uri);
 
 			intent.setDataAndType(data, item.getType());
-			log.warn("palying " + item.pathname);
+			log.debug("palying " + item.pathname);
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException e) {

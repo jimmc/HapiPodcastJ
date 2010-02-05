@@ -30,12 +30,12 @@ public class PodcastBaseActivity extends ListActivity {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			mServiceBinder = ((PodcastService.ReadingBinder) service)
 					.getService();
-			log.info("onServiceConnected");
+			log.debug("onServiceConnected");
 		}
 
 		public void onServiceDisconnected(ComponentName className) {
 			mServiceBinder = null;
-			log.info("onServiceDisconnected");
+			log.debug("onServiceDisconnected");
 		}
 	};
 
@@ -87,12 +87,12 @@ public class PodcastBaseActivity extends ListActivity {
 		super.onLowMemory();
 		mInit = true;
 
-		log.info("onLowMemory()");
+		log.debug("onLowMemory()");
 	}
 
 	public void startInit() {
 
-		log.info("startInit()");
+		log.debug("startInit()");
 
 		mService = startService(new Intent(this, PodcastService.class));
 

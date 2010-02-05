@@ -126,7 +126,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 
 			for (int i = 0; i < count + 1; i++) {
 				final View v = holder[i];
-				// log.info("offset = "+ offset+" length = "+length);
+				// log.debug("offset = "+ offset+" length = "+length);
 				if (i == count) {
 					View v_icon = view.findViewById(R.id.icon);
 					int status = cursor.getInt(from[i]);
@@ -153,7 +153,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 								+ " / " + (formatLength(length)) + " )";
 					}
 
-					// log.info("str = "+ str);
+					// log.debug("str = "+ str);
 
 					if (v != null) {
 						setViewText((TextView) v, str);

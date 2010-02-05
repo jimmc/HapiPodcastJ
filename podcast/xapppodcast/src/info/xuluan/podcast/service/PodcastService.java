@@ -12,6 +12,7 @@ import info.xuluan.podcast.fetcher.DownloadItemListener;
 import info.xuluan.podcast.fetcher.FeedFetcher;
 import info.xuluan.podcast.fetcher.Response;
 import info.xuluan.podcast.parser.FeedParser;
+import info.xuluan.podcast.parser.FeedParserHandler;
 import info.xuluan.podcast.parser.FeedParserListenerAdapter;
 
 import info.xuluan.podcast.provider.FeedItem;
@@ -127,15 +128,11 @@ public class PodcastService extends Service {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case MSG_TIMER:
-				log.info("Message: MSG_TIMER.");
+				log.debug("Message: MSG_TIMER.");
 
-				if (updateConnectStatus() != NO_CONNECT) {
-					start_update();
-				}
+				start_update();
 				removeExpires();
-				if (updateConnectStatus() != NO_CONNECT) {
-					start_download();
-				}
+				start_download();
 
 				triggerNextTimer(timer_freq);
 
@@ -151,7 +148,7 @@ public class PodcastService extends Service {
 	}
 
 	private int updateConnectStatus() {
-		log.warn("updateConnectStatus");
+		log.debug("updateConnectStatus");
 		try {
 
 			ConnectivityManager cm = (ConnectivityManager) this
@@ -187,6 +184,7 @@ public class PodcastService extends Service {
 		Cursor cursor = null;
 		try {
 			Long now = Long.valueOf(System.currentTimeMillis());
+			log.debug("pref_update = " + pref_update);
 
 			String where = SubscriptionColumns.LAST_UPDATED + "<"
 					+ (now - pref_update);
@@ -243,9 +241,13 @@ public class PodcastService extends Service {
 	}
 
 	public void start_update() {
-		log.info("start_update()");
+		if (updateConnectStatus() == NO_CONNECT)
+			return;
+
+		log.debug("start_update()");
 		mUpdateLock.readLock().lock();
 		if (mUpdate) {
+			log.debug("mUpdate = true ");
 			mUpdateLock.readLock().unlock();
 			return;
 
@@ -275,6 +277,8 @@ public class PodcastService extends Service {
 					e.printStackTrace();
 				} finally {
 					mUpdateLock.writeLock().lock();
+					log.debug("mUpdate = false ");
+
 					mUpdate = false;
 					mUpdateLock.writeLock().unlock();
 				}
@@ -284,6 +288,8 @@ public class PodcastService extends Service {
 	}
 
 	public void start_download() {
+		if (updateConnectStatus() == NO_CONNECT)
+			return;
 
 		mDownloadLock.readLock().lock();
 		if (mDownloading) {
@@ -311,7 +317,7 @@ public class PodcastService extends Service {
 							break;
 						}
 
-						// log.info("start_download start");
+						// log.debug("start_download start");
 						if (item.pathname.equals("")) {
 							String path_name = BASE_DOWNLOAD_DIRECTORY
 									+ "/podcast_" + item.id + ".mp3";
@@ -324,8 +330,9 @@ public class PodcastService extends Service {
 						try {
 							item.status = ItemColumns.ITEM_STATUS_DOWNLOADING_NOW;
 							item.update(getContentResolver());
+							FeedFetcher fetcher = new FeedFetcher();
 
-							FeedFetcher.download(item, mDownloadListener);
+							fetcher.download(item, mDownloadListener);
 
 						} catch (Exception e) {
 							e.printStackTrace();
@@ -337,7 +344,7 @@ public class PodcastService extends Service {
 
 						}
 						// }
-						log.info(item.title + "  " + item.length + "  "
+						log.debug(item.title + "  " + item.length + "  "
 								+ item.offset);
 
 						if (item.status == ItemColumns.ITEM_STATUS_NO_PLAY) {
@@ -373,7 +380,7 @@ public class PodcastService extends Service {
 
 					}
 
-					// log.info("start_download end");
+					// log.debug("start_download end");
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
@@ -461,28 +468,31 @@ public class PodcastService extends Service {
 	}
 
 	public FeedParserListenerAdapter fetchFeed(String url) {
-		log.info("fetchFeed start");
+		log.debug("fetchFeed start");
 
 		FeedFetcher fetcher = new FeedFetcher();
 		FeedParserListenerAdapter listener = new FeedParserListenerAdapter();
+		FeedParserHandler handler = new FeedParserHandler(listener);
 
 		try {
 			Response response = fetcher.fetch(url);
 
-			log.info("fetcher.fetch end");
+			log.debug("fetcher.fetch end");
 			if (response != null)
 				FeedParser.getDefault().parse(
-						new ByteArrayInputStream(response.content), listener);
+						new ByteArrayInputStream(response.content), handler);
 			else
-				log.info("response == null");
+				log.debug("response == null");
 
 		} catch (Exception e) {
-			log.info("Parse XML error:", e);
+			log.debug("Parse XML error:", e);
 			// e.printStackTrace();
 
 		}
 
-		log.info("fetchFeed getFeedItemsSize = " + listener.getFeedItemsSize());
+		log
+				.debug("fetchFeed getFeedItemsSize = "
+						+ listener.getFeedItemsSize());
 
 		if (listener.getFeedItemsSize() > 0) {
 			return listener;
@@ -493,7 +503,7 @@ public class PodcastService extends Service {
 
 	private void updateFetch(String url) {
 		Cursor cursor = null;
-		log.info("updateFetch start");
+		log.debug("updateFetch start");
 		try {
 			cursor = getContentResolver().query(SubscriptionColumns.URI,
 					SubscriptionColumns.ALL_COLUMNS, null, null,
@@ -502,7 +512,7 @@ public class PodcastService extends Service {
 				Subscription sub = Subscription.getByCursor(cursor);
 				sub.fail_count++;
 				sub.update(getContentResolver());
-				log.info("updateFetch OK");
+				log.debug("updateFetch OK");
 			}
 		} finally {
 			if (cursor != null)
@@ -515,6 +525,7 @@ public class PodcastService extends Service {
 		String feedTitle = listener.getFeedTitle();
 		String feedDescription = listener.getFeedDescription();
 		FeedItem[] feedItems = listener.getFeedItems();
+		log.debug("updateFeed start");
 		/*
 		 * for (FeedItem item : feedItems) {
 		 * 
@@ -541,42 +552,26 @@ public class PodcastService extends Service {
 		if (subscription == null)
 			return;
 
-		log.info("feedItems length: " + feedItems.length);
+		log.debug("feedItems length: " + feedItems.length);
 
 		List<FeedItem> added = new ArrayList<FeedItem>(feedItems.length);
-		ContentResolver cr = getContentResolver();
 		for (FeedItem item : feedItems) {
 			long d = item.getDate();
-			log.info("item_date: " + item.date);
+			log.debug("item_date: " + item.date);
 
 			if (d <= subscription.lastUpdated) {
-				log.info("item lastUpdated =" + d + " feed lastUpdated = "
+				log.debug("item lastUpdated =" + d + " feed lastUpdated = "
 						+ subscription.lastUpdated);
-				log.info("item date =" + item.date);
+				log.debug("item date =" + item.date);
 				break;
 			}
-			log.info("subscription.id : " + subscription.id);
-			String where = ItemColumns.SUBS_ID + "=" + subscription.id
-					+ " and " + ItemColumns.RESOURCE + "= '" + item.resource
-					+ "'";
+			log.debug("subscription.id : " + subscription.id);
 
-			Cursor cursor = cr.query(ItemColumns.URI,
-					new String[] { ItemColumns._ID }, where, null, null);
-
-			if (cursor.moveToFirst()) {
-				cursor.close();
-				log.info("exist break");
-
-				break;
-			} else {
-				if (cursor != null)
-					cursor.close();
-				log.info("add item = " + item.title);
-				added.add(item);
-			}
+			log.debug("add item = " + item.title);
+			added.add(item);
 
 		}
-		log.info("added size: " + added.size());
+		log.debug("added size: " + added.size());
 		subscription.fail_count = 0;
 		subscription.update(getContentResolver());
 		subscription.title = feedTitle;
@@ -584,12 +579,12 @@ public class PodcastService extends Service {
 
 		if (!added.isEmpty()) {
 			subscription.lastItemUpdated = added.get(0).getDate();
-			log.warn("MAX item date:==" + added.get(0).date);
+			log.debug("MAX item date:==" + added.get(0).date);
 		}
 
 		int n = subscription.update(getContentResolver());
 		if (n == 1) {
-			log.warn("Feed updated: " + url);
+			log.debug("Feed updated: " + url);
 		}
 		if (added.isEmpty())
 			return;
@@ -604,9 +599,25 @@ public class PodcastService extends Service {
 
 			FeedItem item = items.get(i);
 			item.sub_id = sub_id;
-			Uri uri = item.insert(cr);
-			if (uri != null)
-				log.info("Inserted new item: " + uri.toString());
+			String where = ItemColumns.SUBS_ID + "=" + sub_id + " and "
+					+ ItemColumns.RESOURCE + "= '" + item.resource + "'";
+
+			Cursor cursor = cr.query(ItemColumns.URI,
+					new String[] { ItemColumns._ID }, where, null, null);
+
+			if (cursor.moveToFirst()) {
+				cursor.close();
+				log.debug("dup resource: " + where);
+
+				continue;
+			} else {
+				if(cursor!=null)
+					cursor.close();
+				Uri uri = item.insert(cr);
+				if (uri != null)
+					log.debug("Inserted new item: " + uri.toString());
+			}
+
 		}
 	}
 
@@ -634,9 +645,9 @@ public class PodcastService extends Service {
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		log.info("onCreate()");
+		log.debug("onCreate()");
 		updateSetting();
-		log.info("pref_update_mobile " + pref_update_mobile);
+		log.debug("pref_update_mobile " + pref_update_mobile);
 
 		File file = new File(BASE_DOWNLOAD_DIRECTORY);
 		boolean exists = (file.exists());
@@ -661,20 +672,20 @@ public class PodcastService extends Service {
 	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-		log.info("onStart()");
+		log.debug("onStart()");
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
 
-		log.info("onDestroy()");
+		log.debug("onDestroy()");
 	}
 
 	@Override
 	public void onLowMemory() {
 		super.onLowMemory();
-		log.info("onLowMemory()");
+		log.debug("onLowMemory()");
 	}
 
 	@Override

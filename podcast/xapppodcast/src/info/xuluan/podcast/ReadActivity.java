@@ -187,7 +187,7 @@ public class ReadActivity extends Activity {
 			Uri data = Uri.parse(item.uri);
 
 			intent.setDataAndType(data, "audio/mp3");
-			log.warn("palying " + item.pathname);
+			log.debug("palying " + item.pathname);
 			try {
 				startActivity(intent);
 			} catch (ActivityNotFoundException e) {

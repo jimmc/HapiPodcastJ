@@ -2,6 +2,7 @@ package info.xuluan.podcast.fetcher;
 
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
+import info.xuluan.podcast.utils.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -12,13 +13,12 @@ import java.net.URL;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
-import android.util.Log;
-
 public class FeedFetcher {
 
 	private int maxSize = 100 * 1024;
 	private static final int TIMEOUT = 20 * 1000;
 	private boolean canceled = false;
+	protected final Log log = Log.getLog(getClass());
 
 	public void setProxy(String host, int port) {
 		Properties props = System.getProperties();
@@ -49,6 +49,8 @@ public class FeedFetcher {
 
 	}
 
+	
+	
 	Response get(String url, long ifModifiedSince) throws IOException,
 			InterruptedException {
 		URL u = new URL(url);
@@ -56,6 +58,9 @@ public class FeedFetcher {
 		ByteArrayOutputStream output = null;
 		HttpURLConnection hc = null;
 		HttpURLConnection.setFollowRedirects(true);
+
+		int total = 0;
+		
 		try {
 			hc = (HttpURLConnection) u.openConnection();
 			if (ifModifiedSince > 0)
@@ -94,7 +99,6 @@ public class FeedFetcher {
 					.getInputStream();
 			output = new ByteArrayOutputStream();
 			byte[] buffer = new byte[4096];
-			int total = 0;
 			for (;;) {
 				int n = input.read(buffer);
 				if (n == (-1))
@@ -108,11 +112,13 @@ public class FeedFetcher {
 				output.write(buffer, 0, n);
 			}
 			output.close();
-			Log.w("RSS", "download length = " + total);
+			log.debug("download length = " + total);
 
 			return new Response(contentType, charset, output.toByteArray());
 		} catch (Exception e) {
 			e.printStackTrace();
+			log.debug("download length = " + total);
+
 			return null;
 
 		} finally {
@@ -146,8 +152,10 @@ public class FeedFetcher {
 	synchronized void setCanceled(boolean canceled) {
 		this.canceled = canceled;
 	}
+	
+	
 
-	public static int download(FeedItem item, DownloadItemListener listener) {
+	public int download(FeedItem item, DownloadItemListener listener) {
 		String pathname = item.pathname;
 
 		int nStartPos = item.offset;
@@ -157,7 +165,7 @@ public class FeedFetcher {
 		HttpURLConnection httpConnection = null;
 		try {
 			URL url = new URL(item.resource);
-			Log.w("RSS", "url = " + url);
+			log.debug("url = " + url);
 			oSavedFile = new RandomAccessFile(pathname, "rw");
 
 			httpConnection = (HttpURLConnection) url.openConnection();
@@ -173,7 +181,7 @@ public class FeedFetcher {
 			}
 
 			int responseCode = httpConnection.getResponseCode();
-			Log.w("RSS", "Error Code : " + responseCode);
+			log.debug("Error Code : " + responseCode);
 			if (responseCode >= 500) {
 				item.offset = 0;
 				throw new IOException("Error Code : " + responseCode);
@@ -186,14 +194,14 @@ public class FeedFetcher {
 
 				nEndPos = httpConnection.getContentLength();
 				if (nEndPos < 0) {
-					Log.w("RSS", "Cannot get content length: " + nEndPos);
+					log.warn("Cannot get content length: " + nEndPos);
 
 					throw new IOException("Cannot get content length: "
 							+ nEndPos);
 				}
 				item.length = nEndPos;
 			}
-			Log.w("RSS", "nEndPos = " + nEndPos);
+			log.debug("nEndPos = " + nEndPos);
 
 			input = httpConnection.getInputStream();
 			int buff_size = 1024 * 4;

@@ -41,13 +41,17 @@ public class FeedItem {
 	public long created;
 
 	public String type;
+	
+	private long m_date;
 
 	static String[] DATE_FORMATS = { "EEE, dd MMM yyyy HH:mm:ss Z",
 			"EEE, d MMM yy HH:mm z", "EEE, d MMM yyyy HH:mm:ss z",
 			"EEE, d MMM yyyy HH:mm z", "d MMM yy HH:mm z",
 			"d MMM yy HH:mm:ss z", "d MMM yyyy HH:mm z",
 			"d MMM yyyy HH:mm:ss z", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss", };
-
+	
+	static String default_format = "EEE, dd MMM yyyy HH:mm:ss Z";
+	
 	public static FeedItem getById(ContentResolver context, long id) {
 		Cursor cursor = null;
 		FeedItem item = null;
@@ -104,11 +108,13 @@ public class FeedItem {
 
 		created = -1;
 		sub_title = null;
+		
+		m_date = -1;
 
 	}
 
 	public void update(ContentResolver context) {
-		log.info("item update start");
+		log.debug("item update start");
 		try {
 
 			ContentValues cv = new ContentValues();
@@ -135,13 +141,13 @@ public class FeedItem {
 			context.update(ItemColumns.URI, cv, ItemColumns._ID + "=" + id,
 					null);
 
-			log.info("update OK");
+			log.debug("update OK");
 		} finally {
 		}
 	}
 
 	public Uri insert(ContentResolver context) {
-		log.info("item insert start");
+		log.debug("item insert start");
 		try {
 
 			ContentValues cv = new ContentValues();
@@ -192,15 +198,37 @@ public class FeedItem {
 	}
 
 	public long getDate() {
-		return parse();
+		//log.debug(" getDate() start");
+		
+		if(m_date<0){
+			m_date  = parse();
+			//log.debug(" getDate() end " + default_format);
+			
+			
+		}
+			
+		return m_date;
+
 	}
 
 	private long parse() {
+		long l = 0;
+		try{
+			return  new SimpleDateFormat(default_format, Locale.US).parse(date)
+			.getTime();
+		} catch (ParseException e) {
+			log.debug(" first fail");
+		}
+
+
+		
 
 		for (String format : DATE_FORMATS) {
 			try {
-				return new SimpleDateFormat(format, Locale.US).parse(date)
+				l = new SimpleDateFormat(format, Locale.US).parse(date)
 						.getTime();
+				default_format = format;
+				return l;
 			} catch (ParseException e) {
 			}
 		}
