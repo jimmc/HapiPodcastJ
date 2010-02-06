@@ -32,13 +32,16 @@ public class SubscriptionColumns implements BaseColumns {
 	public static final String RATING = "rating";
 	public static final String USERNAME = "user";
 	public static final String PASSWORD = "pwd";
-	public static final String SERVERID = "serverid";
+	public static final String SERVER_ID = "server_id";
 	public static final String SYNC = "sync";	
-	public static final String AUTO_DOWNLOAD = "auto_download";		
+	public static final String AUTO_DOWNLOAD = "auto_download";	
+	public static final String PLAYLIST_ID = "playlist_id";		
+	
 
 	public static final String[] ALL_COLUMNS = { _ID, URL, LINK, TITLE,
 			DESCRIPTION, LAST_UPDATED, LAST_ITEM_UPDATED, FAIL_COUNT, STATUS,
-			COMMENT, RATING, USERNAME, PASSWORD, SERVERID, SYNC, AUTO_DOWNLOAD };
+			COMMENT, RATING, USERNAME, PASSWORD, SERVER_ID, SYNC, AUTO_DOWNLOAD,
+			PLAYLIST_ID};
 
 	public static final String DEFAULT_SORT_ORDER = _ID + " ASC";
 	public static final String sql_create_table = "CREATE TABLE " 
@@ -47,18 +50,20 @@ public class SubscriptionColumns implements BaseColumns {
 		+ URL + " VARCHAR(1024), " 
 		+ LINK + " VARCHAR(256), " 
 		+ TITLE	+ " VARCHAR(128), " 
-		+ DESCRIPTION + " VARCHAR(1024), "
+		+ DESCRIPTION + " TEXT, "
 		+ LAST_UPDATED + " INTEGER, " 
 		+ LAST_ITEM_UPDATED + " INTEGER, "
 		+ FAIL_COUNT + " INTEGER, " 
 		+ STATUS + " INTEGER, " 
-		+ COMMENT + " VARCHAR(1024) , " 
+		+ COMMENT + " TEXT, " 
 		+ RATING + " INTEGER, " 
 		+ USERNAME	+ " VARCHAR(32) , " 
 		+ PASSWORD + " VARCHAR(32) , " 
-		+ SERVERID + " INTEGER , " 
+		+ SERVER_ID + " INTEGER , " 
 		+ SYNC + " INTEGER , " 		
-		+ AUTO_DOWNLOAD + " INTEGER " 				
+		+ AUTO_DOWNLOAD + " INTEGER , "
+		+ PLAYLIST_ID + " INTEGER " 				
+		
 		+ ");";
 
 	public static final String sql_index_subs_url = "CREATE UNIQUE INDEX IDX_"
@@ -137,7 +142,7 @@ public class SubscriptionColumns implements BaseColumns {
 			+ FAIL_COUNT
 			+ ","
 			+ LAST_ITEM_UPDATED
-			+ ") VALUES ('http://feeds.feedburner.com/EnglishAsASecondLanguagePodcast', 'unknown', 'unknown', '', 0, 0, 0);";
+			+ ") VALUES ('http://feeds2.feedburner.com/wtpa', 'unknown', 'unknown', '', 0, 0, 0);";
 
 	public static ContentValues checkValues(ContentValues values, Uri uri) {
 		if (values.containsKey(URL) == false) {

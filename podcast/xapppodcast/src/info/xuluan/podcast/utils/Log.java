@@ -9,7 +9,7 @@ public class Log {
 	public final static int  WARN = 3;
 	public final static int  ERROR = 4;
 	
-	public final static int  DEFAULT_LEVEL = 0;
+	public final static int  DEFAULT_LEVEL = 3;
 	
 	private final String clazz;
 	
