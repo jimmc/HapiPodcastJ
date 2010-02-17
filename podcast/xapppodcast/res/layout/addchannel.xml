@@ -24,7 +24,7 @@
 		android:layout_height="wrap_content"
 		android:orientation="horizontal">
 		
-    <EditText android:id="@+id/stockid"
+    <EditText android:id="@+id/keywords"
 		android:singleLine="true" 
         android:layout_width="fill_parent"
 			android:gravity="left" 	

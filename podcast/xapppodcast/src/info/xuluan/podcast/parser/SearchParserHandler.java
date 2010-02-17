@@ -16,30 +16,27 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class SearchParserHandler extends DefaultHandler {
-
-
-
-	private static final String NODE_SEARCH_RESULTS = "searchresults";
-
-	private static final String NODE_SITE_ITEM = "siteitem";
-
-	private static final String NODE_TITLE = "title";
-	private static final String NODE_FEED_ADDRESS = "feedaddress";
-	private static final String NODE_TAG_LIST = "taglisting";
-	private static final String NODE_TAG = "tag";
-	private static final String NODE_LANGUAGE = "language";
-	private static final String NODE_CONTENT = "content";
 	
+	private static final String TOTAL_RESULTS = "totalResults";
+	private static final String START_INDEX = "startIndex";
+	private static final String ITEMS_PERPAGE = "itemsPerPage";
 	
+	private static final String NODE_HEAD = "head";
+	private static final String NODE_OUTLINE = "outline";
+	
+	private static final String NODE_TITLE = "title";	
+	private static final String NODE_DESCRIPTION = "description";	
+	private static final String NODE_XML_URL = "xmlUrl";
+	private static final String NODE_HTML_URL = "htmlUrl";	
 
 	private final Log log = Log.getLog(getClass());
 
 	private SearchItem mCurrentItem = null;
 
-	private boolean mFirstElement = true;
+	private boolean mInHead = false;
 	private StringBuilder mCache = new StringBuilder(1024);
 
-	public int startindex = 0 ;
+	public int startindex = -1 ;
 	public int foundcount = 0;
 	public int pagecount = 0;
 	public int pagesize = 0;
@@ -50,11 +47,9 @@ public class SearchParserHandler extends DefaultHandler {
 	static final Set<String> fetchChars = new HashSet<String>();
 
 	static {
-		fetchChars.add(NODE_TITLE);
-		fetchChars.add(NODE_FEED_ADDRESS);
-		fetchChars.add(NODE_TAG);
-		fetchChars.add(NODE_LANGUAGE);
-		fetchChars.add(NODE_CONTENT);
+		fetchChars.add(TOTAL_RESULTS);
+		fetchChars.add(START_INDEX);
+		fetchChars.add(ITEMS_PERPAGE);
 	}
 
 	public SearchParserHandler() {
@@ -73,48 +68,23 @@ public class SearchParserHandler extends DefaultHandler {
 	@Override
 	public void endElement(String uri, String localName, String qName)
 			throws SAXException {
-
-		// item end
-		if (NODE_SEARCH_RESULTS.equalsIgnoreCase(localName)){
-			throw new SAXException("END OK");
-		}
 		
-		if( mCurrentItem == null)
+		if (NODE_HEAD.equalsIgnoreCase(localName)) {
+			mInHead = false;
 			return;
+		} 	
 		
-		
-		if (NODE_SITE_ITEM.equalsIgnoreCase(localName)){
-			
-			mCurrentItem = checkItem(mCurrentItem);
-			if(mCurrentItem!=null){
-				items.add(mCurrentItem);				
-				mCurrentItem = null;
-				return;
+		if (mInHead && (mCache != null)) {
+			if (TOTAL_RESULTS.equalsIgnoreCase(localName)){
+				foundcount = Integer.parseInt(mCache.toString());
+				
+			}else if(START_INDEX.equalsIgnoreCase(localName)){
+				startindex = Integer.parseInt(mCache.toString());
+			}else if(ITEMS_PERPAGE.equalsIgnoreCase(localName)){
+				pagesize = Integer.parseInt(mCache.toString());
+				
 			}
-			
-			
-		}
-
-		if (mCache != null) {
-
-					if (NODE_TITLE.equalsIgnoreCase(localName)){
-						mCurrentItem.title = mCache.toString();
-						log.warn("TITLE: " + mCurrentItem.title);
-					}else if (NODE_FEED_ADDRESS.equalsIgnoreCase(localName)){
-						mCurrentItem.url = mCache.toString();
-						log.warn("url: " + mCurrentItem.url);
-					}else if (NODE_TAG.equalsIgnoreCase(localName)){
-						mCurrentItem.tags += mCache.toString() + "\n";
-						
-					} else if (NODE_TAG_LIST.equalsIgnoreCase(localName)){
-						//log.warn("TAG_LIST: " + mCurrentItem.tags);
-						
-					} else if (NODE_LANGUAGE.equalsIgnoreCase(localName)){
-						mCurrentItem.language = mCache.toString();
-						
-					} else if (NODE_CONTENT.equalsIgnoreCase(localName)){
-						mCurrentItem.content = mCache.toString();
-					} 
+			return;
 		}
 		
 		//log.warn("<" + localName + ">  end!");
@@ -127,9 +97,7 @@ public class SearchParserHandler extends DefaultHandler {
 	SearchItem checkItem(SearchItem item) throws SAXException {
 		if (item.title == null)
 			item.title = "(Untitled)";
-			
-		if (item.language == null)
-			item.language = "English";			
+	
 
 		if (item.url == null) {
 			log.warn("item have not a resource link: " + item.title);
@@ -145,6 +113,9 @@ public class SearchParserHandler extends DefaultHandler {
 		
 		if (item.content == null)
 			item.content = "(No content)";
+		
+		if (item.link == null)
+			item.content = "";		
 
 		return item;
 	}
@@ -153,36 +124,27 @@ public class SearchParserHandler extends DefaultHandler {
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
 		//log.warn("<" + localName + ">  start");
-
-		if (mFirstElement) {
-			if (NODE_SEARCH_RESULTS.equalsIgnoreCase(localName)){
-				mFirstElement = false;		
-				startindex = Integer.parseInt( attributes.getValue("startindex") );
-				foundcount = Integer.parseInt( attributes.getValue("foundcount") );
-				pagecount = Integer.parseInt( attributes.getValue("pagecount") );
-				pagesize = Integer.parseInt( attributes.getValue("pagesize") );
-
-				if(foundcount<=0){
-					throw new SAXException("foundcount == 0 ");
-				}
-			
-				
-			}else
-				throw new SAXException("Unknown type '<" + localName + ">'.");
-
+		if (NODE_HEAD.equalsIgnoreCase(localName)) {
+			mInHead = true;
 			return;
-		}
-
-		if (NODE_SITE_ITEM.equalsIgnoreCase(localName)) {
+		} 
+		
+		
+		if (NODE_OUTLINE.equalsIgnoreCase(localName)) {
 			mCurrentItem = new SearchItem();
-			return;
+			mCurrentItem.title = attributes.getValue(NODE_TITLE);
+			mCurrentItem.url = attributes.getValue(NODE_XML_URL);
+			mCurrentItem.link = attributes.getValue(NODE_HTML_URL);
+			mCurrentItem.content = attributes.getValue(NODE_DESCRIPTION);
+			mCurrentItem = checkItem(mCurrentItem);
+			
+			if(mCurrentItem != null){
+				items.add(mCurrentItem);				
+				mCurrentItem = null;
+				return;
+			}			
 		} 
-		
-		if (NODE_TAG_LIST.equalsIgnoreCase(localName)) {
-			mCurrentItem.tags = "";;
-			return;
-		} 
-		
+
 		
 
 		if (fetchChars.contains(localName))

@@ -20,11 +20,12 @@ import android.os.IBinder;
 import android.text.Html;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 public class ReadActivity extends Activity {
 
-	static final int MENU_MORE = Menu.FIRST + 1;
 	static final int MENU_DOWNLOAD = Menu.FIRST + 2;
 	static final int MENU_PLAY = Menu.FIRST + 6;
 	static final int MENU_BACK = Menu.FIRST + 5;
@@ -32,7 +33,7 @@ public class ReadActivity extends Activity {
 	String item_id;
 
 	private final Log log = Log.getLog(getClass());
-	private String url = null;
+	//private String url = null;
 
 	ComponentName service = null;
 
@@ -51,19 +52,7 @@ public class ReadActivity extends Activity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, MENU_MORE, 0,
-				getResources().getString(R.string.menu_orig_link)).setIcon(
-				android.R.drawable.ic_menu_directions);
-		menu.add(0, MENU_DOWNLOAD, 1,
-				getResources().getString(R.string.menu_downloading)).setIcon(
-				android.R.drawable.ic_menu_set_as);
-		// menu.add(0, MENU_PLAY, 2,
-		// getResources().getString(R.string.menu_play)).setIcon(android.R.drawable.ic_menu_slideshow);
 
-		menu.add(0, MENU_PREF, 3, getResources().getString(R.string.menu_pref))
-				.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, MENU_BACK, 4, getResources().getString(R.string.menu_back))
-				.setIcon(android.R.drawable.ic_menu_revert);
 
 		return true;
 	}
@@ -98,11 +87,7 @@ public class ReadActivity extends Activity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == MENU_MORE) {
-			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-			startActivity(intent);
-			return true;
-		} else if (item.getItemId() == MENU_DOWNLOAD) {
+		if (item.getItemId() == MENU_DOWNLOAD) {
 
 			ContentValues cv = new ContentValues();
 
@@ -139,7 +124,6 @@ public class ReadActivity extends Activity {
 			// show404();
 			return;
 		}
-		url = cursor.getString(cursor.getColumnIndex(ItemColumns.URL));
 		item_id = cursor.getString(cursor.getColumnIndex(ItemColumns._ID));
 
 		String title = cursor.getString(cursor
@@ -159,6 +143,45 @@ public class ReadActivity extends Activity {
 		// bind service:
 		Intent bindIntent = new Intent(this, PodcastService.class);
 		bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+		
+		FeedItem feed_item = FeedItem.getById(getContentResolver(), Integer
+				.parseInt(item_id));
+		Button play_btn = (Button) findViewById(R.id.ButtonPlay);
+		Button download_btn = (Button) findViewById(R.id.ButtonDownload);	
+		
+		play_btn.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+				play(Integer.parseInt(item_id));
+
+			}
+		});
+		
+		download_btn.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+
+				ContentValues cv = new ContentValues();
+
+				cv.put(ItemColumns.STATUS, ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE);
+				getContentResolver().update(ItemColumns.URI, cv, "_ID=?",
+						new String[] { item_id });
+				serviceBinder.start_download();
+
+			}
+		});		
+		
+		if (feed_item.status < ItemColumns.ITEM_STATUS_MAX_READING_VIEW) {
+			download_btn.setEnabled(true);
+
+		} else {
+			download_btn.setEnabled(false);
+		}	
+		
+		if (feed_item.status > ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW) {
+			play_btn.setEnabled(true);
+
+		} else {
+			play_btn.setEnabled(false);
+		}		
 	}
 
 	@Override
@@ -186,7 +209,7 @@ public class ReadActivity extends Activity {
 
 			Uri data = Uri.parse(item.uri);
 
-			intent.setDataAndType(data, "audio/mp3");
+			intent.setDataAndType(data, item.getType());
 			log.debug("palying " + item.pathname);
 			try {
 				startActivity(intent);

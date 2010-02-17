@@ -187,15 +187,18 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.download);
-		setTitle("Download");
+		setTitle("Download List");
 
 		getListView().setOnCreateContextMenuListener(this);
 
 		Intent intent = getIntent();
 		intent.setData(ItemColumns.URI);
+		mPrevIntent = new Intent(this, MainActivity.class);
+		mNextIntent = new Intent(this, PlayListActivity.class);			
 		startInit();
 		registerReceiver(mDownloadStatusReceiver, new IntentFilter(
 				PodcastService.UPDATE_DOWNLOAD_STATUS));
+		
 
 	}
 
@@ -220,10 +223,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 		menu.add(0, MENU_RESTART, 0,
 				getResources().getString(R.string.menu_refresh)).setIcon(
 				android.R.drawable.ic_menu_rotate);
-		menu.add(0, MENU_PREF, 1, getResources().getString(R.string.menu_pref))
-				.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, MENU_BACK, 2, getResources().getString(R.string.menu_back))
-				.setIcon(android.R.drawable.ic_menu_revert);
+
 
 		return true;
 	}
@@ -419,7 +419,9 @@ public class DownloadingActivity extends PodcastBaseActivity {
 		}
 
 	}
+	
 
+    
 	@Override
 	public void startInit() {
 

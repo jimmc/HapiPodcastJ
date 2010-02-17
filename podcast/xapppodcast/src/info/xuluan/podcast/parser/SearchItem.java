@@ -6,6 +6,7 @@ import info.xuluan.podcast.utils.Log;
 public class SearchItem {
 
 	public String url;
+	public String link;
 	public String title;
 
 	public String content;

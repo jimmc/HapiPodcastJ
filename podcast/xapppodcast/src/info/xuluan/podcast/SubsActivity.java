@@ -52,6 +52,8 @@ public class SubsActivity extends PodcastBaseActivity {
 		Intent intent = getIntent();
 		intent.setData(SubscriptionColumns.URI);
 
+		mPrevIntent = new Intent(this, SearchChannel.class);
+		mNextIntent = new Intent(this, MainActivity.class);		
 		startInit();
 
 	}
@@ -60,10 +62,6 @@ public class SubsActivity extends PodcastBaseActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_ADD, 0, getResources().getString(R.string.menu_add))
 				.setIcon(android.R.drawable.ic_menu_add);
-		menu.add(0, MENU_PREF, 7, getResources().getString(R.string.menu_pref))
-				.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, MENU_BACK, 8, getResources().getString(R.string.menu_back))
-				.setIcon(android.R.drawable.ic_menu_revert);
 	
 		return true;
 	}

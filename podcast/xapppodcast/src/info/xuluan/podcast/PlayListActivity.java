@@ -48,12 +48,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// menu.add(0, MENU_REFRESH, 0,
-		// getResources().getString(R.string.menu_refresh)).setIcon(android.R.drawable.ic_menu_more);
-		menu.add(0, MENU_PREF, 1, getResources().getString(R.string.menu_pref))
-				.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, MENU_BACK, 2, getResources().getString(R.string.menu_back))
-				.setIcon(android.R.drawable.ic_menu_revert);
+
 		return true;
 	}
 
@@ -88,6 +83,9 @@ public class PlayListActivity extends PodcastBaseActivity {
 		getListView().setOnCreateContextMenuListener(this);
 		Intent intent = getIntent();
 		intent.setData(ItemColumns.URI);
+		
+		mPrevIntent = new Intent(this, DownloadingActivity.class);
+		mNextIntent = new Intent(this, SearchChannel.class);		
 		startInit();
 	}
 

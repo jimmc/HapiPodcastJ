@@ -56,11 +56,14 @@ public class MainActivity extends PodcastBaseActivity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.main);
-		setTitle(getResources().getString(R.string.app_name));
+		setTitle("Read List");
 
 		getListView().setOnCreateContextMenuListener(this);
 		Intent intent = getIntent();
 		intent.setData(ItemColumns.URI);
+		
+		mPrevIntent = new Intent(this, SubsActivity.class);
+		mNextIntent = new Intent(this, DownloadingActivity.class);
 		startInit();
 
 	}
@@ -70,20 +73,7 @@ public class MainActivity extends PodcastBaseActivity {
 		menu.add(0, MENU_REFRESH, 0,
 				getResources().getString(R.string.menu_refresh)).setIcon(
 				android.R.drawable.ic_menu_rotate);
-		menu.add(0, MENU_SEARCH, 1, "Search")
-		.setIcon(android.R.drawable.ic_menu_search);		
-		menu.add(0, MENU_SUBS, 2, getResources().getString(R.string.menu_subs))
-				.setIcon(android.R.drawable.ic_menu_agenda);
-		menu.add(0, MENU_PREF, 3, getResources().getString(R.string.menu_pref))
-				.setIcon(android.R.drawable.ic_menu_preferences);
-		menu.add(0, MENU_DOWNLOADING, 4,
-				getResources().getString(R.string.menu_downloading)).setIcon(
-				android.R.drawable.ic_menu_set_as);
-		menu.add(0, MENU_DOWNLOADED, 5,
-				getResources().getString(R.string.menu_play_list)).setIcon(
-				android.R.drawable.ic_menu_slideshow);
-		
-		
+	
 		return true;
 	}
 
@@ -111,7 +101,7 @@ public class MainActivity extends PodcastBaseActivity {
 			return true;
 
 		case MENU_SEARCH:
-			intent = new Intent(this, AddChannel.class);
+			intent = new Intent(this, SearchChannel.class);
 			startActivity(intent);
 			return true;
 

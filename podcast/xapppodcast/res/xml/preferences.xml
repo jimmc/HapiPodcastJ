@@ -39,7 +39,7 @@
         <CheckBoxPreference
                 android:key="pref_download_only_wifi"
                 android:title="@string/pref_connect_sel"
-				android:defaultValue="true"
+				android:defaultValue="false"
                 android:summary="@string/pref_download_only_wifi" />
 				
         <ListPreference
@@ -48,7 +48,7 @@
                 android:summary="Item Expire"
                 android:entries="@array/entries_item_expire"
                 android:entryValues="@array/entryvalues_item_expire"
-				android:defaultValue="7"
+				android:defaultValue="5"
                 android:dialogTitle="Item Expire" />	
 
         <ListPreference

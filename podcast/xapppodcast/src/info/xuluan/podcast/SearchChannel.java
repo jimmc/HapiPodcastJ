@@ -27,6 +27,8 @@ import android.app.ProgressDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -48,7 +50,7 @@ import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.utils.Log;
 
-public class AddChannel extends PodcastBaseActivity implements TextWatcher {
+public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 
 	private final Log log = Log.getLog(getClass());
 	private ProgressDialog progress = null;
@@ -73,8 +75,12 @@ public class AddChannel extends PodcastBaseActivity implements TextWatcher {
 
 		setListAdapter(mAdapter);
 		getListView().setOnCreateContextMenuListener(this);
-		mEditText = (EditText) findViewById(R.id.stockid);
+		mEditText = (EditText) findViewById(R.id.keywords);
 		mEditText.addTextChangedListener(this);
+		
+		mPrevIntent = new Intent(this, PlayListActivity.class);
+		mNextIntent = new Intent(this, SubsActivity.class);
+		
 		startInit();
 
 		ImageButton prev = (ImageButton) findViewById(R.id.ButtonPrev);
@@ -88,9 +94,9 @@ public class AddChannel extends PodcastBaseActivity implements TextWatcher {
 						str = "&start=" + i;
 					}
 				}
-				String url = getUrl(str);
+				String url = getUrl();
 				if (url != null) {
-					start_search(url);
+					start_search(url+str);
 				}
 
 			}
@@ -106,9 +112,9 @@ public class AddChannel extends PodcastBaseActivity implements TextWatcher {
 						str = "&start=" + i;
 					}
 				}
-				String url = getUrl(str);
+				String url = getUrl();
 				if (url != null) {
-					start_search(url);
+					start_search(url+str);
 				}
 			}
 		});
@@ -117,12 +123,11 @@ public class AddChannel extends PodcastBaseActivity implements TextWatcher {
 		start.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				InputMethodManager m = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-				m.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-				// EditText.setInputType(InputType.TYPE_NULL);
+				m.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_NOT_ALWAYS);
 				m.hideSoftInputFromInputMethod(mEditText.getWindowToken(),
 						InputMethodManager.HIDE_NOT_ALWAYS);
-
-				String url = getUrl("");
+				
+				String url = getUrl();
 				if (url != null) {
 					start_search(url);
 				}
@@ -131,10 +136,10 @@ public class AddChannel extends PodcastBaseActivity implements TextWatcher {
 
 	}
 
-	public String getUrl(String s) {
-		String prefix = "http://www.feedzie.com/scripts/getSearchListing_v2.php?stype=podcast&query=";
-		String suffix = "&searchbtn=Search&version=1.0";
-		String str = AddChannel.this.mEditText.getText().toString();
+	public String getUrl() {
+		String prefix = "http://www.digitalpodcast.com/podcastsearchservice/v2b/search/?appid=kaka_podcast&keywords=";
+		String suffix = "&format=rssopml";
+		String str = SearchChannel.this.mEditText.getText().toString();
 
 		Pattern pattern = Pattern.compile("^\\s+");
 		Matcher matcher = pattern.matcher(str);
@@ -152,7 +157,7 @@ public class AddChannel extends PodcastBaseActivity implements TextWatcher {
 		str = matcher.replaceAll("+");
 		log.debug("query string = " + str);
 		if (str.length() > 0)
-			return prefix + str + s + suffix;
+			return prefix + str + suffix;
 
 		return null;
 	}
@@ -201,7 +206,7 @@ public class AddChannel extends PodcastBaseActivity implements TextWatcher {
 	}
 
 	private void start_search(String zie_url) {
-		AddChannel.this.progress = ProgressDialog.show(AddChannel.this,
+		SearchChannel.this.progress = ProgressDialog.show(SearchChannel.this,
 				getResources().getText(R.string.dialog_title_loading),
 				getResources().getText(R.string.dialog_message_loading), true);
 		AsyncTask<String, ProgressDialog, SearchParserHandler> asyncTask = new AsyncTask<String, ProgressDialog, SearchParserHandler>() {
@@ -219,21 +224,21 @@ public class AddChannel extends PodcastBaseActivity implements TextWatcher {
 			@Override
 			protected void onPostExecute(SearchParserHandler result) {
 
-				if (AddChannel.this.progress != null) {
-					AddChannel.this.progress.dismiss();
-					AddChannel.this.progress = null;
+				if (SearchChannel.this.progress != null) {
+					SearchChannel.this.progress.dismiss();
+					SearchChannel.this.progress = null;
 				}
 				mAdapter.clear();
 
-				if (result.startindex == 0) {
-					Toast.makeText(AddChannel.this, "network fail",
+				if (result.startindex == -1) {
+					Toast.makeText(SearchChannel.this, "network fail",
 							Toast.LENGTH_SHORT).show();
 				} else if (result.foundcount == 0) {
-					Toast.makeText(AddChannel.this, "no data found",
+					Toast.makeText(SearchChannel.this, "no data found",
 							Toast.LENGTH_SHORT).show();
 				}
 				List<SearchItem> items = result.items;
-				AddChannel.this.mHandler = result;
+				SearchChannel.this.mHandler = result;
 				updateBtn();
 
 				for (int i = 0; i < items.size(); i++) {
@@ -251,8 +256,7 @@ public class AddChannel extends PodcastBaseActivity implements TextWatcher {
 		List<SearchItem> items = mHandler.items;
 		final SearchItem item = items.get(position);
 
-		String content = "Language: " + item.language + "<br /><br />"
-				+ item.content;
+		String content = item.content;
 		AlertDialog d = new AlertDialog.Builder(this).setIcon(
 				R.drawable.alert_dialog_icon).setTitle(item.title).setMessage(
 				Html.fromHtml(content)).setPositiveButton(R.string.subscribe,
@@ -262,24 +266,34 @@ public class AddChannel extends PodcastBaseActivity implements TextWatcher {
 						Subscription sub = Subscription.getByUrl(
 								getContentResolver(), item.url);
 						if (sub != null) {
-							Toast.makeText(AddChannel.this,
+							Toast.makeText(SearchChannel.this,
 									"The channel has been subscribed.",
 									Toast.LENGTH_SHORT).show();
 							return;
 						}
 
-						String content = "<language>" + item.language
-								+ "</language>";
-						content += "<tag>" + item.tags + "</tag>";
+						String tags = SearchChannel.this.mEditText.getText().toString();
+						String content = "<tag>" + tags + "</tag>";
 						content += "<content>" + item.content + "</content>";
 
 						ContentValues cv = new ContentValues();
 						cv.put(SubscriptionColumns.TITLE, item.url);
 						cv.put(SubscriptionColumns.URL, item.url);
+						cv.put(SubscriptionColumns.LINK, item.link);
 						cv.put(SubscriptionColumns.LAST_UPDATED, 0L);
 						cv.put(SubscriptionColumns.COMMENT, content);
-						getContentResolver()
+						Uri uri = getContentResolver()
 								.insert(SubscriptionColumns.URI, cv);
+						
+						if (uri == null) {
+							Toast.makeText(SearchChannel.this,
+									"fail",
+									Toast.LENGTH_SHORT).show();									
+						}else{
+							Toast.makeText(SearchChannel.this,
+									"success",
+									Toast.LENGTH_SHORT).show();							
+						}
 
 						mServiceBinder.start_update();
 
@@ -309,7 +323,7 @@ public class AddChannel extends PodcastBaseActivity implements TextWatcher {
 			return;
 		}
 
-		if ((mHandler.startindex - 10) < 2) {
+		if ((mHandler.startindex - 10) < 0) {
 			prev.setEnabled(false);
 			prev.setImageResource(R.drawable.prevdis);
 
