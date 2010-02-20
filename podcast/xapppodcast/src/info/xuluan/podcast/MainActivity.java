@@ -24,12 +24,7 @@ import java.util.HashMap;
 public class MainActivity extends PodcastBaseActivity {
 
 	private static final int MENU_REFRESH = Menu.FIRST + 1;
-	private static final int MENU_SUBS = Menu.FIRST + 2;
-	private static final int MENU_PREF = Menu.FIRST + 3;
-	private static final int MENU_DOWNLOADING = Menu.FIRST + 4;
-	private static final int MENU_DOWNLOADED = Menu.FIRST + 5;
-	
-	private static final int MENU_SEARCH = Menu.FIRST + 6;
+
 	
 
 	private static final int MENU_ITEM_START_DOWNLOAD = Menu.FIRST + 10;
@@ -56,7 +51,7 @@ public class MainActivity extends PodcastBaseActivity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.main);
-		setTitle("Read List");
+		setTitle(getResources().getString(R.string.title_read_list));
 
 		getListView().setOnCreateContextMenuListener(this);
 		Intent intent = getIntent();
@@ -79,30 +74,9 @@ public class MainActivity extends PodcastBaseActivity {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		Intent intent;
 		switch (item.getItemId()) {
 		case MENU_REFRESH:
 			mServiceBinder.start_update();
-			return true;
-		case MENU_SUBS:
-			startActivity(new Intent(this, SubsActivity.class));
-			return true;
-
-		case MENU_PREF:
-			startActivity(new Intent(this, Pref.class));
-			return true;
-		case MENU_DOWNLOADING:
-			intent = new Intent(this, DownloadingActivity.class);
-			startActivity(intent);
-			return true;
-		case MENU_DOWNLOADED:
-			intent = new Intent(this, PlayListActivity.class);
-			startActivity(intent);
-			return true;
-
-		case MENU_SEARCH:
-			intent = new Intent(this, SearchChannel.class);
-			startActivity(intent);
 			return true;
 
 		}

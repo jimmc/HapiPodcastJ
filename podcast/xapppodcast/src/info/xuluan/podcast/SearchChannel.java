@@ -68,7 +68,7 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.addchannel);
-		setTitle(getResources().getString(R.string.search_channel));
+		setTitle(getResources().getString(R.string.title_search_channel));
 
 		mAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, mStrings);
@@ -231,10 +231,10 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 				mAdapter.clear();
 
 				if (result.startindex == -1) {
-					Toast.makeText(SearchChannel.this, "network fail",
+					Toast.makeText(SearchChannel.this, getResources().getString(R.string.network_fail),
 							Toast.LENGTH_SHORT).show();
 				} else if (result.foundcount == 0) {
-					Toast.makeText(SearchChannel.this, "no data found",
+					Toast.makeText(SearchChannel.this, getResources().getString(R.string.no_data_found),
 							Toast.LENGTH_SHORT).show();
 				}
 				List<SearchItem> items = result.items;
@@ -267,7 +267,7 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 								getContentResolver(), item.url);
 						if (sub != null) {
 							Toast.makeText(SearchChannel.this,
-									"The channel has been subscribed.",
+									getResources().getString(R.string.already_subscribed),
 									Toast.LENGTH_SHORT).show();
 							return;
 						}
@@ -287,11 +287,11 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 						
 						if (uri == null) {
 							Toast.makeText(SearchChannel.this,
-									"fail",
+									getResources().getString(R.string.fail),
 									Toast.LENGTH_SHORT).show();									
 						}else{
 							Toast.makeText(SearchChannel.this,
-									"success",
+									getResources().getString(R.string.success),
 									Toast.LENGTH_SHORT).show();							
 						}
 

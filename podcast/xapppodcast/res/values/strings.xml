@@ -1,68 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Podcast</string>
+	<string name="title_play_list">Play List</string>
+	<string name="title_download_list">Download List</string>
+	<string name="title_read_list">Read List</string>
+    <string name="title_subs">Channel List</string>
+    <string name="title_pref">Settings</string>
+	<string name="title_search_channel">Search Channel</string>	
+
     <string name="menu_delete">Delete</string>
     <string name="menu_play">Play</string>
     <string name="menu_view">View</string>
     <string name="menu_keep">Keep</string>
     <string name="menu_download">Download</string>
-    <string name="menu_cancel">Cancel</string>
     <string name="menu_pause">Pause</string>
     <string name="menu_resume">Resume</string>	
     <string name="menu_back">Back</string>	
     <string name="menu_ok">OK</string>
-    <string name="subscribe">Subscribe</string>	
-    <string name="search_channel">Search Channel</string>	
+    <string name="menu_cancel">Cancel</string>
     <string name="menu_refresh">Refresh</string>
-    <string name="menu_subs">Channel</string>
-    <string name="menu_pref">Settings</string>
-    <string name="menu_downloading">Downloading</string>
-	<string name="menu_play_list">Play List</string>
-		
     <string name="menu_add">Add</string>
-    <string name="menu_del">Delete</string>
-	
-    <string name="title_subs">Channel List</string>
-    <string name="title_pref">Preferences</string>
+    <string name="subscribe">Subscribe</string>	
+
 	
 	
     <string name="pref_download_only_wifi">Download file only when Wi-Fi connected</string>	
     <string name="pref_connect_sel">Download only Wi-Fi</string>	
 	
 
-    <string name="dialog_title_no_feed_found">No Feed Found</string>
-    <string name="dialog_message_no_feed_found">No feed found or need to add.</string>
-
-    <string name="dialog_title_feed_found">Feed Found</string>
-    <string name="dialog_message_feed_found">%1$d new subscription(s) added.</string>
-
     <string name="dialog_title_loading">Loading</string>
     <string name="dialog_message_loading">Loading channel...</string>
 
-    <string name="dialog_title_add_sub">Add Subscription</string>
-    <string name="dialog_message_add_sub">Add subscription from URL:</string>
+    <string name="dialog_title_add_sub">Add Channel</string>
+    <string name="dialog_message_add_sub">Add channel from URL:</string>
     <string name="dialog_message_malformed_url">URL is invalid, please retry!</string>
     <string name="dialog_message_url_exist">URL exist, please retry!</string>
 	
-    <string name="dialog_title_del_sub">Delete Subscription</string>
-    <string name="dialog_message_del_sub">Are you sure you want to delete &apos;%1$s&apos;?</string>
+    <string name="dialog_title_del_sub">Delete Channel</string>
 
     <string name="list_message_empty_item">No Data Found</string>
     <string name="list_message_empty_subs">No channel, please add one...</string>
+    
+    <string name="fail">fail</string>
+    <string name="success">success</string>
+    
+    <string name="network_fail">network fail</string>
+    <string name="no_data_found">no data found</string>
+    <string name="already_subscribed">The channel has been subscribed.</string>
 
 
 
-
-
-    <string name="menu_orig_link">Original Link</string>
-
-    <string name="pref_radio_prompt">Display items:</string>
-    <string name="pref_fetch_prompt">Fetch frequency:</string>
-    <string name="pref_delete_prompt">Delete items after:</string>
-
-    <string name="radio_items_unread">Unread items</string>
-    <string name="radio_items_all">All items</string>
-
-    <string name="unit_minute">minute(s)</string>
-    <string name="unit_week">week(s)</string>
 </resources>

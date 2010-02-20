@@ -1,6 +1,5 @@
 package info.xuluan.podcast.parser;
 
-import info.xuluan.podcast.utils.Log;
 
 
 public class SearchItem {

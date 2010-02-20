@@ -45,7 +45,7 @@ public class PodcastBaseActivity extends ListActivity {
     class MyGestureDetector extends SimpleOnGestureListener {
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        	log.debug("onFling");
+        	//log.debug("onFling");
             try {
                 if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
                     return false;

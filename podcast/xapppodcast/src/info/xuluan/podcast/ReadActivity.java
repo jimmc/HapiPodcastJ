@@ -19,7 +19,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Html;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -49,66 +48,6 @@ public class ReadActivity extends Activity {
 			serviceBinder = null;
 		}
 	};
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-
-		return true;
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		super.onPrepareOptionsMenu(menu);
-
-		MenuItem item = menu.findItem(MENU_DOWNLOAD);
-		FeedItem feed_item = FeedItem.getById(getContentResolver(), Integer
-				.parseInt(item_id));
-		if (feed_item.status < ItemColumns.ITEM_STATUS_MAX_READING_VIEW) {
-			item.setEnabled(true);
-
-		} else {
-			item.setEnabled(false);
-
-		}
-		/*
-		 * item = menu.findItem(MENU_PLAY);
-		 * 
-		 * if(feed_item.status > ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW){
-		 * item.setEnabled(true);
-		 * 
-		 * }else{ item.setEnabled(false);
-		 * 
-		 * }
-		 */
-
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == MENU_DOWNLOAD) {
-
-			ContentValues cv = new ContentValues();
-
-			cv.put(ItemColumns.STATUS, ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE);
-			getContentResolver().update(ItemColumns.URI, cv, "_ID=?",
-					new String[] { item_id });
-			serviceBinder.start_download();
-			return true;
-		} else if (item.getItemId() == MENU_BACK) {
-			finish();
-			return true;
-		} else if (item.getItemId() == MENU_PREF) {
-			startActivity(new Intent(this, Pref.class));
-			return true;
-		} else if (item.getItemId() == MENU_PLAY) {
-			play(Integer.parseInt(item_id));
-			return true;
-		}
-
-		return super.onOptionsItemSelected(item);
-	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -164,6 +103,8 @@ public class ReadActivity extends Activity {
 				cv.put(ItemColumns.STATUS, ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE);
 				getContentResolver().update(ItemColumns.URI, cv, "_ID=?",
 						new String[] { item_id });
+				Button btn = (Button) findViewById(R.id.ButtonDownload);	
+				btn.setEnabled(false);
 				serviceBinder.start_download();
 
 			}

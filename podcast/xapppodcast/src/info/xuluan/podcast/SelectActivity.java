@@ -33,22 +33,22 @@ public class SelectActivity extends ListActivity{
     protected List getData() {
         List<Map> myData = new ArrayList<Map>();
 
-	    addItem(myData, "Search Channel", R.drawable.search_big_pic , 
+	    addItem(myData, getResources().getString(R.string.title_search_channel), R.drawable.search_big_pic , 
 	    		new Intent(this, SearchChannel.class));
 	    
-	    addItem(myData, "Channel List", R.drawable.channel_big_pic , 
+	    addItem(myData, getResources().getString(R.string.title_subs), R.drawable.channel_big_pic , 
 	    		new Intent(this, SubsActivity.class));	    
  
-	    addItem(myData, "Read List", R.drawable.episode_big_pic , 
+	    addItem(myData, getResources().getString(R.string.title_read_list), R.drawable.episode_big_pic , 
 	    		new Intent(this, MainActivity.class));		   
 	    
-	    addItem(myData, "Download List", R.drawable.download_big_pic , 
+	    addItem(myData, getResources().getString(R.string.title_download_list), R.drawable.download_big_pic , 
 	    		new Intent(this, DownloadingActivity.class));
 	    
-	    addItem(myData, "Play List", R.drawable.playlist_big_pic , 
+	    addItem(myData, getResources().getString(R.string.title_play_list), R.drawable.playlist_big_pic , 
 	    		new Intent(this, PlayListActivity.class));	    
 	    
-	    addItem(myData, "Settings", R.drawable.settings_big_pic , 
+	    addItem(myData, getResources().getString(R.string.title_pref), R.drawable.settings_big_pic , 
 	    		new Intent(this, Pref.class));		    
         
         return myData;
@@ -74,6 +74,7 @@ public class SelectActivity extends ListActivity{
         Map map = (Map) l.getItemAtPosition(position);
 
         Intent intent = (Intent) map.get("intent");
-        startActivity(intent);
+        if(intent!=null)
+        	startActivity(intent);
     }
 }

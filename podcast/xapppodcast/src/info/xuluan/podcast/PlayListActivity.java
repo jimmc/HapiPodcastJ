@@ -46,27 +46,6 @@ public class PlayListActivity extends PodcastBaseActivity {
 	public static final int MENU_ITEM_VIEW = Menu.FIRST + 12;
 	public static final int MENU_ITEM_DELETE = Menu.FIRST + 13;
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-
-		case MENU_BACK:
-			finish();
-			return true;
-
-		case MENU_PREF:
-			startActivity(new Intent(this, Pref.class));
-			return true;
-
-		}
-		return super.onOptionsItemSelected(item);
-	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -78,7 +57,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		setTitle("Play List");
+		setTitle(getResources().getString(R.string.title_play_list));
 
 		getListView().setOnCreateContextMenuListener(this);
 		Intent intent = getIntent();

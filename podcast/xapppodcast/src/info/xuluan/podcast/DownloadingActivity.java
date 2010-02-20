@@ -36,8 +36,6 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	private static final int COLUMN_INDEX_TITLE = 1;
 
 	private static final int MENU_RESTART = Menu.FIRST + 1;
-	private static final int MENU_BACK = Menu.FIRST + 2;
-	private static final int MENU_PREF = Menu.FIRST + 3;
 
 	private static final int MENU_ITEM_REMOVE = Menu.FIRST + 10;
 	private static final int MENU_ITEM_PAUSE = Menu.FIRST + 11;
@@ -187,7 +185,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.download);
-		setTitle("Download List");
+		setTitle(getResources().getString(R.string.title_download_list));
 
 		getListView().setOnCreateContextMenuListener(this);
 
@@ -234,15 +232,6 @@ public class DownloadingActivity extends PodcastBaseActivity {
 		case MENU_RESTART:
 			mServiceBinder.start_download();
 			return true;
-
-		case MENU_BACK:
-			finish();
-			return true;
-
-		case MENU_PREF:
-			startActivity(new Intent(this, Pref.class));
-			return true;
-
 		}
 
 		return super.onOptionsItemSelected(item);
@@ -318,7 +307,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 				return true;
 			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE
 					&& feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE) {
-				Toast.makeText(this, "failed!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
 				return true;
 			} else {
 				feed_item.status = ItemColumns.ITEM_STATUS_READ;
@@ -344,7 +333,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 			if (feed_item == null)
 				return true;
 			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE) {
-				Toast.makeText(this, "failed!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
 				return true;
 			} else {
 				feed_item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE;
@@ -360,7 +349,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 			if (feed_item == null)
 				return true;
 			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE) {
-				Toast.makeText(this, "failed!", Toast.LENGTH_SHORT).show();
+				Toast.makeText(this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
 				return true;
 			} else {
 				feed_item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;

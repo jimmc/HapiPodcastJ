@@ -27,9 +27,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 public class SubsActivity extends PodcastBaseActivity {
-	private final int MENU_BACK = Menu.FIRST + 1;
 	private final int MENU_ADD = Menu.FIRST + 2;
-	private final int MENU_PREF = Menu.FIRST + 3;
 
 	
 	private final int MENU_ITEM_DELETE = Menu.FIRST + 10;
@@ -72,15 +70,6 @@ public class SubsActivity extends PodcastBaseActivity {
 		case MENU_ADD:
 			addSubscription();
 			return true;
-
-		case MENU_BACK:
-			finish();
-			return true;
-
-		case MENU_PREF:
-			startActivity(new Intent(this, Pref.class));
-			return true;
-
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -210,10 +199,10 @@ public class SubsActivity extends PodcastBaseActivity {
 				}
 				if (result != null) {
 					addFeed(url, result);
-					Toast.makeText(SubsActivity.this, "success",
+					Toast.makeText(SubsActivity.this, getResources().getString(R.string.success),
 							Toast.LENGTH_SHORT).show();
 				} else {
-					Toast.makeText(SubsActivity.this, "failed",
+					Toast.makeText(SubsActivity.this, getResources().getString(R.string.fail),
 							Toast.LENGTH_SHORT).show();
 				}
 			}
