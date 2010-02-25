@@ -20,8 +20,8 @@
                 
         <ListPreference
                 android:key="pref_update_wifi"
-                android:title="Update Interval on Wi-Fi"
-                android:summary="Update Interval on Wi-Fi"
+                android:title="@string/pref_update_wifi_title"
+                android:summary="@string/pref_update_wifi_description"
                 android:entries="@array/entries_update"
                 android:entryValues="@array/entryvalues_update"
 				android:defaultValue="60"
@@ -29,8 +29,8 @@
 				
         <ListPreference
                 android:key="pref_update_mobile"
-                android:title="Update Interval on Mobile"
-                android:summary="Update Interval on Mobile"
+                android:title="@string/pref_update_mobile_title"
+                android:summary="@string/pref_update_mobile_description"
                 android:entries="@array/entries_update"
                 android:entryValues="@array/entryvalues_update"
 				android:defaultValue="120"
@@ -38,14 +38,14 @@
 
         <CheckBoxPreference
                 android:key="pref_download_only_wifi"
-                android:title="@string/pref_connect_sel"
+                android:title="@string/pref_only_wifi_title"
 				android:defaultValue="false"
-                android:summary="@string/pref_download_only_wifi" />
+                android:summary="@string/pref_only_wifi_description" />
 				
         <ListPreference
                 android:key="pref_item_expire"
-                android:title="Item Expire"
-                android:summary="Item Expire"
+                android:title="@string/pref_item_expire_title"
+                android:summary="@string/pref_item_expire_description"
                 android:entries="@array/entries_item_expire"
                 android:entryValues="@array/entryvalues_item_expire"
 				android:defaultValue="5"
@@ -53,8 +53,8 @@
 
         <ListPreference
                 android:key="pref_download_file_expire"
-                android:title="Download File Expire"
-                android:summary="Download File Expire"
+                android:title="@string/pref_downloaded_expire_title"
+                android:summary="@string/pref_downloaded_expire_description"
                 android:entries="@array/entries_downlaod_file_expire"
                 android:entryValues="@array/entryvalues_downlaod_file_expire"
 				android:defaultValue="7"
@@ -62,8 +62,8 @@
 
         <ListPreference
                 android:key="pref_played_file_expire"
-                android:title="Played File Expire"
-                android:summary="Played File Expire"
+                android:title="@string/pref_played_file_expire_title"
+                android:summary="@string/pref_played_file_expire_description"
                 android:entries="@array/entries_played_file_expire"
                 android:entryValues="@array/entryvalues_played_file_expire"
 				android:defaultValue="24"

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Podcast</string>
+    <string name="app_name">Hapi Podcast</string>
 	<string name="title_play_list">Play List</string>
-	<string name="title_download_list">Download List</string>
-	<string name="title_read_list">Read List</string>
-    <string name="title_subs">Channel List</string>
+	<string name="title_download_list">Downloading List</string>
+	<string name="title_read_list">Undownload Items</string>
+    <string name="title_subs">Manage Channel</string>
     <string name="title_pref">Settings</string>
 	<string name="title_search_channel">Search Channel</string>	
 
@@ -24,10 +24,26 @@
 
 	
 	
-    <string name="pref_download_only_wifi">Download file only when Wi-Fi connected</string>	
-    <string name="pref_connect_sel">Download only Wi-Fi</string>	
+    <string name="pref_only_wifi_description">Download file only when Wi-Fi connected</string>	
+    <string name="pref_only_wifi_title">Download only Wi-Fi</string>	
+
+    <string name="pref_update_wifi_description">Set up automatic update interval time though Wi-Fi</string>	
+    <string name="pref_update_wifi_title">Update interval through Wi-Fi</string>
+	
+    <string name="pref_update_mobile_description">Set up automatic update interval time though 3G/2.5G network</string>	
+    <string name="pref_update_mobile_title">Update interval though 3G</string>	
 	
 
+    <string name="pref_item_expire_description">Setup the automatic expiration time of the undownload items</string>	
+    <string name="pref_item_expire_title">Undownload item expired in</string>	
+
+    <string name="pref_downloaded_expire_description">Setup the automatic expiration time of the downloaded items</string>	
+    <string name="pref_downloaded_expire_title">Downloaded file expired in</string>	
+
+    <string name="pref_played_file_expire_description">Setup the automatic expiration time of the downloaded items</string>	
+    <string name="pref_played_file_expire_title">Played file expired in</string>	
+
+	
     <string name="dialog_title_loading">Loading</string>
     <string name="dialog_message_loading">Loading channel...</string>
 

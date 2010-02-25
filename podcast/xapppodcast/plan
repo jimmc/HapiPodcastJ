@@ -1,0 +1,251 @@
+TODO
+--------------------------------
+RENEW DOMAIN
+
+http://www.blogtalkradio.com/rss/tag/personal-finance.rss
+http://www.blogtalkradio.com/rss/category/finance/mostviewed.rss
+http://www.blogtalkradio.com/finance
+---------------
+XULUAN.INFO
+HAPIBOKE.COM
+HAPIQ.COM
+EVERYDAYFEED.COM
+---------------
+HAPIQUAN.COM
+MARKFEED.INFO
+----------------------------
+PREPARE FOR ONLINE!!!
+
+- string
+- find default podcast(talk show, funny story, joke, music)
+- introduce
+------------
+- name
+- help
+
+------------
+------------------------------
+RELEASE ITEM
+- default channel
+- debug level
+- test
+setImeOptions(EditorInfo.IME_ACTION_SEARCH); 
+-------------------------------------
+
+ 
+ * fetcher "user agent"
+ MAX SIZE
+ 
+ find  default podcasts
+
+ NAME: xapp podcast, kaka podcast, podcast pro, ..
+ add channel: fail reason
+ 
+ REVIEW & TEST
+
+ ----
+ 不能下载 有几种可能
+
+1 wifi 没有启动
+2 sd卡 没有装好
+3 下载的文件 链接出了问题
+4  轮询时间没有到 
+----
+ 
+ main activity onResume updateFeed
+ download onResume
+
+-----------------------------
+NEXT PHASE
+- mail to me
+- download pause
+- add subscription view (del feed,   auto download for channel)
+ title, sub title,[del, auot download, auto keep,  update time]
+- backup (sync feed subscribtion)
+- view by channel
+- share
+- help
+- audio type
+
+- audio player and manage list 
+
+- item view, add date info
+- (add, add from clipboard, search, search from browser)
+- when channel cannot get item?
+- clear: download file (fail, no delete etc)
+  if download == false, download status update
+  
+- hint download status (no card, no wifi,...) 
+- service
+
+--------------------------------------------------------------  
+
+BUG
+ magic bug:  play resource
+ 
+ add channel: no data in list view
+ 
+
+
+----------------------------
+MORE INFOMATION
+
+1 audio type suffix
+
+error mimetype?
+only with mp3 as suffix
+- multi type
+	<type extension=".mp3" mimetype="audio/mp3" />
+	<type extension=".wav" mimetype="audio/wav" />
+	<type extension=".ogg" mimetype="audio/x-ogg" />
+	<type extension=".mid" mimetype="audio/mid" />
+	<type extension=".midi" mimetype="audio/midi" />
+	<type extension=".amr" mimetype="audio/AMR" />
+	<type extension=".m4a" mimetype="audio/aac" />
+	audio/mpeg audio/mp4a audio/mp4a-latm audio/aac audio/x-aac
+
+
+
+----------
+5  hint download status (no card, no wifi,...)
+DOWNLOAD VIEW + STATUS BAR 
+
+ - dup file name
+ ( receive sd card unmount message)   
+ - put db to sdcard, update db and  create dir: sdcard/xuluan.podcast/download
+  serviece start from power on
+clear: download file (fail, no delete etc)
+  if download == false, download status update
+
+--------------------------------------------------------------
+
+RELEASE
+
+2010-02-06 alpha release, version 7
+
+--------------
+DONE
+- 20090219[TAG 9]
+   modify manifest.xml
+   string 
+   name
+ 
+- 20090217[TAG 8]
+ * UI style ( HOME )
+ * download and play button
+ 
+- 20090216
+ SEARCH ENGINE
+ remove origin link
+ 
+- 20090209
+ low memory finish
+ input method bug
+
+- 20090204
+ readview: add scroll
+ SEARCH FEED
+ http://www.feedzie.com/scripts/getSearchListing_v2.php?stype=podcast&query=radio&searchbtn=Search&version=1.0
+ language + content
+ 
+- 20090131
+  refactor
+  no entries, bug
+  
+- 20090127
+ lock?
+ update continue
+  download list bug??? some download items will disappear ....
+
+  
+- 20090124
+2  audio type: mp3,aac, ogg, ... TEST??
+ is audio?
+fied: rating, comment
+2 NO ENTRIES
+3  order
+MENU
+2 settings update
+
+- 20090123
+  pref view
+  fix download bug,   http timeout
+  layout bug: 1 weight, 2 center
+  modify   webview 
+  expire: item, played ...
+- 20090121
+1 playlist view(delete,status)
+2 download view(start,pause, priority, download progress ...)
+
+- 20090120
+	play list and download view, layout
+   bug no items
+   
+	
+- 20090119h
+  for summary, \n -> <br/>
+  no music service
+  create adapter
+  make up item.xml
+  add item(channel title, duration, icon) to view
+
+
+- 20090117
+  updateConnectStatus
+  
+  check sdcard mount
+- 20090114
+  check wifi or cell or none
+
+- 20090113
+  directory
+  play bug?
+  HTTP Status Code > 500
+  download launch when user set item download
+
+
+- 20090111
+  play
+  download continue
+  delete only for no download item
+
+
+- 20090110
+5 add download list view
+6 add play list view
+- 20090109
+1 clean table: feed, item (update)
+ parser 		<pubDate>Tue, 05 Jan 2010 02:34:09 +0000</pubDate>
+ rss update fail, (update time ) 
+
+- 20090108
+1 modify provider notifyChange, feed:update date,
+1 update feed
+2 add feed
+
+- 20090107
+1 database(2 table, structucture , review)
+6 podcast parser and download
+2 modify item list view
+3 modify item edit view
+
+
+--------------------------------------------------
+
+
+music player:  7 view ，1 sercice ，2 table/ 2month
+1 music player
+ - playlist manager(add,edit,delete) 
+ - playlist editer (list, add,del)
+ - player (play pause stop, next , mode:random repeat/repeat one/no repeat)
+ - *service (start_play, pause, resume, stop, on_play, get_status)
+ - *provider (playlist(id,name,mode,date,order), list_content(id,list_id,path,audio_name_description,order,date) )
+ 
+ view:
+ - list playlist 
+ - add list
+ - add list fail
+ - list audio
+ - add audio
+ - player *
+ - home

@@ -90,6 +90,7 @@ public class SubscriptionColumns implements BaseColumns {
 			+ ","
 			+ LAST_ITEM_UPDATED
 			+ ") VALUES ('http://www.cbcradio3.com/podcast/', 'unknown', 'unknown', '', 0, 0, 0);";
+	
 
 	public static final String sql_insert_default1 = "INSERT INTO "
 			+ TABLE_NAME
@@ -107,7 +108,7 @@ public class SubscriptionColumns implements BaseColumns {
 			+ FAIL_COUNT
 			+ ","
 			+ LAST_ITEM_UPDATED
-			+ ") VALUES ('http://www.justing.com.cn/justpod/justpod.xml', 'unknown', 'unknown', '', 0, 0, 0);";
+			+ ") VALUES ('http://www.blogtalkradio.com/rss/category/finance/mostviewed.rss', 'unknown', 'unknown', '', 0, 0, 0);";
 
 	public static final String sql_insert_default2 = "INSERT INTO "
 			+ TABLE_NAME
@@ -125,7 +126,7 @@ public class SubscriptionColumns implements BaseColumns {
 			+ FAIL_COUNT
 			+ ","
 			+ LAST_ITEM_UPDATED
-			+ ") VALUES ('http://feeds2.feedburner.com/qiangqiang', 'unknown', 'unknown', '', 0, 0, 0);";
+			+ ") VALUES ('http://www.npr.org/rss/podcast.php?id=500000', 'unknown', 'unknown', '', 0, 0, 0);";
 	public static final String sql_insert_default3 = "INSERT INTO "
 			+ TABLE_NAME
 			+ " ("
@@ -142,8 +143,26 @@ public class SubscriptionColumns implements BaseColumns {
 			+ FAIL_COUNT
 			+ ","
 			+ LAST_ITEM_UPDATED
-			+ ") VALUES ('http://feeds2.feedburner.com/wtpa', 'unknown', 'unknown', '', 0, 0, 0);";
+			+ ") VALUES ('http://podcasts.engadget.com/rss.xml', 'unknown', 'unknown', '', 0, 0, 0);";
 
+	public static final String sql_insert_default4 = "INSERT INTO "
+		+ TABLE_NAME
+		+ " ("
+		+ URL
+		+ ","
+		+ TITLE
+		+ ","
+		+ DESCRIPTION
+		+ ","
+		+ LINK
+		+ ","
+		+ LAST_UPDATED
+		+ ","
+		+ FAIL_COUNT
+		+ ","
+		+ LAST_ITEM_UPDATED
+		+ ") VALUES ('http://downloads.bbc.co.uk/podcasts/radio4/r4choice/rss.xml', 'unknown', 'unknown', '', 0, 0, 0);";
+	
 	public static ContentValues checkValues(ContentValues values, Uri uri) {
 		if (values.containsKey(URL) == false) {
 			throw new SQLException("Fail to insert row because URL is needed "

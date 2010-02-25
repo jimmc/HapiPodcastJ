@@ -74,6 +74,7 @@
         <item>12 hours</item>
         <item>1 day</item>
         <item>2 days</item>
+		<item>1 week</item>
     </string-array>
 
     <string-array name="entryvalues_played_file_expire">
@@ -81,6 +82,7 @@
         <item>12</item>
         <item>24</item>  
         <item>48</item>  
+		<item>168</item>  
     </string-array>			
     
 </resources>
