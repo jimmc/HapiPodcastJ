@@ -126,7 +126,7 @@ public class SubscriptionColumns implements BaseColumns {
 			+ FAIL_COUNT
 			+ ","
 			+ LAST_ITEM_UPDATED
-			+ ") VALUES ('http://www.npr.org/rss/podcast.php?id=500000', 'unknown', 'unknown', '', 0, 0, 0);";
+			+ ") VALUES ('http://www.npr.org/rss/podcast.php?id=13', 'unknown', 'unknown', '', 0, 0, 0);";
 	public static final String sql_insert_default3 = "INSERT INTO "
 			+ TABLE_NAME
 			+ " ("

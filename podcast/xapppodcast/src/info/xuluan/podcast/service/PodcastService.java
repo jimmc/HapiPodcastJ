@@ -56,11 +56,11 @@ public class PodcastService extends Service {
 
 	public int pref_connection_sel = WIFI_CONNECT;
 
-	public int pref_update_wifi = 0;
-	public int pref_update_mobile = 0;
-	public int pref_item_expire = 0;
-	public int pref_download_file_expire = 0;
-	public int pref_played_file_expire = 0;
+	public long pref_update_wifi = 0;
+	public long pref_update_mobile = 0;
+	public long pref_item_expire = 0;
+	public long pref_download_file_expire = 0;
+	public long pref_played_file_expire = 0;
 
 	private DownloadItemListener mDownloadListener = null;
 
