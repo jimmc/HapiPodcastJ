@@ -2,9 +2,7 @@ TODO
 --------------------------------
 RENEW DOMAIN
 
-http://www.blogtalkradio.com/rss/tag/personal-finance.rss
-http://www.blogtalkradio.com/rss/category/finance/mostviewed.rss
-http://www.blogtalkradio.com/finance
+
 ---------------
 XULUAN.INFO
 HAPIBOKE.COM
@@ -14,21 +12,14 @@ EVERYDAYFEED.COM
 HAPIQUAN.COM
 MARKFEED.INFO
 ----------------------------
-PREPARE FOR ONLINE!!!
 
-- string
-- find default podcast(talk show, funny story, joke, music)
-- introduce
-------------
-- name
-- help
-
-------------
 ------------------------------
 RELEASE ITEM
 - default channel
 - debug level
 - test
+-----------------------------------------
+notify
 setImeOptions(EditorInfo.IME_ACTION_SEARCH); 
 -------------------------------------
 
@@ -57,26 +48,38 @@ setImeOptions(EditorInfo.IME_ACTION_SEARCH);
 
 -----------------------------
 NEXT PHASE
-- mail to me
-- download pause
-- add subscription view (del feed,   auto download for channel)
+1 add subscription view (del feed,   auto download for channel)
  title, sub title,[del, auot download, auto keep,  update time]
-- backup (sync feed subscribtion)
-- view by channel
-- share
-- help
-- audio type
+ 
+2 backup (sync feed subscribtion)
+ 
+3 download pause
+  hint download status (no card, no wifi,...) 
 
-- audio player and manage list 
+ 
+4 help (liensce, EMLU)
 
-- item view, add date info
+5 view by channel
+6 item view, add date info
+7 share
+8 mail to me
+9 clear: download file (fail, no delete etc)
+  if download == false, download status update
+
+10 service start when power on
+11 change search engine
+12 audio type
+
 - (add, add from clipboard, search, search from browser)
 - when channel cannot get item?
-- clear: download file (fail, no delete etc)
-  if download == false, download status update
+- audio player and manage list 
+
+
+
+
   
-- hint download status (no card, no wifi,...) 
-- service
+
+
 
 --------------------------------------------------------------  
 
@@ -121,10 +124,21 @@ clear: download file (fail, no delete etc)
 
 RELEASE
 
+2010-02-26 beta release, version 11
+2010-02-25 beta release, version 10
 2010-02-06 alpha release, version 7
+
 
 --------------
 DONE
+
+- 20090219[TAG 11]
+fix bug: expire overflow
+- string
+- find default podcast(talk show, funny story, joke, music)
+- introduce
+
+
 - 20090219[TAG 9]
    modify manifest.xml
    string 
@@ -249,3 +263,15 @@ music player:  7 view £¬1 sercice £¬2 table/ 2month
  - add audio
  - player *
  - home
+ ------------------------------
+ 
+ <50
+100-500  *
+500-1000
+1000-5000
+10000-50000
+50000-250000
+>250000
+-------------------------------
+$900/month |50000 download |42289show/day|$33.47 /day
+$3000/month|200000 download|100000 active
