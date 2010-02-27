@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+
+    
+    <string-array name="entries_update">
+        <item>30 minutes</item>
+        <item>1 hour</item>
+        <item>2 hours</item>  
+        <item>4 hours</item> 
+        <item>6 hours</item>  
+        <item>10 hours</item> 
+        <item>1 day</item>  
+    </string-array>
+
+    <string-array name="entryvalues_update">
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>  
+        <item>240</item>  
+        <item>360</item>
+        <item>600</item>
+        <item>1440</item>  
+    </string-array>
+	
+    <string-array name="entries_item_expire">
+        <item>1 day</item>
+        <item>3 days</item>
+        <item>5 days</item>
+        <item>1 week</item>
+        <item>2 weeks</item>
+    </string-array>
+
+    <string-array name="entryvalues_item_expire">
+        <item>1</item>
+        <item>3</item>
+        <item>5</item>  
+        <item>7</item>  
+        <item>14</item>
+    </string-array>	
+	
+    <string-array name="entries_downlaod_file_expire">
+        <item>1 day</item>
+        <item>3 days</item>
+        <item>1 week</item>
+        <item>2 weeks</item>
+        <item>1 month</item>
+    </string-array>
+
+    <string-array name="entryvalues_downlaod_file_expire">
+        <item>1</item>
+        <item>3</item>
+        <item>7</item>  
+        <item>14</item>  
+        <item>30</item>
+    </string-array>		
+	
+    <string-array name="entries_played_file_expire">
+        <item>2 hours</item>
+        <item>12 hours</item>
+        <item>1 day</item>
+        <item>2 days</item>
+		<item>1 week</item>
+    </string-array>
+
+    <string-array name="entryvalues_played_file_expire">
+        <item>2</item>
+        <item>12</item>
+        <item>24</item>  
+        <item>48</item>  
+		<item>168</item>  
+    </string-array>			
+    
+</resources>

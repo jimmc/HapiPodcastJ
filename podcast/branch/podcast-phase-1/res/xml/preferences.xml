@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2008 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+
+          http://www.apache.org/licenses/LICENSE-2.0
+
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<!-- This is a primitive example showing the different types of preferences available. -->
+<PreferenceScreen
+        xmlns:android="http://schemas.android.com/apk/res/android">
+                
+        <ListPreference
+                android:key="pref_update_wifi"
+                android:title="@string/pref_update_wifi_title"
+                android:summary="@string/pref_update_wifi_description"
+                android:entries="@array/entries_update"
+                android:entryValues="@array/entryvalues_update"
+				android:defaultValue="60"
+                android:dialogTitle="Update Interval on Wi-Fi" />
+				
+        <ListPreference
+                android:key="pref_update_mobile"
+                android:title="@string/pref_update_mobile_title"
+                android:summary="@string/pref_update_mobile_description"
+                android:entries="@array/entries_update"
+                android:entryValues="@array/entryvalues_update"
+				android:defaultValue="120"
+                android:dialogTitle="Update Interval on Mobile" />	
+
+        <CheckBoxPreference
+                android:key="pref_download_only_wifi"
+                android:title="@string/pref_only_wifi_title"
+				android:defaultValue="false"
+                android:summary="@string/pref_only_wifi_description" />
+				
+        <ListPreference
+                android:key="pref_item_expire"
+                android:title="@string/pref_item_expire_title"
+                android:summary="@string/pref_item_expire_description"
+                android:entries="@array/entries_item_expire"
+                android:entryValues="@array/entryvalues_item_expire"
+				android:defaultValue="5"
+                android:dialogTitle="Item Expire" />	
+
+        <ListPreference
+                android:key="pref_download_file_expire"
+                android:title="@string/pref_downloaded_expire_title"
+                android:summary="@string/pref_downloaded_expire_description"
+                android:entries="@array/entries_downlaod_file_expire"
+                android:entryValues="@array/entryvalues_downlaod_file_expire"
+				android:defaultValue="7"
+                android:dialogTitle="Download File Expire" />	
+
+        <ListPreference
+                android:key="pref_played_file_expire"
+                android:title="@string/pref_played_file_expire_title"
+                android:summary="@string/pref_played_file_expire_description"
+                android:entries="@array/entries_played_file_expire"
+                android:entryValues="@array/entryvalues_played_file_expire"
+				android:defaultValue="24"
+                android:dialogTitle="Played File Expire" />				
+
+    
+</PreferenceScreen>
