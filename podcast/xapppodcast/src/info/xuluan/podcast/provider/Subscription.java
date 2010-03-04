@@ -15,6 +15,7 @@ public class Subscription {
 	public long lastUpdated;
 	public long lastItemUpdated;
 	public long fail_count;
+	public long auto_download;
 
 	public static Subscription getByUrl(ContentResolver context, String url) {
 		Cursor cursor = null;
@@ -109,6 +110,9 @@ public class Subscription {
 			if (lastItemUpdated >= 0)
 				cv.put(SubscriptionColumns.LAST_ITEM_UPDATED, lastItemUpdated);
 
+			if (auto_download >= 0)
+				cv.put(SubscriptionColumns.AUTO_DOWNLOAD, auto_download);
+			
 			return context.update(SubscriptionColumns.URI, cv,
 					SubscriptionColumns._ID + "=" + id, null);
 
@@ -128,7 +132,8 @@ public class Subscription {
 				.getColumnIndex(SubscriptionColumns.FAIL_COUNT));
 		sub.lastItemUpdated = cursor.getLong(cursor
 				.getColumnIndex(SubscriptionColumns.LAST_ITEM_UPDATED));
-
+		sub.auto_download = cursor.getLong(cursor
+				.getColumnIndex(SubscriptionColumns.AUTO_DOWNLOAD));
 	}
 
 }

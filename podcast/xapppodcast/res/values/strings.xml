@@ -3,7 +3,7 @@
     <string name="app_name">Hapi Podcast</string>
 	<string name="title_play_list">Play List</string>
 	<string name="title_download_list">Downloading List</string>
-	<string name="title_read_list">Undownload Items</string>
+	<string name="title_read_list">All Items</string>
     <string name="title_subs">Manage Channel</string>
     <string name="title_pref">Settings</string>
 	<string name="title_search_channel">Search Channel</string>	
@@ -19,9 +19,25 @@
     <string name="menu_ok">OK</string>
     <string name="menu_cancel">Cancel</string>
     <string name="menu_refresh">Refresh</string>
+    <string name="menu_update">Update</string>
     <string name="menu_add">Add</string>
+    <string name="menu_display">Display</string>
+    <string name="menu_sort">Sort Mode</string>
+	
     <string name="subscribe">Subscribe</string>	
+    <string name="unsubscribe">Unsubscribe</string>	
+	
 
+    <string name="last_item_date">Last Item Time</string>	
+    <string name="update_date">Last Update Time</string>	
+    <string name="channel_title">Channel Info</string>	
+	
+    <string name="auto_download">Auto Download</string>	
+    <string name="on">On</string>	
+    <string name="off">Off</string>	
+	
+    <string name="download_hint">Put it into the downloading queue.</string>	
+    <string name="unsubscribe_channel">Do you want to unsubscribe it? This channel will be deleted.</string>	
 	
 	
     <string name="pref_only_wifi_description">Download file only when Wi-Fi connected</string>	
@@ -35,13 +51,13 @@
 	
 
     <string name="pref_item_expire_description">Setup the automatic expiration time of the undownload items</string>	
-    <string name="pref_item_expire_title">Undownload item expired in</string>	
+    <string name="pref_item_expire_title">Undownload item expire in</string>	
 
     <string name="pref_downloaded_expire_description">Setup the automatic expiration time of the downloaded items</string>	
-    <string name="pref_downloaded_expire_title">Downloaded file expired in</string>	
+    <string name="pref_downloaded_expire_title">Downloaded file expire in</string>	
 
     <string name="pref_played_file_expire_description">Setup the automatic expiration time of the downloaded items</string>	
-    <string name="pref_played_file_expire_title">Played file expired in</string>	
+    <string name="pref_played_file_expire_title">Played file expire in</string>	
 
 	
     <string name="dialog_title_loading">Loading</string>

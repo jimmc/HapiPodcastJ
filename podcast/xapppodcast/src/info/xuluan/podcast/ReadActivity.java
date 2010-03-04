@@ -6,9 +6,7 @@ import info.xuluan.podcast.service.PodcastService;
 import info.xuluan.podcast.utils.Log;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ComponentName;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +20,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class ReadActivity extends Activity {
 
@@ -90,7 +89,11 @@ public class ReadActivity extends Activity {
 		
 		play_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				play(Integer.parseInt(item_id));
+				FeedItem item = FeedItem.getById(getContentResolver(), Integer
+						.parseInt(item_id));
+				if(item==null)
+					return;				
+				item.play(ReadActivity.this);
 
 			}
 		});
@@ -106,6 +109,9 @@ public class ReadActivity extends Activity {
 				Button btn = (Button) findViewById(R.id.ButtonDownload);	
 				btn.setEnabled(false);
 				serviceBinder.start_download();
+				
+				Toast.makeText(ReadActivity.this, getResources().getString(R.string.download_hint),
+						Toast.LENGTH_SHORT).show();
 
 			}
 		});		
@@ -130,49 +136,5 @@ public class ReadActivity extends Activity {
 		super.onDestroy();
 		unbindService(serviceConnection);
 		// stopService(new Intent(this, service.getClass()));
-	}
-
-	private void play(long id) {
-
-		Uri uri = ContentUris.withAppendedId(ItemColumns.URI, id);
-		Cursor cursor = managedQuery(uri, ItemColumns.ALL_COLUMNS, null, null,
-				null);
-		if (cursor.moveToFirst()) {
-			FeedItem item = FeedItem.getByCursor(cursor);
-			cursor.close();
-
-			if ((item != null)
-					&& (item.status == ItemColumns.ITEM_STATUS_NO_PLAY)) {
-				item.status = ItemColumns.ITEM_STATUS_PLAYED;
-				item.update(getContentResolver());
-			}
-			Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-
-			Uri data = Uri.parse(item.uri);
-
-			intent.setDataAndType(data, item.getType());
-			log.debug("palying " + item.pathname);
-			try {
-				startActivity(intent);
-			} catch (ActivityNotFoundException e) {
-				e.printStackTrace();
-				Intent intent2 = new Intent(android.content.Intent.ACTION_VIEW);
-
-				data = Uri.parse("file://" + item.pathname);
-				intent2.setDataAndType(data, "audio/mp3");
-				try {
-					startActivity(intent2);
-
-				} catch (Exception e2) {
-					e2.printStackTrace();
-
-				}
-
-			}
-		}
-
-		if (cursor != null)
-			cursor.close();
-
 	}
 }

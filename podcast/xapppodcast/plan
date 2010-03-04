@@ -1,85 +1,43 @@
 TODO
 --------------------------------
-RENEW DOMAIN
+auto download
 
+1 backup  
 
----------------
-XULUAN.INFO
-HAPIBOKE.COM
-HAPIQ.COM
-EVERYDAYFEED.COM
----------------
-HAPIQUAN.COM
-MARKFEED.INFO
-----------------------------
+6 item view, add date info (pading)
 
-------------------------------
-RELEASE ITEM
-- default channel
-- debug level
-- test
------------------------------------------
-notify
-setImeOptions(EditorInfo.IME_ACTION_SEARCH); 
--------------------------------------
-
- 
- * fetcher "user agent"
- MAX SIZE
- 
- find  default podcasts
-
- NAME: xapp podcast, kaka podcast, podcast pro, ..
- add channel: fail reason
- 
- REVIEW & TEST
-
- ----
- 不能下载 有几种可能
-
-1 wifi 没有启动
-2 sd卡 没有装好
-3 下载的文件 链接出了问题
-4  轮询时间没有到 
-----
- 
- main activity onResume updateFeed
- download onResume
-
------------------------------
-NEXT PHASE
-1 add subscription view (del feed,   auto download for channel)
- title, sub title,[del, auot download, auto keep,  update time]
- 
-2 backup (sync feed subscribtion)
- 
-3 download pause
-  hint download status (no card, no wifi,...) 
-
- 
-4 help (liensce, EMLU)
-
-5 view by channel
-6 item view, add date info
 7 share
 8 mail to me
+
+3 download pause
+  hint download status (no card, no wifi,...) 
+  fetcher "user agent"
+--------------------------------
+RELEASE ITEM
+- debug level
+- test
+-----------------------------
+NEXT PHASE
+4 help (liensce, EMLU)
+5 loging to web
 9 clear: download file (fail, no delete etc)
   if download == false, download status update
-
 10 service start when power on
+android.intent.action.BOOT_COMPLETED
+---------------------------------------------
 11 change search engine
+  add channel: fail reason
+setImeOptions(EditorInfo.IME_ACTION_SEARCH); 
+  
 12 audio type
 
-- (add, add from clipboard, search, search from browser)
-- when channel cannot get item?
-- audio player and manage list 
 
+PHASE 3
 
-
-
-  
-
-
+1 (add, add from clipboard, search, search from browser)
+2 sync feed subscribtion
+	when channel cannot get item?
+3 audio player and manage list 
 
 --------------------------------------------------------------  
 
@@ -119,11 +77,21 @@ DOWNLOAD VIEW + STATUS BAR
   serviece start from power on
 clear: download file (fail, no delete etc)
   if download == false, download status update
+  
+  
+-----------------------------------------
+ 不能下载 有几种可能
+
+1 wifi 没有启动
+2 sd卡 没有装好
+3 下载的文件 链接出了问题
+4  轮询时间没有到 
+  
 
 --------------------------------------------------------------
 
 RELEASE
-
+PHASE 1 release, version 12
 2010-02-26 beta release, version 11
 2010-02-25 beta release, version 10
 2010-02-06 alpha release, version 7
@@ -131,7 +99,38 @@ RELEASE
 
 --------------
 DONE
+- 20090303
+are you sure for delete channel?
+fix bug, from channel activity to read activity
 
+
+- 20090302
+refresh update
+
+1 when press download button, display " put it into downloading queue, 
+waiting download please, you can lookup download status in Downloading List"
+
+2 All items
+new, read, download, play
+
+sort by channel, by status, by date
+
+only display undownload items
+display all items
+
+
+3 add subscription view 
+title
+
+update:
+last item:
+auto download
+del button
+(del feed,   auto download for channel)
+ title, sub title,[del, auot download,  update time]
+
+
+PHASE ONE
 - 20090219[TAG 11]
 fix bug: expire overflow
 - string
@@ -263,7 +262,7 @@ music player:  7 view ，1 sercice ，2 table/ 2month
  - add audio
  - player *
  - home
- ------------------------------
+------------------------------
  
  <50
 100-500  *

@@ -49,7 +49,10 @@ public class PlayListActivity extends PodcastBaseActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		play(id);
+		FeedItem item = FeedItem.getById(getContentResolver(), id);
+		if (item == null)
+			return;
+		item.play(this);
 
 	}
 
@@ -68,57 +71,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 		startInit();
 	}
 
-	private void play(long id) {
 
-		Uri uri = ContentUris.withAppendedId(getIntent().getData(), id);
-		Cursor cursor = managedQuery(uri, ItemColumns.ALL_COLUMNS, null, null,
-				null);
-		if (cursor.moveToFirst()) {
-			FeedItem item = FeedItem.getByCursor(cursor);
-			cursor.close();
-
-			if ((item != null)
-					&& (item.status == ItemColumns.ITEM_STATUS_NO_PLAY)) {
-				item.status = ItemColumns.ITEM_STATUS_PLAYED;
-				item.update(getContentResolver());
-			}
-			Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
-			// Intent intent = new Intent("com.android.music.PLAYBACK_VIEWER");
-			// intent.setComponent(new
-			// ComponentName("com.android.music","com.android.music.MediaPlaybackActivity"));
-			// intent.addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-			// getContentResolver().query("content://media/external/audio/media"
-			// ItemColumns.ALL_COLUMNS, where, null, null);
-			// Uri data = Media.getContentUriForPath("file://"+item.pathname);
-			// log.warn("Uri =  " + data);
-			// Uri data = Uri.parse("file://"+item.pathname);
-			Uri data = Uri.parse(item.uri);
-
-			intent.setDataAndType(data, item.getType());
-			log.debug("palying " + item.pathname);
-			try {
-				startActivity(intent);
-			} catch (ActivityNotFoundException e) {
-				e.printStackTrace();
-				Intent intent2 = new Intent(android.content.Intent.ACTION_VIEW);
-
-				data = Uri.parse("file://" + item.pathname);
-				intent2.setDataAndType(data, "audio/mp3");
-				try {
-					startActivity(intent2);
-
-				} catch (Exception e2) {
-					e2.printStackTrace();
-
-				}
-
-			}
-		}
-
-		if (cursor != null)
-			cursor.close();
-
-	}
 
 	@Override
 	public void onCreateContextMenu(ContextMenu menu, View view,
@@ -185,7 +138,10 @@ public class PlayListActivity extends PodcastBaseActivity {
 			return true;
 		}
 		case MENU_ITEM_PLAY: {
-			play(info.id);
+			FeedItem play_item = FeedItem.getById(getContentResolver(), info.id);
+			if(play_item==null)
+				return true;
+			play_item.play(this);
 			return true;
 		}
 		case MENU_ITEM_KEEP: {
@@ -211,7 +167,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 	public void startInit() {
 		String where = ItemColumns.STATUS + ">"
 				+ ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW;
-		String order = ItemColumns.STATUS + " ASC, " + ItemColumns.CREATED
+		String order = ItemColumns.STATUS + " ASC, " + ItemColumns.LAST_UPDATE
 				+ " DESC";
 
 		mCursor = managedQuery(ItemColumns.URI, PROJECTION, where, null, order);

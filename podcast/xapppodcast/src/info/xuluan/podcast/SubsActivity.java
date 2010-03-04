@@ -2,6 +2,8 @@ package info.xuluan.podcast;
 
 
 import info.xuluan.podcast.parser.FeedParserListenerAdapter;
+import info.xuluan.podcast.provider.FeedItem;
+import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
 import java.net.MalformedURLException;
@@ -11,9 +13,11 @@ import java.util.regex.Pattern;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.ContextMenu;
@@ -23,6 +27,7 @@ import android.view.View;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
@@ -126,6 +131,26 @@ public class SubsActivity extends PodcastBaseActivity {
 
 		return true;
 	}
+	
+	@Override
+	protected void onListItemClick(ListView l, View v, int position, long id) {
+
+		Uri uri = ContentUris.withAppendedId(getIntent().getData(), id);
+		String action = getIntent().getAction();
+		if (Intent.ACTION_PICK.equals(action)
+				|| Intent.ACTION_GET_CONTENT.equals(action)) {
+			setResult(RESULT_OK, new Intent().setData(uri));
+		} else {
+			FeedItem item = FeedItem.getById(getContentResolver(), id);
+			if ((item != null)
+					&& (item.status == ItemColumns.ITEM_STATUS_UNREAD)) {
+				item.status = ItemColumns.ITEM_STATUS_READ;
+				item.update(getContentResolver());
+			}
+
+			startActivity(new Intent(Intent.ACTION_EDIT, uri));
+		}
+	}	
 
 	private void addSubscription() {
 		final AlertDialog.Builder alert = new AlertDialog.Builder(this);

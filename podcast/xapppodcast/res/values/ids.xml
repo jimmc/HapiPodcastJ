@@ -25,7 +25,7 @@
     <drawable name="solid_red">#f00</drawable>
     <drawable name="solid_blue">#0000ff</drawable>
     <drawable name="solid_green">#f0f0</drawable>  
-    <drawable name="all_background">#000</drawable>  
+    <drawable name="black">#000</drawable>  
     <drawable name="white">#fff</drawable>  
     
     <drawable name="lighter_gray">#ddd</drawable>

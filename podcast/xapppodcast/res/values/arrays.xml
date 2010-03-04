@@ -84,5 +84,9 @@
         <item>48</item>  
 		<item>168</item>  
     </string-array>			
-    
+    <string-array name="sort_select">
+        <item>Sort by Channel</item>
+        <item>Sort by Status</item>
+        <item>Sort by Date</item>
+    </string-array>    
 </resources>

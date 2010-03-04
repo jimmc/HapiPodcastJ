@@ -365,8 +365,7 @@ public class PodcastService extends Service {
 							if (newUri != null)
 								item.uri = newUri.toString();
 
-							item.created = Long.valueOf(System
-									.currentTimeMillis());
+							//item.created = Long.valueOf(System.currentTimeMillis());
 
 						} else {
 							item.failcount++;
@@ -588,17 +587,21 @@ public class PodcastService extends Service {
 		}
 		if (added.isEmpty())
 			return;
-		addItems(subscription.id, added);
+		addItems(subscription, added);
 
 	}
 
-	void addItems(Long sub_id, List<FeedItem> items) {
+	void addItems(Subscription subscription, List<FeedItem> items) {
+		Long sub_id = subscription.id;
 		ContentResolver cr = getContentResolver();
 		int len = items.size();
 		for (int i = len - 1; i >= 0; i--) {
 
 			FeedItem item = items.get(i);
 			item.sub_id = sub_id;
+			if(subscription.auto_download!=0){
+				item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
+			}
 			String where = ItemColumns.SUBS_ID + "=" + sub_id + " and "
 					+ ItemColumns.RESOURCE + "= '" + item.resource + "'";
 

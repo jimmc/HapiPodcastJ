@@ -6,8 +6,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -285,5 +288,42 @@ public class FeedItem {
 		}
 
 		return "audio/mp3";
+	}
+	
+	public void play(Activity act){
+
+		if (status <= ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW) 
+			return;
+		if (status == ItemColumns.ITEM_STATUS_NO_PLAY) {
+			status = ItemColumns.ITEM_STATUS_PLAYED;
+			update(act.getContentResolver());
+		}
+		
+		
+		Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
+
+		Uri data = Uri.parse(uri);
+
+		intent.setDataAndType(data, getType());
+		log.debug("palying " + pathname);
+		
+			try {
+				act.startActivity(intent);
+			} catch (ActivityNotFoundException e) {
+				e.printStackTrace();
+				Intent intent2 = new Intent(android.content.Intent.ACTION_VIEW);
+
+				data = Uri.parse("file://" + pathname);
+				intent2.setDataAndType(data, "audio/mp3");
+				try {
+					act.startActivity(intent2);
+
+				} catch (Exception e2) {
+					e2.printStackTrace();
+
+				}
+
+			}
+	
 	}
 }
