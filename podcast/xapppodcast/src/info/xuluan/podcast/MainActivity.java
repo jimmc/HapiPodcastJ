@@ -275,10 +275,11 @@ public class MainActivity extends PodcastBaseActivity {
 	}	
 
 	public String getWhere() {
+		String where = ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_PLAYLIST_VIEW;
 			if(pref_where!=0){
-				return ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_READING_VIEW;
+				where =  ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_READING_VIEW;
 			}
-			return null;
+			return where;
 }	
 	
 	public void getPref() {

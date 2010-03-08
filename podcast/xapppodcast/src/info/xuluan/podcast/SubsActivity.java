@@ -141,13 +141,6 @@ public class SubsActivity extends PodcastBaseActivity {
 				|| Intent.ACTION_GET_CONTENT.equals(action)) {
 			setResult(RESULT_OK, new Intent().setData(uri));
 		} else {
-			FeedItem item = FeedItem.getById(getContentResolver(), id);
-			if ((item != null)
-					&& (item.status == ItemColumns.ITEM_STATUS_UNREAD)) {
-				item.status = ItemColumns.ITEM_STATUS_READ;
-				item.update(getContentResolver());
-			}
-
 			startActivity(new Intent(Intent.ACTION_EDIT, uri));
 		}
 	}	

@@ -23,6 +23,11 @@ public class ItemColumns implements BaseColumns {
 
 	public static final int ITEM_STATUS_KEEP = 63;
 	public static final int ITEM_STATUS_PLAYED = 66;
+	public static final int ITEM_STATUS_MAX_PLAYLIST_VIEW = 100;
+	
+	public static final int ITEM_STATUS_MIN_DELETE = 190;
+	public static final int ITEM_STATUS_DELETE = 195;	
+	public static final int ITEM_STATUS_DELETED = 200;
 
 	public static final Uri URI = Uri.parse("content://"
 			+ PodcastProvider.AUTHORITY + "/items");

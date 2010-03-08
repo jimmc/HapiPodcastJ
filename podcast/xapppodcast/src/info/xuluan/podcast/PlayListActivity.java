@@ -8,7 +8,6 @@ import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.utils.IconCursorAdapter;
 
-import android.content.ActivityNotFoundException;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
@@ -124,17 +123,8 @@ public class PlayListActivity extends PodcastBaseActivity {
 			 * Toast.LENGTH_SHORT).show(); return true; }
 			 */
 			// TODO are you sure?
-			try {
-				File file = new File(feed_item.pathname);
-				boolean deleted = file.delete();
-
-			} catch (Exception e) {
-				log.warn("del file failed : " + feed_item.pathname + "  " + e);
-
-			}
-			Uri delUri = ContentUris.withAppendedId(getIntent().getData(),
-					info.id);
-			getContentResolver().delete(delUri, null, null);
+			
+			feed_item.delFile(getContentResolver());
 			return true;
 		}
 		case MENU_ITEM_PLAY: {
@@ -166,7 +156,9 @@ public class PlayListActivity extends PodcastBaseActivity {
 
 	public void startInit() {
 		String where = ItemColumns.STATUS + ">"
-				+ ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW;
+				+ ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW + " AND " 
+		+ ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_PLAYLIST_VIEW;
+		
 		String order = ItemColumns.STATUS + " ASC, " + ItemColumns.LAST_UPDATE
 				+ " DESC";
 

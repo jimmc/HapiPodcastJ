@@ -214,6 +214,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 		FeedItem item = mServiceBinder.getDownloadingItem();
 		if (item != null)
 			updateDownloadInfo(item);
+		
 		mServiceBinder.start_download();
 	}
 

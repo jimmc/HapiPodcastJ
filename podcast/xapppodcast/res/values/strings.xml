@@ -35,6 +35,9 @@
     <string name="auto_download">Auto Download</string>	
     <string name="on">On</string>	
     <string name="off">Off</string>	
+	<string name="sdcard_unmout">SDCard no found.</string>	
+	<string name="no_connect">Network no found.</string>	
+
 	
     <string name="download_hint">Put it into the downloading queue.</string>	
     <string name="unsubscribe_channel">Do you want to unsubscribe it? This channel will be deleted.</string>	

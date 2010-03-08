@@ -253,7 +253,8 @@ public class ChannelActivity extends PodcastBaseActivity {
 	@Override
 	public void startInit() {
 
-		String where = ItemColumns.SUBS_ID + "=" + mChannel.id;
+		String where = ItemColumns.SUBS_ID + "=" + mChannel.id + " AND " 
+		+ ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_PLAYLIST_VIEW;
 
 		mCursor = managedQuery(ItemColumns.URI, PROJECTION, where, null, null);
 

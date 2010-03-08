@@ -100,18 +100,21 @@ public class ReadActivity extends Activity {
 		
 		download_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-
+				Toast.makeText(ReadActivity.this, getResources().getString(R.string.download_hint),
+						Toast.LENGTH_SHORT).show();
+				
 				ContentValues cv = new ContentValues();
 
 				cv.put(ItemColumns.STATUS, ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE);
 				getContentResolver().update(ItemColumns.URI, cv, "_ID=?",
 						new String[] { item_id });
+				
 				Button btn = (Button) findViewById(R.id.ButtonDownload);	
 				btn.setEnabled(false);
+				
 				serviceBinder.start_download();
 				
-				Toast.makeText(ReadActivity.this, getResources().getString(R.string.download_hint),
-						Toast.LENGTH_SHORT).show();
+
 
 			}
 		});		

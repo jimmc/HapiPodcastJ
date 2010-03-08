@@ -83,6 +83,7 @@ public class Subscription {
 		lastUpdated = -1;
 		fail_count = -1;
 		lastItemUpdated = -1;
+		auto_download = -1;
 	}
 
 	public void delete(ContentResolver context) {

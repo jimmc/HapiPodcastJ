@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import info.xuluan.podcast.R;
 import info.xuluan.podcast.fetcher.DownloadItemListener;
 import info.xuluan.podcast.fetcher.FeedFetcher;
 import info.xuluan.podcast.fetcher.Response;
@@ -31,10 +32,12 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.widget.Toast;
 
 public class PodcastService extends Service {
 
@@ -71,8 +74,11 @@ public class PodcastService extends Service {
 	private static boolean mUpdate = false;
 	private static final ReentrantReadWriteLock mUpdateLock = new ReentrantReadWriteLock();
 	private static int mConnectStatus = NO_CONNECT;
-
-	public static final String BASE_DOWNLOAD_DIRECTORY = "/sdcard/xuluan.podcast/download";
+	
+	public static String SDCARD_DIR = "/sdcard"; 
+	public static final String APP_DIR = "/xuluan.podcast";
+	public static final String DOWNLOAD_DIR = "/download";
+	//public static final String BASE_DOWNLOAD_DIRECTORY = "/sdcard/xuluan.podcast/download";
 
 	public static final String UPDATE_DOWNLOAD_STATUS = PodcastService.class
 			.getName()
@@ -132,7 +138,7 @@ public class PodcastService extends Service {
 
 				start_update();
 				removeExpires();
-				start_download();
+				do_download(false);
 
 				triggerNextTimer(timer_freq);
 
@@ -146,7 +152,24 @@ public class PodcastService extends Service {
 		msg.what = MSG_TIMER;
 		handler.sendMessageDelayed(msg, delay);
 	}
+	
+	private boolean getSDCardStatus()
+	{
+		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+			return true;
+		}else{
+			return false;
+		}
 
+	}
+	private String getDownloadDir()
+	{
+		File sdDir = new File(Environment.getExternalStorageDirectory().getPath());
+		SDCARD_DIR = sdDir.getAbsolutePath();
+		log.debug("getDownloadDir: " + SDCARD_DIR + APP_DIR + DOWNLOAD_DIR);
+		return SDCARD_DIR + APP_DIR + DOWNLOAD_DIR;
+	}
+	
 	private int updateConnectStatus() {
 		log.debug("updateConnectStatus");
 		try {
@@ -288,9 +311,26 @@ public class PodcastService extends Service {
 	}
 
 	public void start_download() {
-		if (updateConnectStatus() == NO_CONNECT)
-			return;
 
+
+		
+		 do_download(true);
+		
+	}
+	private void do_download(boolean show){
+		if (getSDCardStatus()==false){
+			
+			if(show)
+				Toast.makeText(this, getResources().getString(R.string.sdcard_unmout), Toast.LENGTH_LONG).show();
+			return;
+		}
+
+		
+		if (updateConnectStatus() == NO_CONNECT){
+			if(show)
+				Toast.makeText(this, getResources().getString(R.string.no_connect), Toast.LENGTH_LONG).show();
+			return;
+		}
 		mDownloadLock.readLock().lock();
 		if (mDownloading) {
 			mDownloadLock.readLock().unlock();
@@ -312,14 +352,14 @@ public class PodcastService extends Service {
 						if (item == null) {
 							break;
 						}
-						File file = new File(BASE_DOWNLOAD_DIRECTORY);
+						File file = new File(getDownloadDir());
 						if (!file.exists()) {
 							break;
 						}
 
 						// log.debug("start_download start");
 						if (item.pathname.equals("")) {
-							String path_name = BASE_DOWNLOAD_DIRECTORY
+							String path_name = getDownloadDir()
 									+ "/podcast_" + item.id + ".mp3";
 							item.pathname = path_name;
 						}
@@ -393,7 +433,26 @@ public class PodcastService extends Service {
 		}.start();
 
 	}
+	private void deleteExpireFile(Cursor cursor) {
+		if(cursor==null)
+			return;
+		
+		if (cursor.moveToFirst()) {
+			do{
 
+				FeedItem item = FeedItem.getByCursor(cursor);
+
+				if(item!=null){
+					item.delFile(getContentResolver());
+				}
+
+			}while (cursor.moveToNext());
+
+		}
+		
+		cursor.close();
+		
+	}
 	private void removeExpires() {
 		long expiredTime = System.currentTimeMillis() - pref_item_expire;
 		try {
@@ -405,6 +464,10 @@ public class PodcastService extends Service {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		if (getSDCardStatus()==false){
+			return;
+		}
 
 		expiredTime = System.currentTimeMillis() - pref_played_file_expire;
 		try {
@@ -414,23 +477,7 @@ public class PodcastService extends Service {
 
 			Cursor cursor = getContentResolver().query(ItemColumns.URI,
 					ItemColumns.ALL_COLUMNS, where, null, null);
-			if (cursor.moveToFirst()) {
-				while (cursor.moveToNext()) {
-					String path = cursor.getString(cursor
-							.getColumnIndex(ItemColumns.PATHNAME));
-					try {
-						File file = new File(path);
-						boolean deleted = file.delete();
-
-					} catch (Exception e) {
-						log.warn("del file failed : " + path + "  " + e);
-
-					}
-				}
-
-			}
-			cursor.close();
-			getContentResolver().delete(ItemColumns.URI, where, null);
+			deleteExpireFile(cursor);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -444,26 +491,28 @@ public class PodcastService extends Service {
 
 			Cursor cursor = getContentResolver().query(ItemColumns.URI,
 					ItemColumns.ALL_COLUMNS, where, null, null);
-			if (cursor.moveToFirst()) {
-				while (cursor.moveToNext()) {
-					String path = cursor.getString(cursor
-							.getColumnIndex(ItemColumns.PATHNAME));
-					try {
-						File file = new File(path);
-						boolean deleted = file.delete();
+			deleteExpireFile(cursor);
 
-					} catch (Exception e) {
-						log.warn("del file failed : " + path + "  " + e);
-
-					}
-				}
-
-			}
-			cursor.close();
-			getContentResolver().delete(ItemColumns.URI, where, null);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		try {
+			String where = ItemColumns.STATUS + "="
+					+ ItemColumns.ITEM_STATUS_DELETE;
+
+			Cursor cursor = getContentResolver().query(ItemColumns.URI,
+					ItemColumns.ALL_COLUMNS, where, null, null);
+			deleteExpireFile(cursor);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		String where = ItemColumns.STATUS + "="
+		+ ItemColumns.ITEM_STATUS_DELETED;		
+		getContentResolver().delete(ItemColumns.URI, where, null);
+
 	}
 
 	public FeedParserListenerAdapter fetchFeed(String url) {
@@ -599,7 +648,7 @@ public class PodcastService extends Service {
 
 			FeedItem item = items.get(i);
 			item.sub_id = sub_id;
-			if(subscription.auto_download!=0){
+			if(subscription.auto_download>0){
 				item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
 			}
 			String where = ItemColumns.SUBS_ID + "=" + sub_id + " and "
@@ -621,6 +670,10 @@ public class PodcastService extends Service {
 					log.debug("Inserted new item: " + uri.toString());
 			}
 
+		}
+		
+		if(subscription.auto_download>0){
+			do_download(false);
 		}
 	}
 
@@ -652,17 +705,17 @@ public class PodcastService extends Service {
 		updateSetting();
 		log.debug("pref_update_mobile " + pref_update_mobile);
 
-		File file = new File(BASE_DOWNLOAD_DIRECTORY);
+		File file = new File(getDownloadDir());
 		boolean exists = (file.exists());
 		if (exists) {
 			if (!file.isDirectory())
 				log.error("cannot change file to directory:"
-						+ BASE_DOWNLOAD_DIRECTORY);
+						+ getDownloadDir());
 
 		} else {
 			if (!file.mkdirs())
 				log.error("cannot create the directory:"
-						+ BASE_DOWNLOAD_DIRECTORY);
+						+ getDownloadDir());
 
 		}
 

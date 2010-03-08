@@ -99,7 +99,11 @@ PHASE 1 release, version 12
 
 --------------
 DONE
-- 20090303
+- 20090307 
+fix sdcard bug
+fix delete bug
+
+- 20090303 (TAG 16)
 are you sure for delete channel?
 fix bug, from channel activity to read activity
 

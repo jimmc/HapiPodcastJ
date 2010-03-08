@@ -2,6 +2,7 @@ package info.xuluan.podcast.provider;
 
 import info.xuluan.podcast.utils.Log;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -9,6 +10,7 @@ import java.util.Locale;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -83,8 +85,8 @@ public class FeedItem {
 	}
 
 	public static FeedItem getByCursor(Cursor cursor) {
-		if (cursor.moveToFirst() == false)
-			return null;
+		//if (cursor.moveToFirst() == false)
+		//	return null;
 		FeedItem item = new FeedItem();
 		fetchFromCursor(item, cursor);
 		return item;
@@ -240,8 +242,8 @@ public class FeedItem {
 	}
 
 	private static void fetchFromCursor(FeedItem item, Cursor cursor) {
-		assert cursor.moveToFirst();
-		cursor.moveToFirst();
+		//assert cursor.moveToFirst();
+		//cursor.moveToFirst();
 		item.id = cursor.getLong(cursor.getColumnIndex(ItemColumns._ID));
 		item.resource = cursor.getString(cursor
 				.getColumnIndex(ItemColumns.RESOURCE));
@@ -305,7 +307,7 @@ public class FeedItem {
 		Uri data = Uri.parse(uri);
 
 		intent.setDataAndType(data, getType());
-		log.debug("palying " + pathname);
+		log.debug("playing " + pathname);
 		
 			try {
 				act.startActivity(intent);
@@ -324,6 +326,34 @@ public class FeedItem {
 				}
 
 			}
+	
+	}
+	
+	public void delFile(ContentResolver context){
+		if(status<ItemColumns.ITEM_STATUS_DELETE){
+			status = ItemColumns.ITEM_STATUS_DELETE;
+			update(context);	
+		}
+
+		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+			try {
+				File file = new File(pathname);
+				
+				boolean deleted = true;
+				if(file.exists()){
+					deleted = file.delete();					
+				}
+				if(deleted){
+					if(status<ItemColumns.ITEM_STATUS_DELETED){
+						status = ItemColumns.ITEM_STATUS_DELETED;
+						update(context);	
+					}						
+				}
+			} catch (Exception e) {
+				log.warn("del file failed : " + pathname + "  " + e);
+
+			}
+		}		
 	
 	}
 }
