@@ -29,6 +29,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 		mIconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.no_play);
 		mIconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.played);
 		mIconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.keep);
+		
 	}
 
 	private static final String[] PROJECTION = new String[] { ItemColumns._ID, // 0
@@ -44,6 +45,9 @@ public class PlayListActivity extends PodcastBaseActivity {
 	public static final int MENU_ITEM_KEEP = Menu.FIRST + 11;
 	public static final int MENU_ITEM_VIEW = Menu.FIRST + 12;
 	public static final int MENU_ITEM_DELETE = Menu.FIRST + 13;
+	public static final int MENU_ITEM_SHARE = Menu.FIRST + 14;
+	
+	
 
 
 	@Override
@@ -97,6 +101,8 @@ public class PlayListActivity extends PodcastBaseActivity {
 		menu.add(0, MENU_ITEM_KEEP, 0, R.string.menu_keep);
 		menu.add(0, MENU_ITEM_VIEW, 0, R.string.menu_view);
 		menu.add(0, MENU_ITEM_DELETE, 0, R.string.menu_delete);
+		menu.add(0, MENU_ITEM_SHARE, 0, R.string.menu_share);
+		
 
 	}
 
@@ -109,38 +115,26 @@ public class PlayListActivity extends PodcastBaseActivity {
 			log.error("bad menuInfo", e);
 			return false;
 		}
+		FeedItem select_item = FeedItem.getById(getContentResolver(), info.id);
+		if(select_item==null)
+			return true;
 
 		switch (item.getItemId()) {
 		case MENU_ITEM_DELETE: {
-			// Delete the note that the context menu is for
-			FeedItem feed_item = FeedItem
-					.getById(getContentResolver(), info.id);
-			if (feed_item == null)
-				return true;
-			/*
-			 * if(feed_item.status == ItemColumns.ITEM_STATUS_KEEP){
-			 * Toast.makeText(this, "The item status is KEEP!",
-			 * Toast.LENGTH_SHORT).show(); return true; }
-			 */
+
 			// TODO are you sure?
 			
-			feed_item.delFile(getContentResolver());
+			select_item.delFile(getContentResolver());
 			return true;
 		}
 		case MENU_ITEM_PLAY: {
-			FeedItem play_item = FeedItem.getById(getContentResolver(), info.id);
-			if(play_item==null)
-				return true;
-			play_item.play(this);
+			select_item.play(this);
 			return true;
 		}
 		case MENU_ITEM_KEEP: {
-			FeedItem feed_item = FeedItem
-					.getById(getContentResolver(), info.id);
-			if ((feed_item != null)
-					&& (feed_item.status != ItemColumns.ITEM_STATUS_KEEP)) {
-				feed_item.status = ItemColumns.ITEM_STATUS_KEEP;
-				feed_item.update(getContentResolver());
+			if (select_item.status != ItemColumns.ITEM_STATUS_KEEP) {
+				select_item.status = ItemColumns.ITEM_STATUS_KEEP;
+				select_item.update(getContentResolver());
 			}
 			return true;
 		}
@@ -150,6 +144,10 @@ public class PlayListActivity extends PodcastBaseActivity {
 			startActivity(new Intent(Intent.ACTION_EDIT, uri));
 			return true;
 		}
+		case MENU_ITEM_SHARE: {
+			select_item.sendMail(this);
+			return true;
+		}		
 		}
 		return false;
 	}

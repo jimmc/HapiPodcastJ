@@ -89,4 +89,9 @@
         <item>Sort by Status</item>
         <item>Sort by Date</item>
     </string-array>    
+	
+    <string-array name="backup_select">
+        <item>Import from OPML</item>
+        <item>Export to OPML</item>
+    </string-array>   	
 </resources>

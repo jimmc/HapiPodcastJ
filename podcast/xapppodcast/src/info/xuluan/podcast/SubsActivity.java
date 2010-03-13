@@ -36,6 +36,9 @@ public class SubsActivity extends PodcastBaseActivity {
 
 	
 	private final int MENU_ITEM_DELETE = Menu.FIRST + 10;
+	private final int MENU_ITEM_AUTO = Menu.FIRST + 11;
+	
+	
 
 	private ProgressDialog progress = null;
 
@@ -95,14 +98,29 @@ public class SubsActivity extends PodcastBaseActivity {
 			// For some reason the requested item isn't available, do nothing
 			return;
 		}
+		
+		Subscription subs = Subscription.getSubbyId(getContentResolver(), 
+				cursor.getInt(0));
+		if (subs == null)
+			return;		
 
 		// Setup the menu header
 		menu.setHeaderTitle(cursor.getString(COLUMN_INDEX_TITLE));
 
 		// Add a menu item to delete the note
 		menu.add(0, MENU_ITEM_DELETE, 0, R.string.menu_delete);
+		String auto;
+		if(subs.auto_download==0){
+			auto = getResources().getString(R.string.menu_auto_download);
+		}else{
+			auto = getResources().getString(R.string.menu_manual_download);
+		}       
+		menu.add(0, MENU_ITEM_AUTO, 0, auto);
+		
 
 	}
+	
+
 
 	@Override
 	public boolean onContextItemSelected(MenuItem item) {
@@ -113,19 +131,39 @@ public class SubsActivity extends PodcastBaseActivity {
 			log.error("bad menuInfo", e);
 			return false;
 		}
-
+		
+		final long sub_id = info.id;
+			
 		switch (item.getItemId()) {
 		case MENU_ITEM_DELETE: {
 
-			// TODO are you sure?
-
+			new AlertDialog.Builder(this)
+            .setTitle(R.string.unsubscribe_channel)
+            .setPositiveButton(R.string.menu_ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+            		Subscription subs = Subscription.getSubbyId(getContentResolver(),
+            				sub_id);
+            		if (subs != null)
+            			subs.delete(getContentResolver());
+						
+        			dialog.dismiss();
+                }
+            })
+            .setNegativeButton(R.string.menu_cancel, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                }
+            })
+            .show();
+			return true;
+		}
+		case MENU_ITEM_AUTO: {
 			Subscription subs = Subscription.getSubbyId(getContentResolver(),
-					info.id);
+					sub_id);
 			if (subs == null)
-				return true;
-
-			subs.delete(getContentResolver());
-
+				return true;			
+			subs.auto_download = 1 - subs.auto_download;
+			subs.update(getContentResolver());	
+			return true;
 		}
 		}
 

@@ -356,4 +356,27 @@ public class FeedItem {
 		}		
 	
 	}
+	
+	private String getMailBody(){
+		
+		String text;
+		text = "audio title: "+title+" \n";
+		text +="download address: "+resource;
+		
+		text +="\n-------------------------------------------------------------\n";
+		text +="from Hapi Podcast http://market.android.com/search?q=pname:info.xuluan.podcast";
+		
+		return text;
+		
+	}
+
+	public void sendMail(Activity act){
+	
+		final Intent emailIntent = new Intent(android.content.Intent.ACTION_SEND); 
+		emailIntent .setType("plain/text"); 
+		//emailIntent .putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{"xuluan.android@gmail.com"}); 
+		emailIntent .putExtra(android.content.Intent.EXTRA_SUBJECT, "please listen..."); 
+		emailIntent .putExtra(android.content.Intent.EXTRA_TEXT, getMailBody()); 
+		act.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+	}
 }

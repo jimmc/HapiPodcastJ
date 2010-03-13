@@ -406,6 +406,7 @@ public class PodcastService extends Service {
 								item.uri = newUri.toString();
 
 							//item.created = Long.valueOf(System.currentTimeMillis());
+							item.offset = 0;
 
 						} else {
 							item.failcount++;

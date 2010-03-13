@@ -1,14 +1,19 @@
 package info.xuluan.podcast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.service.PodcastService;
 import info.xuluan.podcast.utils.Log;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
@@ -17,6 +22,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.text.Html;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -24,11 +30,12 @@ import android.widget.Toast;
 
 public class ReadActivity extends Activity {
 
+	private static final int MENU_SHARE = Menu.FIRST + 1;
+
 	static final int MENU_DOWNLOAD = Menu.FIRST + 2;
-	static final int MENU_PLAY = Menu.FIRST + 6;
-	static final int MENU_BACK = Menu.FIRST + 5;
-	static final int MENU_PREF = Menu.FIRST + 3;
+
 	String item_id;
+	FeedItem mItem;
 
 	private final Log log = Log.getLog(getClass());
 	//private String url = null;
@@ -48,6 +55,13 @@ public class ReadActivity extends Activity {
 		}
 	};
 
+	private String getTimeString(long time){
+		SimpleDateFormat formatter = new SimpleDateFormat(
+				"yyyy-MM-dd HH:mm");
+		Date date = new Date(time);
+		return  formatter.format(date);
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -62,20 +76,33 @@ public class ReadActivity extends Activity {
 			// show404();
 			return;
 		}
+		
+		mItem = FeedItem.getByCursor(cursor);
+		if(mItem==null){
+			finish();
+			return;
+		}
 		item_id = cursor.getString(cursor.getColumnIndex(ItemColumns._ID));
 
 		String title = cursor.getString(cursor
 				.getColumnIndex(ItemColumns.TITLE));
+
 		String content = cursor.getString(cursor
 				.getColumnIndex(ItemColumns.CONTENT));
+		Long time = cursor.getLong(cursor
+				.getColumnIndex(ItemColumns.CREATED));		
 		cursor.close();
 
 		// set title:
 		setTitle(title);
 
 		TextView contentView = (TextView) findViewById(R.id.content);
+		
 		contentView.setText(Html.fromHtml(content));
 
+		TextView timeView = (TextView) findViewById(R.id.time_view);
+		timeView.setText("at "+getTimeString(time));
+		
 		service = startService(new Intent(this, PodcastService.class));
 
 		// bind service:
@@ -133,7 +160,28 @@ public class ReadActivity extends Activity {
 			play_btn.setEnabled(false);
 		}		
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, MENU_SHARE, 0,
+				getResources().getString(R.string.menu_share)).setIcon(
+				android.R.drawable.ic_menu_share);
+		return true;
+	}
 
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+
+		case MENU_SHARE:
+			mItem.sendMail(this);
+			return true;			
+
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();

@@ -1,14 +1,25 @@
 package info.xuluan.podcast.provider;
 
+import info.xuluan.podcast.R;
+import info.xuluan.podcast.SearchChannel;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
+import android.widget.Toast;
 
 public class Subscription {
+	
+	public final static int ADD_SUCCESS = 0;
+	public final static int ADD_FAIL_DUP = -1;
+	public final static int ADD_FAIL_UNSUCCESS = -2;
+	
+	
 	public long id;
 	public String title;
+	public String link;
+	public String comment;
 
 	public String url;
 	public String description;
@@ -42,8 +53,8 @@ public class Subscription {
 	}
 
 	public static Subscription getByCursor(Cursor cursor) {
-		if (cursor.moveToFirst() == false)
-			return null;
+		//if (cursor.moveToFirst() == false)
+		//	return null;
 		Subscription sub = new Subscription();
 		fetchFromCursor(sub, cursor);
 		return sub;
@@ -85,6 +96,30 @@ public class Subscription {
 		lastItemUpdated = -1;
 		auto_download = -1;
 	}
+	
+	public int add(ContentResolver context){
+		Subscription sub = Subscription.getByUrl(
+				context, url);
+		if (sub != null) {
+			return ADD_FAIL_DUP;
+		}
+
+
+
+		ContentValues cv = new ContentValues();
+		cv.put(SubscriptionColumns.TITLE, url);
+		cv.put(SubscriptionColumns.URL, url);
+		cv.put(SubscriptionColumns.LINK, link);
+		cv.put(SubscriptionColumns.LAST_UPDATED, 0L);
+		cv.put(SubscriptionColumns.COMMENT, comment);
+		Uri uri = context.insert(SubscriptionColumns.URI, cv);
+		if (uri == null) {
+			return ADD_FAIL_UNSUCCESS;
+		}
+		
+		return ADD_SUCCESS;
+			
+	}
 
 	public void delete(ContentResolver context) {
 		Uri uri = ContentUris.withAppendedId(SubscriptionColumns.URI, id);
@@ -122,13 +157,15 @@ public class Subscription {
 	}
 
 	private static void fetchFromCursor(Subscription sub, Cursor cursor) {
-		assert cursor.moveToFirst();
-		cursor.moveToFirst();
+		//assert cursor.moveToFirst();
+		//cursor.moveToFirst();
 		sub.id = cursor.getLong(cursor.getColumnIndex(SubscriptionColumns._ID));
 		sub.lastUpdated = cursor.getLong(cursor
 				.getColumnIndex(SubscriptionColumns.LAST_ITEM_UPDATED));
 		sub.title = cursor.getString(cursor
 				.getColumnIndex(SubscriptionColumns.TITLE));
+		sub.url = cursor.getString(cursor
+				.getColumnIndex(SubscriptionColumns.URL));		
 		sub.fail_count = cursor.getLong(cursor
 				.getColumnIndex(SubscriptionColumns.FAIL_COUNT));
 		sub.lastItemUpdated = cursor.getLong(cursor

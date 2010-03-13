@@ -192,6 +192,13 @@ public class SubscriptionColumns implements BaseColumns {
 		if (values.containsKey(FAIL_COUNT) == false) {
 			values.put(FAIL_COUNT, 0);
 		}
+		
+		if (values.containsKey(AUTO_DOWNLOAD) == false) {
+			values.put(AUTO_DOWNLOAD, 0);
+		}		
+		if (values.containsKey(PLAYLIST_ID) == false) {
+			values.put(PLAYLIST_ID, -1);
+		}			
 		return values;
 	}
 }

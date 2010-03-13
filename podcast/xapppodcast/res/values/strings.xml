@@ -7,6 +7,8 @@
     <string name="title_subs">Manage Channel</string>
     <string name="title_pref">Settings</string>
 	<string name="title_search_channel">Search Channel</string>	
+	<string name="title_backup">Backup Channels</string>	
+	
 
     <string name="menu_delete">Delete</string>
     <string name="menu_play">Play</string>
@@ -24,6 +26,10 @@
     <string name="menu_display">Display</string>
     <string name="menu_sort">Sort Mode</string>
 	
+	<string name="menu_share">Share</string>	
+	<string name="menu_auto_download">Auto Download</string>	
+	<string name="menu_manual_download">Manual Download</string>	
+
     <string name="subscribe">Subscribe</string>	
     <string name="unsubscribe">Unsubscribe</string>	
 	
@@ -40,7 +46,7 @@
 
 	
     <string name="download_hint">Put it into the downloading queue.</string>	
-    <string name="unsubscribe_channel">Do you want to unsubscribe it? This channel will be deleted.</string>	
+    <string name="unsubscribe_channel">Do you want to unsubscribe the channel?</string>	
 	
 	
     <string name="pref_only_wifi_description">Download file only when Wi-Fi connected</string>	

@@ -61,13 +61,6 @@ public class ChannelActivity extends PodcastBaseActivity {
 		mIconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.music);		
 
 	}
-
-	private String getTimeString(long time){
-		SimpleDateFormat formatter = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm");
-		Date date = new Date(time);
-		return  formatter.format(date);
-	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -125,9 +118,9 @@ public class ChannelActivity extends PodcastBaseActivity {
         MenuItem item = menu.findItem(MENU_AUTO_DOWNLOAD);
 		String auto;
 		if(mChannel.auto_download==0){
-			auto = "Auto Download";
+			auto = getResources().getString(R.string.menu_auto_download);
 		}else{
-			auto = "Manual Download";
+			auto = getResources().getString(R.string.menu_manual_download);
 		}        
         item.setTitle(auto);
         return true;
@@ -154,7 +147,7 @@ public class ChannelActivity extends PodcastBaseActivity {
                 .show();
 			return true;
 		case MENU_AUTO_DOWNLOAD:
-			mChannel.auto_download= 1-mChannel.auto_download;
+			mChannel.auto_download = 1-mChannel.auto_download;
 			mChannel.update(getContentResolver());	
 			return true;			
 

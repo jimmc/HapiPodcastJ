@@ -262,37 +262,30 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 				Html.fromHtml(content)).setPositiveButton(R.string.subscribe,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-
-						Subscription sub = Subscription.getByUrl(
-								getContentResolver(), item.url);
-						if (sub != null) {
-							Toast.makeText(SearchChannel.this,
-									getResources().getString(R.string.already_subscribed),
-									Toast.LENGTH_SHORT).show();
-							return;
-						}
-
+						Subscription sub = new Subscription();
+						sub.url = item.url;
+						sub.link = item.link;
+						
 						String tags = SearchChannel.this.mEditText.getText().toString();
 						String content = "<tag>" + tags + "</tag>";
 						content += "<content>" + item.content + "</content>";
-
-						ContentValues cv = new ContentValues();
-						cv.put(SubscriptionColumns.TITLE, item.url);
-						cv.put(SubscriptionColumns.URL, item.url);
-						cv.put(SubscriptionColumns.LINK, item.link);
-						cv.put(SubscriptionColumns.LAST_UPDATED, 0L);
-						cv.put(SubscriptionColumns.COMMENT, content);
-						Uri uri = getContentResolver()
-								.insert(SubscriptionColumns.URI, cv);
 						
-						if (uri == null) {
+						sub.comment = content;
+						
+						int rc = sub.add(getContentResolver());
+						
+						if(rc == Subscription.ADD_FAIL_DUP){
 							Toast.makeText(SearchChannel.this,
-									getResources().getString(R.string.fail),
-									Toast.LENGTH_SHORT).show();									
-						}else{
+									getResources().getString(R.string.already_subscribed),
+									Toast.LENGTH_SHORT).show();														
+						}else if(rc == Subscription.ADD_SUCCESS){
 							Toast.makeText(SearchChannel.this,
 									getResources().getString(R.string.success),
-									Toast.LENGTH_SHORT).show();							
+									Toast.LENGTH_SHORT).show();								
+						}else {
+							Toast.makeText(SearchChannel.this,
+									getResources().getString(R.string.fail),
+									Toast.LENGTH_SHORT).show();	
 						}
 
 						mServiceBinder.start_update();
