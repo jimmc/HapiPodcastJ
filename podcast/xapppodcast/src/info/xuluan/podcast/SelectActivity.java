@@ -24,7 +24,6 @@ import info.xuluan.podcast.utils.Log;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -162,9 +161,15 @@ public class SelectActivity extends ListActivity{
     	
         File directory = new File(getAppDir());
         final File[] filesArray = directory.listFiles(new MyFileFilter());
+        
+        if(filesArray == null){
+	    		Toast.makeText(SelectActivity.this, " No OPML file found!\n  " 
+ 	    				, Toast.LENGTH_LONG).show();	
+	    		return;
+        }
   
         
-        if (filesArray != null & filesArray.length>0) {
+        if ( filesArray.length>0) {
         	String[] arr = new String[filesArray.length];
 
             for (int i = 0; i < filesArray.length; i++) {
@@ -282,13 +287,12 @@ public class SelectActivity extends ListActivity{
             try {
                 File writeFile = new File(getAppDir(), OPML_FILE);
                 fileOutputStream = new FileOutputStream(writeFile);
-            	log.debug("write file");
 
                 fileOutputStream.write(xml.getBytes());
                 
         		
         		new AlertDialog.Builder(this)
-                .setTitle("Export Success")
+                .setTitle("Success")
                 .setMessage("Export to : "+ getAppDir() + "/" + OPML_FILE)
                 .setPositiveButton(R.string.menu_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {

@@ -1,28 +1,29 @@
 TODO
 --------------------------------
-
-
-8 mail to me
-
-3 download pause
+1 download pause
   hint download status (no card, no wifi,...) 
   fetcher "user agent"
-   
-5 loging to web
 
+2 mail to me
+
+3 service start when power on
+android.intent.action.BOOT_COMPLETED  
+
+  
+4 help (liensce, EMLU)
+5 loging to web
 6 player   
+
 --------------------------------
 RELEASE ITEM
 - debug level
 - test
 -----------------------------
 NEXT PHASE
-4 help (liensce, EMLU)
 
 9 clear: download file (fail, no delete etc)
   if download == false, download status update
-10 service start when power on
-android.intent.action.BOOT_COMPLETED
+
 ---------------------------------------------
 11 change search engine
   add channel: fail reason
@@ -98,7 +99,7 @@ PHASE 1 release, version 12
 
 --------------
 DONE
-- 20090313
+- 20090315  (TAG 19)
 
 undiscribe text
 backup  
