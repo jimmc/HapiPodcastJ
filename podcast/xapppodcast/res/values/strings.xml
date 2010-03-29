@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Hapi Podcast</string>
-	<string name="title_play_list">Play List</string>
+	<string name="title_play_list">Audio List</string>
+	<string name="title_player">Player</string>	
 	<string name="title_download_list">Downloading List</string>
 	<string name="title_read_list">All Items</string>
     <string name="title_subs">Manage Channel</string>
@@ -11,6 +12,10 @@
 	
 
     <string name="menu_delete">Delete</string>
+    <string name="menu_remove">Remove</string>
+    <string name="menu_move_up">Move Up</string>
+    <string name="menu_move_down">Move Down</string>
+	
     <string name="menu_play">Play</string>
     <string name="menu_view">View</string>
     <string name="menu_keep">Keep</string>
@@ -25,6 +30,11 @@
     <string name="menu_add">Add</string>
     <string name="menu_display">Display</string>
     <string name="menu_sort">Sort Mode</string>
+    <string name="menu_repeat">Repeat Mode</string>
+
+	<string name="menu_load_all">Load All</string>	
+	<string name="menu_load_by_channel">Load by Channel</string>	
+	<string name="menu_remove_all">Remove All</string>		
 	
 	<string name="menu_share">Share</string>	
 	<string name="menu_auto_download">Auto Download</string>	
@@ -42,6 +52,8 @@
     <string name="on">On</string>	
     <string name="off">Off</string>	
 	<string name="sdcard_unmout">SDCard no found.</string>	
+	<string name="audio_no_found">Audio File cannot found.</string>	
+	
 	<string name="no_connect">Network no found.</string>	
 
 	

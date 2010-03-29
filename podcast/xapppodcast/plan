@@ -1,19 +1,28 @@
 TODO
 --------------------------------
-1 download pause
+
+
+
+
+---------------------------------
+1 service start when power on
+android.intent.action.BOOT_COMPLETED  
+
+2 channel status icon
+
+
+3 download pause
   hint download status (no card, no wifi,...) 
   fetcher "user agent"
 
-2 mail to me
-
-3 service start when power on
-android.intent.action.BOOT_COMPLETED  
-
+4 mail to me
   
-4 help (liensce, EMLU)
-5 loging to web
-6 player   
-
+5 help (liensce, EMLU)
+6 loging to web
+7 player
+- random/seq/only one
+- a/b loop
+- refactor
 --------------------------------
 RELEASE ITEM
 - debug level
@@ -25,7 +34,7 @@ NEXT PHASE
   if download == false, download status update
 
 ---------------------------------------------
-11 change search engine
+11 change search engine(feedzie,doubletwist)
   add channel: fail reason
 setImeOptions(EditorInfo.IME_ACTION_SEARCH); 
   
@@ -99,6 +108,22 @@ PHASE 1 release, version 12
 
 --------------
 DONE
+
+- 20090328  (TAG 20)
+ up/down
+
+- 20090328 
+
+8 repeat mode choose: repeat/repeat one/no repeat
+6 next/prev
+
+5 load all/load by channel/ remove all/repeat mode
+7  play/view/remove
+
+9 on create cannot start play
+10 play check file exist or sd mount
+
+
 - 20090315  (TAG 19)
 
 undiscribe text

@@ -18,6 +18,7 @@ import info.xuluan.podcast.parser.FeedParser;
 import info.xuluan.podcast.parser.OPMLParserHandler;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
+import info.xuluan.podcast.service.PlayerService;
 import info.xuluan.podcast.service.PodcastService;
 import info.xuluan.podcast.utils.Log;
 
@@ -59,6 +60,7 @@ public class SelectActivity extends ListActivity{
         
 		setContentView(R.layout.select);
 		startService(new Intent(this, PodcastService.class));
+		startService(new Intent(this, PlayerService.class));
 
         setListAdapter(new SimpleAdapter(this, getData(),
         		R.layout.select_item, new String[] { "title" ,"icon"},
@@ -82,6 +84,8 @@ public class SelectActivity extends ListActivity{
 	    
 	    addItem(myData, getResources().getString(R.string.title_play_list), R.drawable.playlist_big_pic , 
 	    		new Intent(this, PlayListActivity.class),"");	    
+	    addItem(myData, getResources().getString(R.string.title_player), R.drawable.player3_big_pic , 
+	    		new Intent(this, AudioPlayer.class),"");		    
 
 	    addItem(myData, getResources().getString(R.string.title_backup), R.drawable.backup_big_pic , 
 	    		null,"backup");	

@@ -388,24 +388,8 @@ public class PodcastService extends Service {
 								+ item.offset);
 
 						if (item.status == ItemColumns.ITEM_STATUS_NO_PLAY) {
-
-							ContentValues values = new ContentValues(3);
-
-							values
-									.put(MediaStore.Audio.Media.TITLE,
-											item.title);
-							values.put(MediaStore.Audio.Media.MIME_TYPE, item
-									.getType());
-							values.put(MediaStore.Audio.Media.DATA,
-									item.pathname);
-
-							Uri base = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
-							Uri newUri = getContentResolver().insert(base,
-									values);
-							if (newUri != null)
-								item.uri = newUri.toString();
-
-							//item.created = Long.valueOf(System.currentTimeMillis());
+							item.update = Long.valueOf(System.currentTimeMillis());
+							item.failcount = 0;
 							item.offset = 0;
 
 						} else {
@@ -432,28 +416,26 @@ public class PodcastService extends Service {
 			}
 
 		}.start();
-
 	}
+
+
 	private void deleteExpireFile(Cursor cursor) {
+		
 		if(cursor==null)
 			return;
 		
 		if (cursor.moveToFirst()) {
 			do{
-
 				FeedItem item = FeedItem.getByCursor(cursor);
-
 				if(item!=null){
 					item.delFile(getContentResolver());
 				}
-
 			}while (cursor.moveToNext());
-
 		}
-		
 		cursor.close();
 		
 	}
+
 	private void removeExpires() {
 		long expiredTime = System.currentTimeMillis() - pref_item_expire;
 		try {
@@ -750,9 +732,9 @@ public class PodcastService extends Service {
 		return binder;
 	}
 
-	private final IBinder binder = new ReadingBinder();
+	private final IBinder binder = new PodcastBinder();
 
-	public class ReadingBinder extends Binder {
+	public class PodcastBinder extends Binder {
 		public PodcastService getService() {
 			return PodcastService.this;
 		}

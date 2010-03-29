@@ -108,7 +108,7 @@ public class SubsActivity extends PodcastBaseActivity {
 		menu.setHeaderTitle(cursor.getString(COLUMN_INDEX_TITLE));
 
 		// Add a menu item to delete the note
-		menu.add(0, MENU_ITEM_DELETE, 0, R.string.menu_delete);
+		menu.add(0, MENU_ITEM_DELETE, 0, R.string.unsubscribe);
 		String auto;
 		if(subs.auto_download==0){
 			auto = getResources().getString(R.string.menu_auto_download);

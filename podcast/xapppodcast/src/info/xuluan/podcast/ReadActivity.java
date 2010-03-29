@@ -46,7 +46,7 @@ public class ReadActivity extends Activity {
 
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			serviceBinder = ((PodcastService.ReadingBinder) service)
+			serviceBinder = ((PodcastService.PodcastBinder) service)
 					.getService();
 		}
 
@@ -118,9 +118,11 @@ public class ReadActivity extends Activity {
 			public void onClick(View v) {
 				FeedItem item = FeedItem.getById(getContentResolver(), Integer
 						.parseInt(item_id));
+
 				if(item==null)
-					return;				
+					return;
 				item.play(ReadActivity.this);
+
 
 			}
 		});

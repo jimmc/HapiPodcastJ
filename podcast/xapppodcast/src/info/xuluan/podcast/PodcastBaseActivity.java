@@ -69,7 +69,7 @@ public class PodcastBaseActivity extends ListActivity {
 
 	protected static ServiceConnection serviceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			mServiceBinder = ((PodcastService.ReadingBinder) service)
+			mServiceBinder = ((PodcastService.PodcastBinder) service)
 					.getService();
 			//log.debug("onServiceConnected");
 		}

@@ -32,7 +32,7 @@ public class Pref extends PreferenceActivity {
 
 	private ServiceConnection serviceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
-			serviceBinder = ((PodcastService.ReadingBinder) service)
+			serviceBinder = ((PodcastService.PodcastBinder) service)
 					.getService();
 		}
 

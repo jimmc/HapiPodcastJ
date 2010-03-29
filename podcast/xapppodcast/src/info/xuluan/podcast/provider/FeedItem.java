@@ -1,5 +1,7 @@
 package info.xuluan.podcast.provider;
 
+import info.xuluan.podcast.AudioPlayer;
+import info.xuluan.podcast.ReadActivity;
 import info.xuluan.podcast.utils.Log;
 
 import java.io.File;
@@ -34,7 +36,7 @@ public class FeedItem {
 	public String pathname;
 	public int offset;
 	public int status;
-	public int failcount;
+	public long failcount;
 
 	public long length;
 
@@ -117,6 +119,43 @@ public class FeedItem {
 		m_date = -1;
 
 	}
+	
+	public void updateOffset(ContentResolver context, long i)
+	{
+		offset = (int)i;
+		update = -1;
+		update(context);
+		
+	}
+	
+	public void played(ContentResolver context)
+	{
+		offset = 0;
+		if(status == ItemColumns.ITEM_STATUS_NO_PLAY) {
+			status = ItemColumns.ITEM_STATUS_PLAYED;
+			update = Long.valueOf(System.currentTimeMillis());
+		}else{
+			update = -1;
+		}
+		update(context);
+		
+	}
+	
+	public void addtoPlaylistByOrder(ContentResolver context, long order)
+	{
+		failcount = order;
+		update = -1;
+		update(context);
+		
+	}
+	
+	public void addtoPlaylist(ContentResolver context)
+	{
+		failcount = Long.valueOf(System.currentTimeMillis());
+		update = -1;
+		update(context);
+		
+	}		
 
 	public void update(ContentResolver context) {
 		log.debug("item update start");
@@ -131,9 +170,11 @@ public class FeedItem {
 				cv.put(ItemColumns.STATUS, status);
 			if (failcount >= 0)
 				cv.put(ItemColumns.FAIL_COUNT, failcount);
-
-			update = Long.valueOf(System.currentTimeMillis());
-			cv.put(ItemColumns.LAST_UPDATE, update);
+			
+			if(update >= 0){
+				update = Long.valueOf(System.currentTimeMillis());
+				cv.put(ItemColumns.LAST_UPDATE, update);
+			}
 			if (created >= 0)
 				cv.put(ItemColumns.CREATED, created);
 			if (length >= 0)
@@ -251,7 +292,7 @@ public class FeedItem {
 				.getColumnIndex(ItemColumns.PATHNAME));
 		item.offset = cursor.getInt(cursor.getColumnIndex(ItemColumns.OFFSET));
 		item.status = cursor.getInt(cursor.getColumnIndex(ItemColumns.STATUS));
-		item.failcount = cursor.getInt(cursor
+		item.failcount = cursor.getLong(cursor
 				.getColumnIndex(ItemColumns.FAIL_COUNT));
 
 		item.length = cursor.getLong(cursor.getColumnIndex(ItemColumns.LENGTH));
@@ -270,6 +311,8 @@ public class FeedItem {
 
 		item.created = cursor.getLong(cursor
 				.getColumnIndex(ItemColumns.CREATED));
+		item.update = cursor.getLong(cursor
+				.getColumnIndex(ItemColumns.LAST_UPDATE));		
 		item.sub_title = cursor.getString(cursor
 				.getColumnIndex(ItemColumns.SUB_TITLE));
 		item.type = cursor.getString(cursor.getColumnIndex(ItemColumns.TYPE));
@@ -293,7 +336,14 @@ public class FeedItem {
 	}
 	
 	public void play(Activity act){
-
+		
+		//item.play(ReadActivity.this);
+		Intent intent = new Intent(act, AudioPlayer.class);
+		intent.putExtra("item_id", id);
+		act.startActivity(intent);
+		
+		return;
+/*
 		if (status <= ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW) 
 			return;
 		if (status == ItemColumns.ITEM_STATUS_NO_PLAY) {
@@ -326,7 +376,7 @@ public class FeedItem {
 				}
 
 			}
-	
+*/		
 	}
 	
 	public void delFile(ContentResolver context){
@@ -354,7 +404,7 @@ public class FeedItem {
 
 			}
 		}		
-	
+
 	}
 	
 	private String getMailBody(){
