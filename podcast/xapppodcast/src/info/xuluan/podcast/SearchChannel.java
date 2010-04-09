@@ -22,6 +22,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentValues;
@@ -36,6 +39,7 @@ import android.text.Html;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -58,9 +62,8 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 	EditText mEditText;
 	String mHttpContent = "";
 	private ArrayAdapter<String> mAdapter;
-
-	private SearchParserHandler mHandler = null;
-
+	private int mStart = 0;
+	public List<SearchItem> mItems = new ArrayList<SearchItem>();
 	private ArrayList<String> mStrings = new ArrayList<String>();
 
 	@Override
@@ -82,36 +85,13 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 		mNextIntent = new Intent(this, SubsActivity.class);
 		
 		startInit();
+		Button next = (Button) findViewById(R.id.ButtonNext);
 
-		ImageButton prev = (ImageButton) findViewById(R.id.ButtonPrev);
-		prev.setEnabled(false);
-		prev.setOnClickListener(new View.OnClickListener() {
-			public void onClick(View v) {
-				String str = "";
-				if (mHandler != null) {
-					int i = mHandler.startindex - 10;
-					if (i > 1) {
-						str = "&start=" + i;
-					}
-				}
-				String url = getUrl();
-				if (url != null) {
-					start_search(url+str);
-				}
-
-			}
-		});
-		ImageButton next = (ImageButton) findViewById(R.id.ButtonNext);
 		next.setEnabled(false);
 		next.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				String str = "";
-				if (mHandler != null) {
-					int i = mHandler.startindex + 10;
-					if (i < mHandler.foundcount) {
-						str = "&start=" + i;
-					}
-				}
+				String str = "&start=" + mStart;
+
 				String url = getUrl();
 				if (url != null) {
 					start_search(url+str);
@@ -127,9 +107,11 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 				m.hideSoftInputFromInputMethod(mEditText.getWindowToken(),
 						InputMethodManager.HIDE_NOT_ALWAYS);
 				
+				String str = "&start=" + mStart;
+
 				String url = getUrl();
 				if (url != null) {
-					start_search(url);
+					start_search(url+str);
 				}
 			}
 		});
@@ -137,8 +119,8 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 	}
 
 	public String getUrl() {
-		String prefix = "http://www.digitalpodcast.com/podcastsearchservice/v2b/search/?appid=kaka_podcast&keywords=";
-		String suffix = "&format=rssopml";
+		String prefix = "http://lfe-alpo-gm.appspot.com/search?q=";
+		String suffix = "";
 		String str = SearchChannel.this.mEditText.getText().toString();
 
 		Pattern pattern = Pattern.compile("^\\s+");
@@ -161,11 +143,39 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 
 		return null;
 	}
+	
+	public List<SearchItem> parseResult(String content) {
+		 List<SearchItem> items = new ArrayList<SearchItem>();
 
-	public SearchParserHandler fetchFeed(String url) {
+		try {
+			JSONObject obj_match = new JSONObject(content);
+			JSONArray arr = obj_match.getJSONArray("items");
+
+			if (arr.length() == 0) {
+
+			}
+			
+			for (int i = 0; i < arr.length(); i++) {
+				SearchItem item = new SearchItem();
+				JSONObject obj = new JSONObject(arr.get(i).toString());
+				item.url = obj.get("feed_url").toString();
+				item.link = obj.get("feed_url").toString();
+				item.title = obj.get("feed_title").toString();
+				item.content = obj.get("summary").toString();
+				items.add(item);
+				
+			}
+
+		} catch (Exception e) {
+
+		}
+		
+		return items;
+	}
+	public String fetchFeed(String url) {
 		log.debug("fetchFeed start");
 
-		FeedFetcher fetcher = new FeedFetcher();
+		FeedFetcher fetcher = new FeedFetcher("Google-Listen/1.1.2 (droid)");
 		SearchParserHandler handler = new SearchParserHandler();
 
 		try {
@@ -177,20 +187,7 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 			byte[] content;
 			if (response != null) {
 				log.debug("response != null");
-
-				content = response.content;
-				log.debug("content len: " + content.length);
-				for (int i = 0; i < content.length; i++) {
-					if (content[i] < 0x20) {
-						// log.debug("pos = "+ i+ " value= " +content[i]);
-						content[i] = 0x2e;
-					}
-				}
-
-				FeedParser.getDefault().parse(
-						new ByteArrayInputStream(content), handler);
-				// new StringBufferInputStream(response.getContentAsString()),
-
+				return response.getContentAsString();
 			} else {
 				log.debug("response == null");
 			}
@@ -201,7 +198,7 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 
 		}
 
-		return handler;
+		return null;
 
 	}
 
@@ -209,11 +206,11 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 		SearchChannel.this.progress = ProgressDialog.show(SearchChannel.this,
 				getResources().getText(R.string.dialog_title_loading),
 				getResources().getText(R.string.dialog_message_loading), true);
-		AsyncTask<String, ProgressDialog, SearchParserHandler> asyncTask = new AsyncTask<String, ProgressDialog, SearchParserHandler>() {
+		AsyncTask<String, ProgressDialog, String> asyncTask = new AsyncTask<String, ProgressDialog, String>() {
 			String url;
 
 			@Override
-			protected SearchParserHandler doInBackground(String... params) {
+			protected String doInBackground(String... params) {
 
 				url = params[0];
 				// log.debug("doInBackground URL ="+url);
@@ -222,30 +219,32 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 			}
 
 			@Override
-			protected void onPostExecute(SearchParserHandler result) {
+			protected void onPostExecute(String result) {
 
 				if (SearchChannel.this.progress != null) {
 					SearchChannel.this.progress.dismiss();
 					SearchChannel.this.progress = null;
 				}
-				mAdapter.clear();
 
-				if (result.startindex == -1) {
+				if (result == null) {
 					Toast.makeText(SearchChannel.this, getResources().getString(R.string.network_fail),
 							Toast.LENGTH_SHORT).show();
-				} else if (result.foundcount == 0) {
-					Toast.makeText(SearchChannel.this, getResources().getString(R.string.no_data_found),
-							Toast.LENGTH_SHORT).show();
+				} else {
+					List<SearchItem> items = parseResult(result);
+					if(items.size()==0) {
+						Toast.makeText(SearchChannel.this, getResources().getString(R.string.no_data_found),
+								Toast.LENGTH_SHORT).show();					
+					}else{
+						mStart += items.size();
+						for (int i = 0; i < items.size(); i++) {
+							mItems.add(items.get(i));
+							mAdapter.add(items.get(i).title);
+
+						}					
+					}
 				}
-				List<SearchItem> items = result.items;
-				SearchChannel.this.mHandler = result;
+				
 				updateBtn();
-
-				for (int i = 0; i < items.size(); i++) {
-					mAdapter.add(items.get(i).title);
-
-				}
-
 			}
 		};
 		asyncTask.execute(zie_url);
@@ -253,8 +252,7 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		List<SearchItem> items = mHandler.items;
-		final SearchItem item = items.get(position);
+		final SearchItem item = mItems.get(position);
 
 		String content = item.content;
 		AlertDialog d = new AlertDialog.Builder(this).setIcon(
@@ -304,40 +302,21 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 	}
 
 	public void updateBtn() {
-		ImageButton prev = (ImageButton) findViewById(R.id.ButtonPrev);
-		ImageButton next = (ImageButton) findViewById(R.id.ButtonNext);
-
-		if (mHandler == null) {
-			prev.setEnabled(false);
+		Button next = (Button) findViewById(R.id.ButtonNext);
+		if(mStart==0){
 			next.setEnabled(false);
-			next.setImageResource(R.drawable.nextdis);
-			prev.setImageResource(R.drawable.prevdis);
-
-			return;
-		}
-
-		if ((mHandler.startindex - 10) < 0) {
-			prev.setEnabled(false);
-			prev.setImageResource(R.drawable.prevdis);
-
+			
 		} else {
-			prev.setEnabled(true);
-			prev.setImageResource(R.drawable.prev);
-
-		}
-		if ((mHandler.startindex + 10) < mHandler.foundcount) {
 			next.setEnabled(true);
-			next.setImageResource(R.drawable.next);
-		} else {
-			next.setEnabled(false);
-			next.setImageResource(R.drawable.nextdis);
+			
 		}
-
 	}
 
 	@Override
 	public void afterTextChanged(Editable arg0) {
-		mHandler = null;
+		mStart = 0;
+		mItems.clear();
+		mAdapter.clear();
 		updateBtn();
 	}
 

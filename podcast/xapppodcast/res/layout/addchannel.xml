@@ -55,21 +55,16 @@
 		android:orientation="horizontal">
 		
 		
-	<ImageButton android:id="@+id/ButtonPrev"
-		android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
-		android:gravity="left" 	
-        android:layout_weight="1"	
-		android:src="@drawable/prevdis"		 />
+
 		
-	<ImageButton android:id="@+id/ButtonNext"
+	<Button android:id="@+id/ButtonNext"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-			android:gravity="right" 	
-        android:layout_weight="1"	
-		android:src="@drawable/nextdis"		
-		/>
+		android:gravity="center" 	
+        android:layout_weight="1"
+		android:text="@string/more_channel"			 
 		
+		/>		
 	</LinearLayout>
 
         

@@ -18,8 +18,18 @@ public class FeedFetcher {
 	private int maxSize = 100 * 1024;
 	private static final int TIMEOUT = 20 * 1000;
 	private boolean canceled = false;
+	private String mAgent;
 	protected final Log log = Log.getLog(getClass());
 
+	public FeedFetcher() {
+		mAgent = "Mozilla/4.0 (compatible; Windows XP 5.1; MSIE 6.0.2900.2180)";
+	}
+	
+	public FeedFetcher(String agent) {
+		mAgent = agent;
+	}
+	
+	
 	public void setProxy(String host, int port) {
 		Properties props = System.getProperties();
 		props.put("proxySet", "true");
@@ -70,7 +80,7 @@ public class FeedFetcher {
 			hc.addRequestProperty("Accept", "*/*");
 			hc
 					.addRequestProperty("User-Agent",
-							"Mozilla/4.0 (compatible; Windows XP 5.1; MSIE 6.0.2900.2180)");
+							mAgent);
 			hc.addRequestProperty("Accept-Encoding", "gzip");
 			hc.setReadTimeout(TIMEOUT);
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Hapi Podcast</string>
-	<string name="title_play_list">Audio List</string>
+	<string name="title_play_list">Episode List</string>
 	<string name="title_player">Player</string>	
 	<string name="title_download_list">Downloading List</string>
 	<string name="title_read_list">All Items</string>
@@ -39,6 +39,7 @@
 	<string name="menu_share">Share</string>	
 	<string name="menu_auto_download">Auto Download</string>	
 	<string name="menu_manual_download">Manual Download</string>	
+    <string name="more_channel">More Channels... </string>
 
     <string name="subscribe">Subscribe</string>	
     <string name="unsubscribe">Unsubscribe</string>	

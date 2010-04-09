@@ -20,9 +20,13 @@ android.intent.action.BOOT_COMPLETED
 5 help (liensce, EMLU)
 6 loging to web
 7 player
-- random/seq/only one
+- listen sd card, blue tooth
+- random
 - a/b loop
-- refactor
+- refactor (util)
+- update duration
+- media vol. adjust
+
 --------------------------------
 RELEASE ITEM
 - debug level
@@ -52,7 +56,6 @@ PHASE 3
 
 BUG
  magic bug:  play resource
- 
  add channel: no data in list view
  
 
@@ -100,6 +103,9 @@ clear: download file (fail, no delete etc)
 --------------------------------------------------------------
 
 RELEASE
+
+2010-03-30 PHASE 2 release, version 20?
+
 PHASE 1 release, version 12
 2010-02-26 beta release, version 11
 2010-02-25 beta release, version 10
@@ -108,7 +114,9 @@ PHASE 1 release, version 12
 
 --------------
 DONE
-
+- 20090410  (TAG 21)
+	change search engine to google listen
+	
 - 20090328  (TAG 20)
  up/down
 
