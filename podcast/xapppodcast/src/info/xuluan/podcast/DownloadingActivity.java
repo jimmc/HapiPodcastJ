@@ -3,24 +3,23 @@ package info.xuluan.podcast;
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.service.PodcastService;
+import info.xuluan.podcast.utils.DialogMenu;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.ViewGroup;
-
-import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SimpleCursorAdapter;
@@ -37,9 +36,12 @@ public class DownloadingActivity extends PodcastBaseActivity {
 
 	private static final int MENU_RESTART = Menu.FIRST + 1;
 
+	private static final int MENU_ITEM_VIEW = Menu.FIRST + 9;	
 	private static final int MENU_ITEM_REMOVE = Menu.FIRST + 10;
 	private static final int MENU_ITEM_PAUSE = Menu.FIRST + 11;
 	private static final int MENU_ITEM_RESUME = Menu.FIRST + 12;
+	
+	
 
 	private static final String[] PROJECTION = new String[] {
 			ItemColumns._ID, // 0
@@ -248,122 +250,134 @@ public class DownloadingActivity extends PodcastBaseActivity {
 				|| Intent.ACTION_GET_CONTENT.equals(action)) {
 			setResult(RESULT_OK, new Intent().setData(uri));
 		} else {
-			startActivity(new Intent(Intent.ACTION_EDIT, uri));
+			DialogMenu dialog_menu = createDialogMenus(id);
+			if( dialog_menu==null)
+				return;
+			
+			
+			 new AlertDialog.Builder(this)
+             .setTitle(dialog_menu.getHeader())
+             .setItems(dialog_menu.getItems(), new DLClickListener(dialog_menu,id)).show();		
+			
 		}
 	}
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View view,
-			ContextMenuInfo menuInfo) {
-		AdapterView.AdapterContextMenuInfo info;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-		} catch (ClassCastException e) {
-			log.error("bad menuInfo", e);
-			return;
-		}
+	public DialogMenu createDialogMenus(long id) {
 
-		Cursor cursor = (Cursor) getListAdapter().getItem(info.position);
-
-		if (cursor == null) {
-			// For some reason the requested item isn't available, do nothing
-			return;
-		}
-		FeedItem feed_item = FeedItem.getById(getContentResolver(), info.id);
+		FeedItem feed_item = FeedItem.getById(getContentResolver(), id);
 		if (feed_item == null) {
-			return;
+			return null;
 		}
-
-		// Setup the menu header
-		menu.setHeaderTitle(cursor.getString(COLUMN_INDEX_TITLE));
-
-		// Add a menu item to delete the note
-		menu.add(0, MENU_ITEM_REMOVE, 0, R.string.menu_cancel);
-
+		
+		DialogMenu dialog_menu = new DialogMenu();
+		
+		dialog_menu.setHeader(feed_item.title);
+		
 		if (feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE) {
-			menu.add(0, MENU_ITEM_PAUSE, 0, R.string.menu_pause);
-
+			dialog_menu.addMenu(MENU_ITEM_PAUSE, 
+					getResources().getString(R.string.menu_pause));			
 		} else if (feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE) {
-			menu.add(0, MENU_ITEM_RESUME, 0, R.string.menu_resume);
-		}
+			dialog_menu.addMenu(MENU_ITEM_RESUME, 
+					getResources().getString(R.string.menu_resume));							
+		}		
+		
+		dialog_menu.addMenu(MENU_ITEM_VIEW, 
+				getResources().getString(R.string.menu_view));
+	
+		dialog_menu.addMenu(MENU_ITEM_REMOVE, 
+				getResources().getString(R.string.menu_cancel));
 
+
+
+
+		return dialog_menu;
 	}
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		AdapterView.AdapterContextMenuInfo info;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-		} catch (ClassCastException e) {
-			log.error("bad menuInfo", e);
-			return false;
+	
+	class DLClickListener implements DialogInterface.OnClickListener {
+		
+		public DialogMenu mMenu;
+		public long item_id;
+		public DLClickListener(DialogMenu menu, long id)
+		{
+			mMenu = menu;
+			item_id = id;
 		}
 
-		switch (item.getItemId()) {
-		case MENU_ITEM_REMOVE: {
-			// TODO are you sure?
+		
+        public void onClick(DialogInterface dialog, int select) {
+        	
+    		switch (mMenu.getSelect(select)) {
+    		case MENU_ITEM_VIEW: {
+    			Uri uri = ContentUris.withAppendedId(ItemColumns.URI, item_id);
+    			startActivity(new Intent(Intent.ACTION_EDIT, uri));   
+    			return;
+    		}
+    		
+    		case MENU_ITEM_REMOVE: {
+    			// TODO are you sure?
 
-			FeedItem feed_item = FeedItem
-					.getById(getContentResolver(), info.id);
-			if (feed_item == null)
-				return true;
-			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE
-					&& feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE) {
-				Toast.makeText(this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
-				return true;
-			} else {
-				feed_item.status = ItemColumns.ITEM_STATUS_READ;
-				feed_item.update(getContentResolver());
-			}
+    			FeedItem feed_item = FeedItem
+    					.getById(getContentResolver(), item_id);
+    			if (feed_item == null)
+    				return;
+    			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE
+    					&& feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE) {
+    				Toast.makeText(DownloadingActivity.this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
+    				return;
+    			} else {
+    				feed_item.status = ItemColumns.ITEM_STATUS_READ;
+    				feed_item.update(getContentResolver());
+    			}
 
-			try {
-				File file = new File(feed_item.pathname);
+    			try {
+    				File file = new File(feed_item.pathname);
 
-				boolean deleted = file.delete();
+    				boolean deleted = file.delete();
 
-			} catch (Exception e) {
-				log.warn("del file failed : " + feed_item.pathname + "  " + e);
+    			} catch (Exception e) {
+    				log.warn("del file failed : " + feed_item.pathname + "  " + e);
 
-			}
+    			}
 
-			return true;
-		}
-		case MENU_ITEM_PAUSE: {
+    			return ;
+    		}
+    		case MENU_ITEM_PAUSE: {
 
-			FeedItem feed_item = FeedItem
-					.getById(getContentResolver(), info.id);
-			if (feed_item == null)
-				return true;
-			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE) {
-				Toast.makeText(this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
-				return true;
-			} else {
-				feed_item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE;
-				feed_item.update(getContentResolver());
-			}
+    			FeedItem feed_item = FeedItem
+    					.getById(getContentResolver(), item_id);
+    			if (feed_item == null)
+    				return;
+    			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE) {
+    				Toast.makeText(DownloadingActivity.this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
+    				return;
+    			} else {
+    				feed_item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE;
+    				feed_item.update(getContentResolver());
+    			}
 
-			return true;
-		}
-		case MENU_ITEM_RESUME: {
+    			return;
+    		}
+    		case MENU_ITEM_RESUME: {
 
-			FeedItem feed_item = FeedItem
-					.getById(getContentResolver(), info.id);
-			if (feed_item == null)
-				return true;
-			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE) {
-				Toast.makeText(this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
-				return true;
-			} else {
-				feed_item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
-				feed_item.update(getContentResolver());
-			}
-			mServiceBinder.start_download();
+    			FeedItem feed_item = FeedItem
+    					.getById(getContentResolver(), item_id);
+    			if (feed_item == null)
+    				return;
+    			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE) {
+    				Toast.makeText(DownloadingActivity.this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
+    				return ;
+    			} else {
+    				feed_item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
+    				feed_item.update(getContentResolver());
+    			}
+    			mServiceBinder.start_download();
 
-			return true;
-		}
-		}
-		return false;
-	}
+    			return ;
+    		}
+    		}        	
+        	
+        }		
+	}	
 
 	private static String formatLength(int length) {
 

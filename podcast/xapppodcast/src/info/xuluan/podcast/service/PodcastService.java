@@ -590,7 +590,7 @@ public class PodcastService extends Service {
 			long d = item.getDate();
 			log.debug("item_date: " + item.date);
 
-			if (d <= subscription.lastUpdated) {
+			if (d <= subscription.lastItemUpdated) {
 				log.debug("item lastUpdated =" + d + " feed lastUpdated = "
 						+ subscription.lastUpdated);
 				log.debug("item date =" + item.date);

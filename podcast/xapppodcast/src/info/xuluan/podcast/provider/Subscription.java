@@ -161,7 +161,7 @@ public class Subscription {
 		//cursor.moveToFirst();
 		sub.id = cursor.getLong(cursor.getColumnIndex(SubscriptionColumns._ID));
 		sub.lastUpdated = cursor.getLong(cursor
-				.getColumnIndex(SubscriptionColumns.LAST_ITEM_UPDATED));
+				.getColumnIndex(SubscriptionColumns.LAST_UPDATED));
 		sub.title = cursor.getString(cursor
 				.getColumnIndex(SubscriptionColumns.TITLE));
 		sub.url = cursor.getString(cursor

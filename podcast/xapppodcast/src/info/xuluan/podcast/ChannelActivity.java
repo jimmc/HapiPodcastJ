@@ -4,6 +4,7 @@ import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
+import info.xuluan.podcast.utils.DialogMenu;
 import info.xuluan.podcast.utils.IconCursorAdapter;
 
 import android.database.Cursor;
@@ -15,16 +16,10 @@ import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
 
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
 import android.widget.ListView;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 
 public class ChannelActivity extends PodcastBaseActivity {
@@ -33,7 +28,7 @@ public class ChannelActivity extends PodcastBaseActivity {
 	private static final int MENU_AUTO_DOWNLOAD = Menu.FIRST + 2;
 
 	
-
+	private static final int MENU_ITEM_VIEW = Menu.FIRST + 9;
 	private static final int MENU_ITEM_START_DOWNLOAD = Menu.FIRST + 10;
 	private static final int MENU_ITEM_START_PLAY = Menu.FIRST + 11;
 	private static final String[] PROJECTION = new String[] { ItemColumns._ID, // 0
@@ -158,90 +153,100 @@ public class ChannelActivity extends PodcastBaseActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 
-		Uri uri = ContentUris.withAppendedId(ItemColumns.URI, id);
+		Uri uri = ContentUris.withAppendedId(getIntent().getData(), id);
 		String action = getIntent().getAction();
 		if (Intent.ACTION_PICK.equals(action)
 				|| Intent.ACTION_GET_CONTENT.equals(action)) {
 			setResult(RESULT_OK, new Intent().setData(uri));
 		} else {
-			FeedItem item = FeedItem.getById(getContentResolver(), id);
-			if ((item != null)
-					&& (item.status == ItemColumns.ITEM_STATUS_UNREAD)) {
-				item.status = ItemColumns.ITEM_STATUS_READ;
-				item.update(getContentResolver());
-			}
 
-			startActivity(new Intent(Intent.ACTION_EDIT, uri));
+
+			DialogMenu dialog_menu = createDialogMenus(id);
+			if( dialog_menu==null)
+				return;
+			
+			
+			 new AlertDialog.Builder(this)
+             .setTitle(dialog_menu.getHeader())
+             .setItems(dialog_menu.getItems(), new MainClickListener(dialog_menu,id)).show();		
+
 		}
 	}
+	
+	public DialogMenu createDialogMenus(long id) {
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View view,
-			ContextMenuInfo menuInfo) {
-		AdapterView.AdapterContextMenuInfo info;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-		} catch (ClassCastException e) {
-			log.error("bad menuInfo", e);
-			return;
+		FeedItem feed_item = FeedItem.getById(getContentResolver(), id);
+		if (feed_item == null) {
+			return null;
 		}
 		
-		Cursor cursor = (Cursor) getListAdapter().getItem(info.position);
-		if (cursor == null) {
-			// For some reason the requested item isn't available, do nothing
-			return;
+		DialogMenu dialog_menu = new DialogMenu();
+		
+		dialog_menu.setHeader(feed_item.title);
+		
+		dialog_menu.addMenu(MENU_ITEM_VIEW, 
+				getResources().getString(R.string.menu_view));
+		
+		if(feed_item.status<ItemColumns.ITEM_STATUS_MAX_READING_VIEW){
+			dialog_menu.addMenu(MENU_ITEM_START_DOWNLOAD, 
+					getResources().getString(R.string.menu_download));			
+		}else if(feed_item.status>ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW){
+			dialog_menu.addMenu(MENU_ITEM_START_PLAY, 
+					getResources().getString(R.string.menu_play));	
+		}
+
+		return dialog_menu;
+	}	
+
+	
+
+
+	class MainClickListener implements DialogInterface.OnClickListener {
+		public DialogMenu mMenu;
+		public long item_id;
+		public MainClickListener(DialogMenu menu, long id)
+		{
+			mMenu = menu;
+			item_id = id;
 		}
 		
-		
-		FeedItem item = FeedItem.getById(getContentResolver(), cursor.getInt(0));
-		if(item==null)
-			return;
-		// Setup the menu header
-		menu.setHeaderTitle(item.title);
-		if(item.status<ItemColumns.ITEM_STATUS_MAX_READING_VIEW){
-			// Add a menu item to delete the note
-			menu.add(0, MENU_ITEM_START_DOWNLOAD, 0, R.string.menu_download);		
-		}else if(item.status>ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW){
-			menu.add(0, MENU_ITEM_START_PLAY, 0, R.string.menu_play);			
-		}
-
-
-	}
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		AdapterView.AdapterContextMenuInfo info;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-		} catch (ClassCastException e) {
-			log.error("bad menuInfo", e);
-			return false;
-		}
-
-		switch (item.getItemId()) {
+        public void onClick(DialogInterface dialog, int select) 
+        {
+    		switch (mMenu.getSelect(select)) {
+    		case MENU_ITEM_VIEW: {
+    			Uri uri = ContentUris.withAppendedId(ItemColumns.URI, item_id);
+    			FeedItem item = FeedItem.getById(getContentResolver(), item_id);
+    			if ((item != null)
+    					&& (item.status == ItemColumns.ITEM_STATUS_UNREAD)) {
+    				item.status = ItemColumns.ITEM_STATUS_READ;
+    				item.update(getContentResolver());
+    			}    			
+    			startActivity(new Intent(Intent.ACTION_EDIT, uri));   
+    			return;
+    		}    		
 			case MENU_ITEM_START_DOWNLOAD: {
 	
-				FeedItem feeditem = FeedItem.getById(getContentResolver(), info.id);
+				FeedItem feeditem = FeedItem.getById(getContentResolver(), item_id);
 				if (feeditem == null)
-					return true;
+					return;
 	
 				feeditem.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
 				feeditem.update(getContentResolver());
 				mServiceBinder.start_download();
-				return true;
+				return;
 			}
 			case MENU_ITEM_START_PLAY: {
 	
-				FeedItem feeditem = FeedItem.getById(getContentResolver(), info.id);
+				FeedItem feeditem = FeedItem.getById(getContentResolver(), item_id);
 				if (feeditem == null)
-					return true;
+					return;
 		
-				feeditem.play(this);
-				return true;
+				feeditem.play(ChannelActivity.this);
+				return;
 			}		
-		}
-		return false;
-	}
+    		}
+		}        	
+       }
 
 	@Override
 	public void startInit() {

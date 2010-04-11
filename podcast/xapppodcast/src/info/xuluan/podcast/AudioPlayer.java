@@ -1,10 +1,8 @@
 package info.xuluan.podcast;
 
-import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.app.Service;
@@ -17,32 +15,21 @@ import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.media.MediaPlayer.OnBufferingUpdateListener;
-import android.media.MediaPlayer.OnCompletionListener;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.PowerManager;
-import android.os.RemoteException;
 import android.os.SystemClock;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SurfaceHolder;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.SeekBar.OnSeekBarChangeListener;
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
@@ -50,6 +37,7 @@ import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.service.PlayerService;
 import info.xuluan.podcast.service.PodcastService;
+import info.xuluan.podcast.utils.DialogMenu;
 import info.xuluan.podcast.utils.IconCursorAdapter;
 import info.xuluan.podcast.utils.Log;
 
@@ -487,60 +475,54 @@ public class AudioPlayer  extends ListActivity
 		return super.onOptionsItemSelected(item);
 	}	
     
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View view,
-			ContextMenuInfo menuInfo) {
-		AdapterView.AdapterContextMenuInfo info;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-		} catch (ClassCastException e) {
-			log.error("bad menuInfo", e);
-			return;
+	public DialogMenu createDialogMenus(long id) {
+
+		FeedItem feed_item = FeedItem.getById(getContentResolver(), id);
+		if (feed_item == null) {
+			return null;
 		}
 		
-		Cursor cursor = (Cursor) getListAdapter().getItem(info.position);
-		if (cursor == null) {
-			// For some reason the requested item isn't available, do nothing
-			return;
-		}
+		DialogMenu dialog_menu = new DialogMenu();
 		
+		dialog_menu.setHeader(feed_item.title);
 		
-		FeedItem item = FeedItem.getById(getContentResolver(), cursor.getInt(0));
-		if(item==null)
-			return;
-		// Setup the menu header
-		menu.setHeaderTitle(item.title);
+		dialog_menu.addMenu(MENU_PLAY, 
+				getResources().getString(R.string.menu_play));
 		
-		//menu.add(0, MENU_PLAY, 0, R.string.menu_play);		
-		menu.add(0, MENU_MOVE_UP, 0, R.string.menu_move_up);	
+		dialog_menu.addMenu(MENU_MOVE_UP, 
+				getResources().getString(R.string.menu_move_up));
 
-		menu.add(0, MENU_MOVE_DOWN, 0, R.string.menu_move_down);
+		dialog_menu.addMenu(MENU_MOVE_DOWN, 
+				getResources().getString(R.string.menu_move_down));
 		
-		menu.add(0, MENU_READ, 0, R.string.menu_view);	
+		dialog_menu.addMenu(MENU_READ, 
+				getResources().getString(R.string.menu_view));		
 
-		menu.add(0, MENU_REMOVE, 0, R.string.menu_remove);	
+		dialog_menu.addMenu(MENU_REMOVE, 
+				getResources().getString(R.string.menu_remove));				
 
-		
-	}	
+		return dialog_menu;
+	}		
 	
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		AdapterView.AdapterContextMenuInfo info;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-		} catch (ClassCastException e) {
-			log.error("bad menuInfo", e);
-			return false;
+	class PlayClickListener implements DialogInterface.OnClickListener {
+		public DialogMenu mMenu;
+		public long item_id;
+		public PlayClickListener(DialogMenu menu, long id)
+		{
+			mMenu = menu;
+			item_id = id;
 		}
-
-		FeedItem feeditem = FeedItem.getById(getContentResolver(), info.id);
-		if (feeditem == null)
-			return true;
 		
-		switch (item.getItemId()) {
+        public void onClick(DialogInterface dialog, int select) 
+        {
+    		FeedItem feeditem = FeedItem.getById(getContentResolver(), item_id);
+    		if (feeditem == null)
+    			return;   
+    		
+    		switch (mMenu.getSelect(select)) {
 			case MENU_PLAY: {
 				play(feeditem);
-				return true;
+				return ;
 			}
 			case MENU_MOVE_UP: {
 		    	if(mServiceBinder != null){
@@ -551,7 +533,7 @@ public class AudioPlayer  extends ListActivity
 		    			feeditem.addtoPlaylistByOrder(getContentResolver(), ord);
 		    		}
 		    	}
-				return true;
+				return ;
 			}	
 			case MENU_MOVE_DOWN: {
 		    	if(mServiceBinder != null){
@@ -562,12 +544,12 @@ public class AudioPlayer  extends ListActivity
 		    			feeditem.addtoPlaylistByOrder(getContentResolver(), ord);
 		    		}
 		    	}
-				return true;
+				return ;
 			}			
 			case MENU_READ: {
 				Uri uri = ContentUris.withAppendedId(ItemColumns.URI, feeditem.id);
 				startActivity(new Intent(Intent.ACTION_EDIT, uri));
-				return true;
+				return ;
 			}
 			case MENU_REMOVE: {
 		    	if(mServiceBinder != null){
@@ -578,11 +560,12 @@ public class AudioPlayer  extends ListActivity
 		    		}
 		    	}
 				feeditem.addtoPlaylistByOrder(getContentResolver(), 0);
-				return true;
+				return ;
 			}			
 		}
-		return false;
-	}	
+      }
+	}
+
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
@@ -593,9 +576,14 @@ public class AudioPlayer  extends ListActivity
 				|| Intent.ACTION_GET_CONTENT.equals(action)) {
 			setResult(RESULT_OK, new Intent().setData(uri));
 		} else {
-			FeedItem item = FeedItem.getById(getContentResolver(), id);
-			if (item != null)
-				play(item);
+			DialogMenu dialog_menu = createDialogMenus(id);
+			if( dialog_menu==null)
+				return;
+			
+			
+			 new AlertDialog.Builder(this)
+             .setTitle(dialog_menu.getHeader())
+             .setItems(dialog_menu.getItems(), new PlayClickListener(dialog_menu,id)).show();	
 		}
 
 	}	

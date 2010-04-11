@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Hapi Podcast</string>
-	<string name="title_play_list">Episode List</string>
+	<string name="title_play_list">Manage Episode</string>
 	<string name="title_player">Player</string>	
 	<string name="title_download_list">Downloading List</string>
 	<string name="title_read_list">All Items</string>

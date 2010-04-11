@@ -1,23 +1,20 @@
 package info.xuluan.podcast;
 
-import java.io.File;
 import java.util.HashMap;
-import android.view.ContextMenu.ContextMenuInfo;
 
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
+import info.xuluan.podcast.utils.DialogMenu;
 import info.xuluan.podcast.utils.IconCursorAdapter;
 
+import android.app.AlertDialog;
 import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class PlayListActivity extends PodcastBaseActivity {
@@ -52,10 +49,15 @@ public class PlayListActivity extends PodcastBaseActivity {
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
-		FeedItem item = FeedItem.getById(getContentResolver(), id);
-		if (item == null)
+		DialogMenu dialog_menu = createDialogMenus(id);
+		if( dialog_menu==null)
 			return;
-		item.play(this);
+		
+		
+		 new AlertDialog.Builder(this)
+         .setTitle(dialog_menu.getHeader())
+         .setItems(dialog_menu.getItems(), new EpisodeClickListener(dialog_menu,id)).show();		
+
 
 	}
 
@@ -74,83 +76,85 @@ public class PlayListActivity extends PodcastBaseActivity {
 		startInit();
 	}
 
+	public DialogMenu createDialogMenus(long id) {
 
-
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View view,
-			ContextMenuInfo menuInfo) {
-		AdapterView.AdapterContextMenuInfo info;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-		} catch (ClassCastException e) {
-			log.error("bad menuInfo", e);
-			return;
+		FeedItem feed_item = FeedItem.getById(getContentResolver(), id);
+		if (feed_item == null) {
+			return null;
 		}
-
-		Cursor cursor = (Cursor) getListAdapter().getItem(info.position);
-		if (cursor == null) {
-			// For some reason the requested item isn't available, do nothing
-			return;
-		}
-
-		// Setup the menu header
-		menu.setHeaderTitle(cursor.getString(COLUMN_INDEX_TITLE));
-
-		// Add a menu item to delete the note
-		menu.add(0, MENU_ITEM_PLAY, 0, R.string.menu_play);
-		menu.add(0, MENU_ITEM_KEEP, 0, R.string.menu_keep);
-		menu.add(0, MENU_ITEM_VIEW, 0, R.string.menu_view);
-		menu.add(0, MENU_ITEM_DELETE, 0, R.string.menu_delete);
-		menu.add(0, MENU_ITEM_SHARE, 0, R.string.menu_share);
 		
-
-	}
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		AdapterView.AdapterContextMenuInfo info;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-		} catch (ClassCastException e) {
-			log.error("bad menuInfo", e);
-			return false;
-		}
-		FeedItem select_item = FeedItem.getById(getContentResolver(), info.id);
-		if(select_item==null)
-			return true;
-
-		switch (item.getItemId()) {
-		case MENU_ITEM_DELETE: {
-
-			// TODO are you sure?
-			
-			select_item.delFile(getContentResolver());
-			return true;
-		}
-		case MENU_ITEM_PLAY: {
-			select_item.play(this);
-			return true;
-		}
-		case MENU_ITEM_KEEP: {
-			if (select_item.status != ItemColumns.ITEM_STATUS_KEEP) {
-				select_item.status = ItemColumns.ITEM_STATUS_KEEP;
-				select_item.update(getContentResolver());
-			}
-			return true;
-		}
-		case MENU_ITEM_VIEW: {
-			Uri uri = ContentUris
-					.withAppendedId(getIntent().getData(), info.id);
-			startActivity(new Intent(Intent.ACTION_EDIT, uri));
-			return true;
-		}
-		case MENU_ITEM_SHARE: {
-			select_item.sendMail(this);
-			return true;
+		DialogMenu dialog_menu = new DialogMenu();
+		
+		dialog_menu.setHeader(feed_item.title);
+		dialog_menu.addMenu(MENU_ITEM_PLAY,
+				getResources().getString(R.string.menu_play));
+		
+		if(feed_item.status!=ItemColumns.ITEM_STATUS_KEEP){
+			dialog_menu.addMenu(MENU_ITEM_KEEP, 
+					getResources().getString(R.string.menu_keep));			
 		}		
-		}
-		return false;
+
+		dialog_menu.addMenu(MENU_ITEM_SHARE,
+				getResources().getString(R.string.menu_share));	
+		
+		dialog_menu.addMenu(MENU_ITEM_VIEW,
+				getResources().getString(R.string.menu_view));
+		
+		dialog_menu.addMenu(MENU_ITEM_DELETE,
+				getResources().getString(R.string.menu_delete));	
+
+		return dialog_menu;
 	}
+
+
+	class EpisodeClickListener implements DialogInterface.OnClickListener {
+		public DialogMenu mMenu;
+		public long item_id;
+		public EpisodeClickListener(DialogMenu menu, long id)
+		{
+			mMenu = menu;
+			item_id = id;
+		}
+		
+        public void onClick(DialogInterface dialog, int select) 
+        {
+    		FeedItem select_item = FeedItem.getById(getContentResolver(), item_id);
+    		if(select_item==null)
+    			return;
+    		
+    		switch (mMenu.getSelect(select)) {
+    		case MENU_ITEM_DELETE: {
+
+    			// TODO are you sure?
+    			
+    			select_item.delFile(PlayListActivity.this.getContentResolver());
+    			return;
+    		}
+    		case MENU_ITEM_PLAY: {
+    			select_item.play(PlayListActivity.this);
+    			return;
+    		}
+    		case MENU_ITEM_KEEP: {
+    			if (select_item.status != ItemColumns.ITEM_STATUS_KEEP) {
+    				select_item.status = ItemColumns.ITEM_STATUS_KEEP;
+    				select_item.update(PlayListActivity.this.getContentResolver());
+    			}
+    			return;
+    		}
+    		case MENU_ITEM_VIEW: {
+    			Uri uri = ContentUris
+    					.withAppendedId(getIntent().getData(), select_item.id);
+    			startActivity(new Intent(Intent.ACTION_EDIT, uri));
+    			return;
+    		}
+    		case MENU_ITEM_SHARE: {
+    			select_item.sendMail(PlayListActivity.this);
+    			return;
+    		}		
+    		}
+		}        	
+       }
+
 
 	public void startInit() {
 		String where = ItemColumns.STATUS + ">"

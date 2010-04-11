@@ -6,6 +6,8 @@ import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
+import info.xuluan.podcast.utils.DialogMenu;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.regex.Matcher;
@@ -16,16 +18,12 @@ import android.app.ProgressDialog;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.ContextMenu;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -35,8 +33,10 @@ public class SubsActivity extends PodcastBaseActivity {
 	private final int MENU_ADD = Menu.FIRST + 2;
 
 	
+	private final int MENU_ITEM_VIEW = Menu.FIRST + 9;
 	private final int MENU_ITEM_DELETE = Menu.FIRST + 10;
 	private final int MENU_ITEM_AUTO = Menu.FIRST + 11;
+	private final int MENU_ITEM_REFRESH = Menu.FIRST + 12;
 	
 	
 
@@ -82,105 +82,114 @@ public class SubsActivity extends PodcastBaseActivity {
 		return super.onOptionsItemSelected(item);
 	}
 
-	@Override
-	public void onCreateContextMenu(ContextMenu menu, View view,
-			ContextMenuInfo menuInfo) {
-		AdapterView.AdapterContextMenuInfo info;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-		} catch (ClassCastException e) {
-			log.error("bad menuInfo", e);
-			return;
-		}
+	public DialogMenu createDialogMenus(long id) {
 
-		Cursor cursor = (Cursor) getListAdapter().getItem(info.position);
-		if (cursor == null) {
-			// For some reason the requested item isn't available, do nothing
-			return;
-		}
-		
 		Subscription subs = Subscription.getSubbyId(getContentResolver(), 
-				cursor.getInt(0));
+				id);
 		if (subs == null)
-			return;		
+			return null;		
+		
+		DialogMenu dialog_menu = new DialogMenu();
+		
+		dialog_menu.setHeader(subs.title);
+		
+		dialog_menu.addMenu(MENU_ITEM_VIEW, 
+				getResources().getString(R.string.menu_view));
 
-		// Setup the menu header
-		menu.setHeaderTitle(cursor.getString(COLUMN_INDEX_TITLE));
-
-		// Add a menu item to delete the note
-		menu.add(0, MENU_ITEM_DELETE, 0, R.string.unsubscribe);
+		dialog_menu.addMenu(MENU_ITEM_REFRESH, 
+				getResources().getString(R.string.menu_refresh));
+		
 		String auto;
 		if(subs.auto_download==0){
 			auto = getResources().getString(R.string.menu_auto_download);
 		}else{
 			auto = getResources().getString(R.string.menu_manual_download);
 		}       
-		menu.add(0, MENU_ITEM_AUTO, 0, auto);
+		dialog_menu.addMenu(MENU_ITEM_AUTO, auto);
+
 		
+		dialog_menu.addMenu(MENU_ITEM_DELETE, 
+				getResources().getString(R.string.unsubscribe));
+		
+		return dialog_menu;
+	}	
 
-	}
-	
 
-
-	@Override
-	public boolean onContextItemSelected(MenuItem item) {
-		AdapterView.AdapterContextMenuInfo info;
-		try {
-			info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
-		} catch (ClassCastException e) {
-			log.error("bad menuInfo", e);
-			return false;
+	class SubsClickListener implements DialogInterface.OnClickListener {
+		public DialogMenu mMenu;
+		public long subs_id;
+		public SubsClickListener(DialogMenu menu, long id)
+		{
+			mMenu = menu;
+			subs_id = id;
 		}
 		
-		final long sub_id = info.id;
-			
-		switch (item.getItemId()) {
-		case MENU_ITEM_DELETE: {
+        public void onClick(DialogInterface dialog, int select) 
+        {
+    		switch (mMenu.getSelect(select)) {
+    		case MENU_ITEM_VIEW: {
+    			Uri uri = ContentUris.withAppendedId(SubscriptionColumns.URI, subs_id);
+    			startActivity(new Intent(Intent.ACTION_EDIT, uri));
+    			return;
+    		}  
+    		case MENU_ITEM_REFRESH: {
+        		Subscription subs = Subscription.getSubbyId(getContentResolver(),
+        				subs_id);
+        		if (subs != null) {
+        			subs.lastUpdated = 0;
+        			subs.update(getContentResolver());
+        			if(mServiceBinder!=null)
+        				mServiceBinder.start_update();        			
+        		}
 
-			new AlertDialog.Builder(this)
-            .setTitle(R.string.unsubscribe_channel)
-            .setPositiveButton(R.string.menu_ok, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-            		Subscription subs = Subscription.getSubbyId(getContentResolver(),
-            				sub_id);
-            		if (subs != null)
-            			subs.delete(getContentResolver());
-						
-        			dialog.dismiss();
-                }
-            })
-            .setNegativeButton(R.string.menu_cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                }
-            })
-            .show();
-			return true;
-		}
-		case MENU_ITEM_AUTO: {
-			Subscription subs = Subscription.getSubbyId(getContentResolver(),
-					sub_id);
-			if (subs == null)
-				return true;			
-			subs.auto_download = 1 - subs.auto_download;
-			subs.update(getContentResolver());	
-			return true;
-		}
-		}
 
-		return true;
-	}
+    			return;
+    		}     		
+    		case MENU_ITEM_DELETE: {
+
+    			new AlertDialog.Builder(SubsActivity.this)
+                .setTitle(R.string.unsubscribe_channel)
+                .setPositiveButton(R.string.menu_ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                		Subscription subs = Subscription.getSubbyId(getContentResolver(),
+                				subs_id);
+                		if (subs != null)
+                			subs.delete(getContentResolver());
+    						
+            			dialog.dismiss();
+                    }
+                })
+                .setNegativeButton(R.string.menu_cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                })
+                .show();
+    			return;
+    		}
+    		case MENU_ITEM_AUTO: {
+    			Subscription subs = Subscription.getSubbyId(getContentResolver(),
+    					subs_id);
+    			if (subs == null)
+    				return;			
+    			subs.auto_download = 1 - subs.auto_download;
+    			subs.update(getContentResolver());	
+    			return ;
+    		}
+    		}    		
+
+		}        	
+       }	
 	
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 
-		Uri uri = ContentUris.withAppendedId(getIntent().getData(), id);
-		String action = getIntent().getAction();
-		if (Intent.ACTION_PICK.equals(action)
-				|| Intent.ACTION_GET_CONTENT.equals(action)) {
-			setResult(RESULT_OK, new Intent().setData(uri));
-		} else {
-			startActivity(new Intent(Intent.ACTION_EDIT, uri));
-		}
+		DialogMenu dialog_menu = createDialogMenus(id);
+		if( dialog_menu==null)
+			return;
+		
+		 new AlertDialog.Builder(this)
+         .setTitle(dialog_menu.getHeader())
+         .setItems(dialog_menu.getItems(), new SubsClickListener(dialog_menu,id)).show();		
 	}	
 
 	private void addSubscription() {
