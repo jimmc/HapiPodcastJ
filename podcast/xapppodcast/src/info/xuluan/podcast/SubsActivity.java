@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -96,9 +97,6 @@ public class SubsActivity extends PodcastBaseActivity {
 		dialog_menu.addMenu(MENU_ITEM_VIEW, 
 				getResources().getString(R.string.menu_view));
 
-		dialog_menu.addMenu(MENU_ITEM_REFRESH, 
-				getResources().getString(R.string.menu_refresh));
-		
 		String auto;
 		if(subs.auto_download==0){
 			auto = getResources().getString(R.string.menu_auto_download);
@@ -107,6 +105,8 @@ public class SubsActivity extends PodcastBaseActivity {
 		}       
 		dialog_menu.addMenu(MENU_ITEM_AUTO, auto);
 
+		dialog_menu.addMenu(MENU_ITEM_REFRESH, 
+				getResources().getString(R.string.menu_manual_update));
 		
 		dialog_menu.addMenu(MENU_ITEM_DELETE, 
 				getResources().getString(R.string.unsubscribe));
@@ -127,24 +127,29 @@ public class SubsActivity extends PodcastBaseActivity {
         public void onClick(DialogInterface dialog, int select) 
         {
     		switch (mMenu.getSelect(select)) {
-    		case MENU_ITEM_VIEW: {
-    			Uri uri = ContentUris.withAppendedId(SubscriptionColumns.URI, subs_id);
-    			startActivity(new Intent(Intent.ACTION_EDIT, uri));
-    			return;
-    		}  
     		case MENU_ITEM_REFRESH: {
         		Subscription subs = Subscription.getSubbyId(getContentResolver(),
         				subs_id);
         		if (subs != null) {
         			subs.lastUpdated = 0;
         			subs.update(getContentResolver());
+        			ContentValues cv = new ContentValues();
+        			cv.put(SubscriptionColumns.LAST_UPDATED, 0);
+        			getContentResolver().update(SubscriptionColumns.URI, cv,
+        					SubscriptionColumns._ID + "=" + subs.id, null);        			
+        			
         			if(mServiceBinder!=null)
-        				mServiceBinder.start_update();        			
+        				mServiceBinder.start_update();        	
+					Toast.makeText(SubsActivity.this, "Start to update channel, please waiting a little",
+							Toast.LENGTH_LONG).show();					
         		}
-
-
+    		}     				
+    		case MENU_ITEM_VIEW: {
+    			Uri uri = ContentUris.withAppendedId(SubscriptionColumns.URI, subs_id);
+    			startActivity(new Intent(Intent.ACTION_EDIT, uri));
     			return;
-    		}     		
+    		}  
+	
     		case MENU_ITEM_DELETE: {
 
     			new AlertDialog.Builder(SubsActivity.this)

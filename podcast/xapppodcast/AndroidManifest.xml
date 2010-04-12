@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="info.xuluan.podcast"  android:versionName="1.0.12.21"
-	android:versionCode="21">
+      package="info.xuluan.podcast"  android:versionName="1.0.12.23"
+	android:versionCode="23">
       
 	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
       
