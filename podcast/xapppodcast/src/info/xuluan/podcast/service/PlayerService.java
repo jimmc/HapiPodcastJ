@@ -369,16 +369,15 @@ public class PlayerService extends Service {
 		if(mItem != null) {
 			if((mItem.id == id) && mPlayer.isInitialized()) {
 				if(mPlayer.isPlaying() == false) {
-					mPlayer.start();
+					start();
 				}
 				return;
 			}
 			
 			if(mPlayer.isPlaying()){
 				mItem.updateOffset(getContentResolver(), mPlayer.position());
-				mPlayer.stop();
+				stop();
 			}
-
 		}
 		
 		mItem = FeedItem.getById(getContentResolver(), id);
