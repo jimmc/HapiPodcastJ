@@ -39,6 +39,7 @@ public class PlayerService extends Service {
 	private static final int FADEIN = 0;
 	private static final int TRACK_ENDED = 1;
 	private static final int SERVER_DIED = 2;
+    public static final int PlayerService_STATUS = 1;
 
 	private static final long REPEAT_MODE_NO_REPEAT = 0;
 	private static final long REPEAT_MODE_REPEAT = 1;
@@ -194,8 +195,12 @@ public class PlayerService extends Service {
  
         MediaPlayer.OnErrorListener errorListener = new MediaPlayer.OnErrorListener() {
             public boolean onError(MediaPlayer mp, int what, int extra) {
+	    		log.debug("onError() "+ what + " : " + extra);
+	    		
                 switch (what) {
                 case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
+    	            //mNotificationManager.cancel(R.layout.audio_player);
+    	            dis_notifyStatus();
                     mIsInitialized = false;
                     mMediaPlayer.release();
                     // Creating a new MediaPlayer and settings its wakemode does not
@@ -258,7 +263,8 @@ public class PlayerService extends Service {
 				if(mItem != null) {
 					FeedItem next_item = getNext(mItem);
 					
-		            mNotificationManager.cancel(R.layout.audio_player);
+		            //mNotificationManager.cancel(R.layout.audio_player);
+		            dis_notifyStatus();
 					mItem.played(getContentResolver());
 					mPlayer.stop();
 					mUpdate = true;
@@ -318,6 +324,8 @@ public class PlayerService extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 		if(mPlayer!=null){
+			//mNotificationManager.cancel(R.layout.audio_player);
+			dis_notifyStatus();
 			mPlayer.release();
 		}
 
@@ -334,9 +342,15 @@ public class PlayerService extends Service {
 	public IBinder onBind(Intent intent) {
 		return binder;
 	}
-	
-    private void notifyStatus() {
 
+    private void dis_notifyStatus() {
+        mNotificationManager.cancel(R.layout.audio_player);    	
+        setForeground(false);
+        //stopForeground(true);
+    }
+    
+    private void notifyStatus() {
+    	
         // choose the ticker text
         String tickerText = mItem == null ? "player" : mItem.title;
 
@@ -351,13 +365,13 @@ public class PlayerService extends Service {
                 PendingIntent.FLAG_UPDATE_CURRENT);   
         
         notification.setLatestEventInfo(this, tickerText,
-        		null, contentIntent);
-        
-        
-
+        		null, contentIntent);        
+        setForeground(true);
+        //startForeground(PlayerService_STATUS, notification);
         // Send the notification.
         // We use a layout id because it is a unique number.  We use it later to cancel.
         mNotificationManager.notify(R.layout.audio_player, notification);
+        
     }	
 	
 	public void play(long id) {
@@ -415,7 +429,8 @@ public class PlayerService extends Service {
     		log.error("playing but no item!!!");
 
 		}
-        mNotificationManager.cancel(R.layout.audio_player);
+        //mNotificationManager.cancel(R.layout.audio_player);
+        dis_notifyStatus();
 		
 		mPlayer.pause();
 	}
@@ -424,7 +439,8 @@ public class PlayerService extends Service {
 		pause();
 		mPlayer.stop();		
 		mItem = null;
-        mNotificationManager.cancel(R.layout.audio_player);
+        //mNotificationManager.cancel(R.layout.audio_player);
+        dis_notifyStatus();
 		mUpdate = true;		
 	}	
 	

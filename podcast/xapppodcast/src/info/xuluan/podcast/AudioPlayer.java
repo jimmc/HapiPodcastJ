@@ -344,11 +344,7 @@ public class AudioPlayer  extends ListActivity
         final Intent intent = getIntent();
         mID = intent.getLongExtra("item_id", -1);
         
-		mService = startService(new Intent(this, PlayerService.class));
-		Intent bindIntent = new Intent(this, PlayerService.class);
-		bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-		
-        
+       
         mPauseButton = (ImageButton) findViewById(R.id.pause);
         mPauseButton.requestFocus();
         mPauseButton.setOnClickListener(mPauseListener);
@@ -378,6 +374,10 @@ public class AudioPlayer  extends ListActivity
     
 	public void startInit() {
 
+		mService = startService(new Intent(this, PlayerService.class));
+		Intent bindIntent = new Intent(this, PlayerService.class);
+		bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+		
 		String where =  ItemColumns.STATUS  + ">" + ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW 
 		+ " AND " + ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_PLAYLIST_VIEW
 		+ " AND " + ItemColumns.FAIL_COUNT + " > 100";
@@ -420,6 +420,18 @@ public class AudioPlayer  extends ListActivity
 		finish();
 	}	
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		try {
+			unbindService(serviceConnection);
+		} catch (Exception e) {
+			e.printStackTrace();
+
+		}
+
+		// stopService(new Intent(this, service.getClass()));
+	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -646,22 +658,41 @@ public class AudioPlayer  extends ListActivity
 		if(channel_condition!= null)
 			where += channel_condition;
 		
-		String order = ItemColumns.FAIL_COUNT + " ASC";
+		final String sel = where;
+		
+		new Thread() {
+			public void run() {
+				Cursor cursor = null;
+				try {
 
-		Cursor cursor = managedQuery(ItemColumns.URI, ItemColumns.ALL_COLUMNS, where, null, order);  
-		long ord = Long.valueOf(System.currentTimeMillis());
+					String order = ItemColumns.FAIL_COUNT + " ASC";
 
-		if((cursor!=null) && cursor.moveToFirst()){
-			do{
-				FeedItem item = FeedItem.getByCursor(cursor);
-				if(item!=null)
-					item.addtoPlaylistByOrder(getContentResolver(), ord++);
+					cursor = managedQuery(ItemColumns.URI, ItemColumns.ALL_COLUMNS, sel, null, order);  
+					long ord = Long.valueOf(System.currentTimeMillis());
 
-			}while (cursor.moveToNext());			
-		}
-		if(cursor!=null)
-			cursor.close();		
+					if((cursor!=null) && cursor.moveToFirst()){
+						do{
+							FeedItem item = FeedItem.getByCursor(cursor);
+							if(item!=null)
+								item.addtoPlaylistByOrder(getContentResolver(), ord++);
 
+						}while (cursor.moveToNext());			
+					}
+
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if(cursor!=null)
+						cursor.close();	
+				}
+
+			}
+		}.start();			
+		
+	
+
+	
 		
     }
     
@@ -671,19 +702,35 @@ public class AudioPlayer  extends ListActivity
 		String where =  ItemColumns.STATUS  + ">" + ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW 
 		+ " AND " + ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_PLAYLIST_VIEW
 		+ " AND " + ItemColumns.FAIL_COUNT + " > 100 ";
+		final String sel = where;
 
-		Cursor cursor = managedQuery(ItemColumns.URI, ItemColumns.ALL_COLUMNS, where, null, null);  
+		
+		new Thread() {
+			public void run() {
+				Cursor cursor = null;
+				try {
 
-		if((cursor!=null) && cursor.moveToFirst()){
-			do{
-				FeedItem item = FeedItem.getByCursor(cursor);
-				if(item!=null)
-					item.addtoPlaylistByOrder(getContentResolver(), 0);
+					cursor = managedQuery(ItemColumns.URI, ItemColumns.ALL_COLUMNS, sel, null, null);  
 
-			}while (cursor.moveToNext());			
-		}    	
-		if(cursor!=null)
-			cursor.close();
+					if((cursor!=null) && cursor.moveToFirst()){
+						do{
+							FeedItem item = FeedItem.getByCursor(cursor);
+							if(item!=null)
+								item.addtoPlaylistByOrder(getContentResolver(), 0);
+
+						}while (cursor.moveToNext());			
+					}    	
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if(cursor!=null)
+						cursor.close();	
+				}
+
+			}
+		}.start();	
+
     }
     
     private String formatTime(long ms) {
