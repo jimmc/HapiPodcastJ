@@ -60,6 +60,9 @@
 
 	
     <string name="download_hint">Put it into the downloading queue.</string>	
+    <string name="auto_download_hint">The new items in the channel will be automatically downloaded.</string>	
+    <string name="manual_download_hint">Auto Download disabled.</string>	
+
     <string name="unsubscribe_channel">Do you want to unsubscribe the channel?</string>	
 	
 	

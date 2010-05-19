@@ -63,6 +63,9 @@ public class AudioPlayer  extends ListActivity
 	
 	private static final int STATE_MAIN = 0;
 	private static final int STATE_VIEW = 1;
+	
+	private static final long ffwd_interval = 30*1000;	
+	
 
 	private boolean mShow = false;
 	private long mID;
@@ -76,6 +79,7 @@ public class AudioPlayer  extends ListActivity
 	
 
 
+    private ImageButton mFfwdButton;
 	
     private ImageButton mPauseButton;
     private ImageButton mPrevButton;
@@ -334,6 +338,23 @@ public class AudioPlayer  extends ListActivity
        }
     };    
     
+    
+    private View.OnClickListener mFfwdListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            try {
+                if (mServiceBinder != null && mServiceBinder.isInitialized()) {
+                	long pos = mServiceBinder.position();
+                	mServiceBinder.seek( pos+ ffwd_interval );
+
+                }
+            } catch (Exception ex) {
+            } 
+            updateInfo();
+
+       }
+    };    
+        
+    
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -348,7 +369,12 @@ public class AudioPlayer  extends ListActivity
         mPauseButton = (ImageButton) findViewById(R.id.pause);
         mPauseButton.requestFocus();
         mPauseButton.setOnClickListener(mPauseListener);
+
+        mFfwdButton = (ImageButton) findViewById(R.id.ffwd);
+        mFfwdButton.requestFocus();
+        mFfwdButton.setOnClickListener(mFfwdListener);        
         
+
         mPrevButton = (ImageButton) findViewById(R.id.prev);
         mPrevButton.requestFocus();
         mPrevButton.setOnClickListener(mPrevListener);        

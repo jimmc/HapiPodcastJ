@@ -2,8 +2,6 @@ package info.xuluan.podcast;
 
 
 import info.xuluan.podcast.parser.FeedParserListenerAdapter;
-import info.xuluan.podcast.provider.FeedItem;
-import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.utils.DialogMenu;
@@ -177,6 +175,14 @@ public class SubsActivity extends PodcastBaseActivity {
     			if (subs == null)
     				return;			
     			subs.auto_download = 1 - subs.auto_download;
+    			if(subs.auto_download==1){
+					Toast.makeText(SubsActivity.this, R.string.auto_download_hint,
+							Toast.LENGTH_LONG).show();	    				
+    			}else{
+    				Toast.makeText(SubsActivity.this, R.string.manual_download_hint,
+							Toast.LENGTH_LONG).show();    				
+    				
+    			}
     			subs.update(getContentResolver());	
     			return ;
     		}

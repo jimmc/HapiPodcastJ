@@ -1,8 +1,12 @@
 TODO
 --------------------------------
+review and refactor:
 
+check sd, path name ..
+-
 
-
+uni channel in search list
+first channel update(update fail count/)
 
 ---------------------------------
 1 service start when power on
@@ -13,7 +17,6 @@ android.intent.action.BOOT_COMPLETED
 
 3 download pause
   hint download status (no card, no wifi,...) 
-  fetcher "user agent"
 
 4 mail to me
   
@@ -99,7 +102,8 @@ clear: download file (fail, no delete etc)
 3 下载的文件 链接出了问题
 4  轮询时间没有到 
   
-
+	
+dato.cn@gmail.com
 --------------------------------------------------------------
 
 RELEASE
@@ -114,6 +118,13 @@ PHASE 1 release, version 12
 
 --------------
 DONE
+- 20090519  (TAG 26)
+add fast forward button
+add auto download hint
+
+- 20090424  (TAG 25)
+service setForeground
+thread for load all/ remove all/ load channel at audio player activity
 
 - 20090412  (TAG 23)
 manual update channel
