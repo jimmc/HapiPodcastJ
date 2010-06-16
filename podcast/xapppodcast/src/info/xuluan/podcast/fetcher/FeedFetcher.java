@@ -16,7 +16,7 @@ import java.util.zip.GZIPInputStream;
 public class FeedFetcher {
 
 	private int maxSize = 100 * 1024;
-	private static final int TIMEOUT = 20 * 1000;
+	private static final int TIMEOUT = 10 * 1000;
 	private boolean canceled = false;
 	private String mAgent;
 	protected final Log log = Log.getLog(getClass());
@@ -83,6 +83,7 @@ public class FeedFetcher {
 							mAgent);
 			hc.addRequestProperty("Accept-Encoding", "gzip");
 			hc.setReadTimeout(TIMEOUT);
+			hc.setConnectTimeout(TIMEOUT);
 
 			hc.connect();
 			int code = hc.getResponseCode();
@@ -165,7 +166,7 @@ public class FeedFetcher {
 	
 	
 
-	public int download(FeedItem item, DownloadItemListener listener) {
+	public int download(FeedItem item) {
 		String pathname = item.pathname;
 
 		int nStartPos = item.offset;
@@ -180,7 +181,7 @@ public class FeedFetcher {
 
 			httpConnection = (HttpURLConnection) url.openConnection();
 			httpConnection.setReadTimeout(TIMEOUT);
-
+			httpConnection.setConnectTimeout(TIMEOUT);
 			httpConnection
 					.setRequestProperty("User-Agent", "Internet Explorer");
 			if (item.offset != 0) {
@@ -220,8 +221,7 @@ public class FeedFetcher {
 
 			while ((nRead = input.read(b, 0, buff_size)) > 0
 					&& nStartPos < nEndPos) {
-				if (listener != null)
-					listener.onUpdate(item);
+
 				oSavedFile.write(b, 0, nRead);
 				nStartPos += nRead;
 				item.offset = nStartPos;

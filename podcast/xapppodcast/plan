@@ -1,73 +1,15 @@
 TODO
 --------------------------------
 review and refactor:
+----------------------------------------
+IMPORTANT
+1 first channel update(update fail count/)
 
-check sd, path name ..
--
-
-uni channel in search list
-first channel update(update fail count/)
-
----------------------------------
-1 service start when power on
+2 service start when power on
 android.intent.action.BOOT_COMPLETED  
-
-2 channel status icon
-
-
-3 download pause
-  hint download status (no card, no wifi,...) 
-
-4 mail to me
   
-5 help (liensce, EMLU)
-6 loging to web
-7 player
-- listen sd card, blue tooth
-- random
-- a/b loop
-- refactor (util)
-- update duration
-- media vol. adjust
-
---------------------------------
-RELEASE ITEM
-- debug level
-- test
------------------------------
-NEXT PHASE
-
-9 clear: download file (fail, no delete etc)
-  if download == false, download status update
-
----------------------------------------------
-11 change search engine(feedzie,doubletwist)
-  add channel: fail reason
-setImeOptions(EditorInfo.IME_ACTION_SEARCH); 
-  
-12 audio type
-
-
-PHASE 3
-
-1 (add, add from clipboard, search, search from browser)
-2 sync feed subscribtion
-	when channel cannot get item?
-3 audio player and manage list 
-
---------------------------------------------------------------  
-
-BUG
- magic bug:  play resource
- add channel: no data in list view
- 
-
-
-----------------------------
-MORE INFOMATION
-
-1 audio type suffix
-
+3 audio type
+audio type suffix
 error mimetype?
 only with mp3 as suffix
 - multi type
@@ -79,44 +21,50 @@ only with mp3 as suffix
 	<type extension=".amr" mimetype="audio/AMR" />
 	<type extension=".m4a" mimetype="audio/aac" />
 	audio/mpeg audio/mp4a audio/mp4a-latm audio/aac audio/x-aac
-
-
-
-----------
-5  hint download status (no card, no wifi,...)
-DOWNLOAD VIEW + STATUS BAR 
-
- - dup file name
- ( receive sd card unmount message)   
- - put db to sdcard, update db and  create dir: sdcard/xuluan.podcast/download
-  serviece start from power on
+4 video type
 clear: download file (fail, no delete etc)
   if download == false, download status update
+5 set fast forward interval
+6 item view flip and playing control
   
+----------------------------------------
+OTHER
+check sd, path name ..(download path)
+sd card full?
+uni channel in search list
+2 channel status icon
+3 download pause
+  hint download status (no card, no wifi,...) 
+4 mail to me
   
------------------------------------------
- 不能下载 有几种可能
+5 help (liensce, EMLU)
+6 loging to web
+7 player
+- listen sd card, blue tooth
+- random
+- a/b loop
+- refactor (util)
+- update duration
+- media vol. adjust  
+11 change search engine(feedzie,doubletwist)
+  add channel: fail reason
+setImeOptions(EditorInfo.IME_ACTION_SEARCH); 
+---------------------------------------------------------------------
+PHASE 3
 
-1 wifi 没有启动
-2 sd卡 没有装好
-3 下载的文件 链接出了问题
-4  轮询时间没有到 
-  
-	
-dato.cn@gmail.com
+
+1 web site, add search channel by web (other search engine)
+2 sync feed subscribtion
+	when channel cannot get item?
+3 refactor db
+4 android account
+--------------------------------------------------------------  
+
+BUG
+
+
 --------------------------------------------------------------
 
-RELEASE
-
-2010-03-30 PHASE 2 release, version 20?
-
-PHASE 1 release, version 12
-2010-02-26 beta release, version 11
-2010-02-25 beta release, version 10
-2010-02-06 alpha release, version 7
-
-
---------------
 DONE
 - 20090519  (TAG 26)
 add fast forward button
@@ -345,3 +293,8 @@ music player:  7 view ，1 sercice ，2 table/ 2month
 -------------------------------
 $900/month |50000 download |42289show/day|$33.47 /day
 $3000/month|200000 download|100000 active
+
+---------------------------------------------------------
+# Project members authenticate over HTTPS to allow committing changes.
+svn checkout https://hapiboke.googlecode.com/svn/trunk/ hapiboke --username rolle.xu
+v8m7h5j2

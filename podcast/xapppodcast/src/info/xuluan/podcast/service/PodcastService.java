@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import info.xuluan.podcast.R;
-import info.xuluan.podcast.fetcher.DownloadItemListener;
 import info.xuluan.podcast.fetcher.FeedFetcher;
 import info.xuluan.podcast.fetcher.Response;
 import info.xuluan.podcast.parser.FeedParser;
@@ -36,7 +35,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.provider.MediaStore;
 import android.widget.Toast;
 
 public class PodcastService extends Service {
@@ -48,6 +46,9 @@ public class PodcastService extends Service {
 	public static final int MAX_DOWNLOAD_FAIL = 5;
 
 	private static final int MSG_TIMER = 0;
+	
+	private static final int REPEAT_UPDATE_FEED_COUNT = 3;
+	
 
 	private static final long ONE_MINUTE = 60L * 1000L;
 	private static final long ONE_HOUR = 60L * ONE_MINUTE;
@@ -65,7 +66,8 @@ public class PodcastService extends Service {
 	public long pref_download_file_expire = 0;
 	public long pref_played_file_expire = 0;
 
-	private DownloadItemListener mDownloadListener = null;
+	//private DownloadItemListener mDownloadListener = null;
+
 
 	private static boolean mDownloading = false;
 	private FeedItem mDownloadingItem = null;
@@ -79,6 +81,8 @@ public class PodcastService extends Service {
 	public static final String APP_DIR = "/xuluan.podcast";
 	public static final String DOWNLOAD_DIR = "/download";
 	//public static final String BASE_DOWNLOAD_DIRECTORY = "/sdcard/xuluan.podcast/download";
+	
+	
 
 	public static final String UPDATE_DOWNLOAD_STATUS = PodcastService.class
 			.getName()
@@ -86,48 +90,6 @@ public class PodcastService extends Service {
 
 	private final Log log = Log.getLog(getClass());
 
-	class DisplayListener implements DownloadItemListener {
-
-		private Intent set_intent(FeedItem item) {
-			Intent intent = new Intent(UPDATE_DOWNLOAD_STATUS);
-			intent.putExtra(ItemColumns.TITLE, item.title);
-			intent.putExtra(ItemColumns.LENGTH, item.length);
-			intent.putExtra(ItemColumns.OFFSET, item.offset);
-			intent.putExtra(ItemColumns.DURATION, item.duration);
-			return intent;
-		}
-
-		public void onBegin(FeedItem item) {
-
-			Intent intent = set_intent(item);
-			mDownloadingItem = item;
-
-			sendBroadcast(intent);
-		}
-
-		public void onUpdate(FeedItem item) {
-
-			Intent intent = set_intent(item);
-			mDownloadingItem = item;
-
-			sendBroadcast(intent);
-		}
-
-		public void onFinish() {
-			FeedItem item = new FeedItem();
-			item.title = "";
-			item.offset = 0;
-			item.length = -1;
-			item.duration = "01:00";
-
-			Intent intent = set_intent(item);
-
-			sendBroadcast(intent);
-
-			mDownloadingItem = item;
-
-		}
-	}
 
 	private final Handler handler = new Handler() {
 		@Override
@@ -211,14 +173,17 @@ public class PodcastService extends Service {
 
 			String where = SubscriptionColumns.LAST_UPDATED + "<"
 					+ (now - pref_update);
-
+			String order = SubscriptionColumns.LAST_UPDATED + " ASC,"
+			+ SubscriptionColumns.FAIL_COUNT +" ASC";
+			
 			cursor = getContentResolver().query(SubscriptionColumns.URI,
-					SubscriptionColumns.ALL_COLUMNS, where, null, null);
+					SubscriptionColumns.ALL_COLUMNS, where, null, order);
 			if (cursor.moveToFirst()) {
 
 				String url = cursor.getString(cursor
 						.getColumnIndex(SubscriptionColumns.URL));
 				cursor.close();
+				log.debug("findSubscriptionUrlByFreq OK : "+url);
 				return url;
 
 			}
@@ -259,10 +224,12 @@ public class PodcastService extends Service {
 
 	}
 
+	
 	public FeedItem getDownloadingItem() {
 		return mDownloadingItem;
 	}
 
+	
 	public void start_update() {
 		if (updateConnectStatus() == NO_CONNECT)
 			return;
@@ -348,8 +315,9 @@ public class PodcastService extends Service {
 				try {
 					while ((updateConnectStatus() & pref_connection_sel) > 0) {
 
-						FeedItem item = getDownloadItem();
-						if (item == null) {
+						mDownloadingItem = getDownloadItem();
+
+						if (mDownloadingItem == null) {
 							break;
 						}
 						File file = new File(getDownloadDir());
@@ -358,49 +326,48 @@ public class PodcastService extends Service {
 						}
 
 						// log.debug("start_download start");
-						if (item.pathname.equals("")) {
+						if (mDownloadingItem.pathname.equals("")) {
 							String path_name = getDownloadDir()
-									+ "/podcast_" + item.id + ".mp3";
-							item.pathname = path_name;
+									+ "/podcast_" + mDownloadingItem.id + ".mp3";
+							mDownloadingItem.pathname = path_name;
 						}
 
 						// if(MAX_DOWNLOAD_FAIL<item.failcount){
 
-						mDownloadListener.onBegin(item);
+						
 						try {
-							item.status = ItemColumns.ITEM_STATUS_DOWNLOADING_NOW;
-							item.update(getContentResolver());
+							mDownloadingItem.status = ItemColumns.ITEM_STATUS_DOWNLOADING_NOW;
+							mDownloadingItem.update(getContentResolver());
 							FeedFetcher fetcher = new FeedFetcher();
 
-							fetcher.download(item, mDownloadListener);
+							fetcher.download(mDownloadingItem);
 
 						} catch (Exception e) {
 							e.printStackTrace();
 						} finally {
-							if (item.status != ItemColumns.ITEM_STATUS_NO_PLAY) {
-								item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
+							if (mDownloadingItem.status != ItemColumns.ITEM_STATUS_NO_PLAY) {
+								mDownloadingItem.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
 							}
-							mDownloadListener.onFinish();
 
 						}
 						// }
-						log.debug(item.title + "  " + item.length + "  "
-								+ item.offset);
+						log.debug(mDownloadingItem.title + "  " + mDownloadingItem.length + "  "
+								+ mDownloadingItem.offset);
 
-						if (item.status == ItemColumns.ITEM_STATUS_NO_PLAY) {
-							item.update = Long.valueOf(System.currentTimeMillis());
-							item.failcount = 0;
-							item.offset = 0;
+						if (mDownloadingItem.status == ItemColumns.ITEM_STATUS_NO_PLAY) {
+							mDownloadingItem.update = Long.valueOf(System.currentTimeMillis());
+							mDownloadingItem.failcount = 0;
+							mDownloadingItem.offset = 0;
 
 						} else {
-							item.failcount++;
-							if (item.failcount > MAX_DOWNLOAD_FAIL) {
-								item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE;
-								item.failcount = 0;
+							mDownloadingItem.failcount++;
+							if (mDownloadingItem.failcount > MAX_DOWNLOAD_FAIL) {
+								mDownloadingItem.status = ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE;
+								mDownloadingItem.failcount = 0;
 							}
 						}
 
-						item.update(getContentResolver());
+						mDownloadingItem.update(getContentResolver());
 
 					}
 
@@ -410,6 +377,7 @@ public class PodcastService extends Service {
 				} finally {
 					mDownloadLock.writeLock().lock();
 					mDownloading = false;
+					mDownloadingItem = null;
 					mDownloadLock.writeLock().unlock();
 				}
 
@@ -521,8 +489,7 @@ public class PodcastService extends Service {
 
 		}
 
-		log
-				.debug("fetchFeed getFeedItemsSize = "
+		log.debug("fetchFeed getFeedItemsSize = "
 						+ listener.getFeedItemsSize());
 
 		if (listener.getFeedItemsSize() > 0) {
@@ -533,21 +500,27 @@ public class PodcastService extends Service {
 	}
 
 	private void updateFetch(String url) {
-		Cursor cursor = null;
+
 		log.debug("updateFetch start");
 		try {
-			cursor = getContentResolver().query(SubscriptionColumns.URI,
-					SubscriptionColumns.ALL_COLUMNS, null, null,
-					SubscriptionColumns.LAST_UPDATED + " asc");
-			if (cursor.moveToFirst()) {
-				Subscription sub = Subscription.getByCursor(cursor);
-				sub.fail_count++;
+
+				Subscription sub = Subscription.getByUrl(getContentResolver(),
+						url);
+				
+				if(sub==null)
+					return;
+				
+				if(sub.fail_count<REPEAT_UPDATE_FEED_COUNT){
+					sub.fail_count++;
+				}else{
+					sub.fail_count=0;
+				}
 				sub.update(getContentResolver());
-				log.debug("updateFetch OK");
-			}
+				
+				log.debug("updateFetch OK : "+url);
+
 		} finally {
-			if (cursor != null)
-				cursor.close();
+
 		}
 	}
 
@@ -556,7 +529,7 @@ public class PodcastService extends Service {
 		String feedTitle = listener.getFeedTitle();
 		String feedDescription = listener.getFeedDescription();
 		FeedItem[] feedItems = listener.getFeedItems();
-		log.debug("updateFeed start");
+		log.debug("updateFeed start:"+url);
 		/*
 		 * for (FeedItem item : feedItems) {
 		 * 
@@ -680,6 +653,9 @@ public class PodcastService extends Service {
 				+ sub_id, null);
 		cr.delete(ItemColumns.URI, ItemColumns.SUBS_ID + "=" + sub_id, null);
 	}
+	
+
+	
 
 	@Override
 	public void onCreate() {
@@ -703,8 +679,6 @@ public class PodcastService extends Service {
 		}
 
 		triggerNextTimer(1);
-
-		mDownloadListener = new DisplayListener();
 
 	}
 

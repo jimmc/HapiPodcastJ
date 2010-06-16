@@ -137,9 +137,13 @@ public class Subscription {
 			if (description != null)
 				cv.put(SubscriptionColumns.DESCRIPTION, description);
 
-			lastUpdated = Long.valueOf(System.currentTimeMillis());
-			cv.put(SubscriptionColumns.LAST_UPDATED, lastUpdated);
-
+			if(fail_count<=0){
+				lastUpdated = Long.valueOf(System.currentTimeMillis());
+			}else{
+				lastUpdated = 0;
+			}
+				cv.put(SubscriptionColumns.LAST_UPDATED, lastUpdated);
+			
 			if (fail_count >= 0)
 				cv.put(SubscriptionColumns.FAIL_COUNT, fail_count);
 

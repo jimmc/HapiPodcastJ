@@ -7,6 +7,8 @@ import info.xuluan.podcast.utils.DialogMenu;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
@@ -41,6 +43,31 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	private static final int MENU_ITEM_PAUSE = Menu.FIRST + 11;
 	private static final int MENU_ITEM_RESUME = Menu.FIRST + 12;
 	
+    private static final int REFRESH = 1;
+	
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case REFRESH:
+            		if (mServiceBinder != null)
+            			updateDownloadInfo(mServiceBinder.getDownloadingItem());
+                    queueNextRefresh(500);
+                    
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    };  
+    
+    private void queueNextRefresh(long delay) {
+        Message msg = mHandler.obtainMessage(REFRESH);
+        mHandler.removeMessages(REFRESH);
+       	mHandler.sendMessageDelayed(msg, delay);
+    }    
+    
 	
 
 	private static final String[] PROJECTION = new String[] {
@@ -49,20 +76,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 			ItemColumns.DURATION, ItemColumns.SUB_TITLE, ItemColumns.OFFSET,
 			ItemColumns.LENGTH, ItemColumns.STATUS, };
 
-	private final BroadcastReceiver mDownloadStatusReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			FeedItem item = new FeedItem();
 
-			item.title = intent.getStringExtra(ItemColumns.TITLE);
-			item.offset = intent.getIntExtra(ItemColumns.OFFSET, 0);
-			item.length = intent.getLongExtra(ItemColumns.LENGTH, 0);
-			item.duration = intent.getStringExtra(ItemColumns.DURATION);
-
-			updateDownloadInfo(item);
-
-		}
-	};
 
 	class MyListCursorAdapter extends SimpleCursorAdapter {
 
@@ -196,8 +210,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 		mPrevIntent = new Intent(this, MainActivity.class);
 		mNextIntent = new Intent(this, PlayListActivity.class);			
 		startInit();
-		registerReceiver(mDownloadStatusReceiver, new IntentFilter(
-				PodcastService.UPDATE_DOWNLOAD_STATUS));
+
 		
 
 	}
@@ -205,7 +218,6 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
-		unregisterReceiver(mDownloadStatusReceiver);
 	}
 
 	@Override
@@ -213,10 +225,12 @@ public class DownloadingActivity extends PodcastBaseActivity {
 		super.onResume();
 		if (mServiceBinder == null)
 			return;
+		/*
 		FeedItem item = mServiceBinder.getDownloadingItem();
 		if (item != null)
 			updateDownloadInfo(item);
-		
+		*/
+		queueNextRefresh(1);
 		mServiceBinder.start_download();
 	}
 
@@ -399,28 +413,36 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	}
 
 	private void updateDownloadInfo(FeedItem item) {
+		
 		TextView title = (TextView) DownloadingActivity.this
 				.findViewById(R.id.title);
 		TextView dl_status = (TextView) DownloadingActivity.this
 				.findViewById(R.id.dl_status);
 		ProgressBar progress = (ProgressBar) findViewById(R.id.progress);
-
-		title.setText(item.title);
-		if (item.length > 0) {
-			double d = 100.0 * item.offset / item.length;
-
-			int status = (int) d;
-
-			String str = "" + status + "% ( " + (formatLength(item.offset))
-					+ " / " + (formatLength((int) item.length)) + " )";
-
-			dl_status.setText(str);
-			progress.setProgress(status);
-
-		} else {
+		
+		if(item==null){
+			title.setText("");
 			dl_status.setText("0% ( 0 KB / 0 KB )");
+			progress.setProgress(0);			
+		}else{
 
-			progress.setProgress(0);
+			title.setText(item.title);
+			if (item.length > 0) {
+				double d = 100.0 * item.offset / item.length;
+	
+				int status = (int) d;
+	
+				String str = "" + status + "% ( " + (formatLength(item.offset))
+						+ " / " + (formatLength((int) item.length)) + " )";
+	
+				dl_status.setText(str);
+				progress.setProgress(status);
+	
+			} else {
+				dl_status.setText("0% ( 0 KB / 0 KB )");
+	
+				progress.setProgress(0);
+			}
 		}
 
 	}
