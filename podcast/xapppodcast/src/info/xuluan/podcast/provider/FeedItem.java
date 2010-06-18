@@ -51,11 +51,18 @@ public class FeedItem {
 	
 	private long m_date;
 
-	static String[] DATE_FORMATS = { "EEE, dd MMM yyyy HH:mm:ss Z",
-			"EEE, d MMM yy HH:mm z", "EEE, d MMM yyyy HH:mm:ss z",
-			"EEE, d MMM yyyy HH:mm z", "d MMM yy HH:mm z",
-			"d MMM yy HH:mm:ss z", "d MMM yyyy HH:mm z",
-			"d MMM yyyy HH:mm:ss z", "yyyy-MM-dd HH:mm", "yyyy-MM-dd HH:mm:ss", };
+	static String[] DATE_FORMATS = { 
+		"EEE, dd MMM yyyy HH:mm:ss Z",
+		"EEE, d MMM yy HH:mm z", 
+		"EEE, d MMM yyyy HH:mm:ss z",
+		"EEE, d MMM yyyy HH:mm z", 
+		"d MMM yy HH:mm z",
+		"d MMM yy HH:mm:ss z", 
+		"d MMM yyyy HH:mm z",
+		"d MMM yyyy HH:mm:ss z", 
+		"yyyy-MM-dd HH:mm", 
+		"yyyy-MM-dd HH:mm:ss", 
+		"EEE,dd MMM yyyy HH:mm:ss Z",};
 	
 	static String default_format = "EEE, dd MMM yyyy HH:mm:ss Z";
 	
