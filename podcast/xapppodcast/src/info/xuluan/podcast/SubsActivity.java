@@ -278,8 +278,14 @@ public class SubsActivity extends PodcastBaseActivity {
 					Toast.makeText(SubsActivity.this, getResources().getString(R.string.success),
 							Toast.LENGTH_SHORT).show();
 				} else {
-					Toast.makeText(SubsActivity.this, getResources().getString(R.string.fail),
-							Toast.LENGTH_SHORT).show();
+					int rc = mServiceBinder.getErrCode();
+					if(rc==0){
+						Toast.makeText(SubsActivity.this, getResources().getString(R.string.fail),
+								Toast.LENGTH_SHORT).show();
+					}else{
+						Toast.makeText(SubsActivity.this, getResources().getString(rc),
+								Toast.LENGTH_SHORT).show();
+					}
 				}
 			}
 		};
@@ -289,7 +295,8 @@ public class SubsActivity extends PodcastBaseActivity {
 	private void addFeed(String url, FeedParserListenerAdapter feed) {
 		if (mServiceBinder == null)
 			return;
-		mServiceBinder.addSubscription(url);
+		Subscription sub = new Subscription(url);
+		sub.subscribe(getContentResolver());
 		mServiceBinder.updateFeed(url, feed);
 
 	}

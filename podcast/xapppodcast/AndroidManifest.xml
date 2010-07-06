@@ -20,6 +20,8 @@
 	
     <application android:icon="@drawable/icon" android:label="@string/app_name"
 	android:debuggable="false" >
+        <uses-library android:name="android.test.runner" />
+	
         <activity android:name=".SelectActivity" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -62,4 +64,8 @@
         <service android:enabled="true" android:name=".service.PlayerService"></service>        
         <provider android:name=".provider.PodcastProvider" android:authorities="info.xuluan.podcast.provider.podcastprovider"></provider>
     </application>
+	
+    <instrumentation android:name="android.test.InstrumentationTestRunner"
+                     android:targetPackage="info.xuluan.podcast"
+                     android:label="Hapi Podcast test"/>	
 </manifest> 

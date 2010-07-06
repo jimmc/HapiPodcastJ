@@ -260,8 +260,7 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 				Html.fromHtml(content)).setPositiveButton(R.string.subscribe,
 				new DialogInterface.OnClickListener() {
 					public void onClick(DialogInterface dialog, int whichButton) {
-						Subscription sub = new Subscription();
-						sub.url = item.url;
+						Subscription sub = new Subscription(item.url);
 						sub.link = item.link;
 						
 						String tags = SearchChannel.this.mEditText.getText().toString();
@@ -270,7 +269,7 @@ public class SearchChannel extends PodcastBaseActivity implements TextWatcher {
 						
 						sub.comment = content;
 						
-						int rc = sub.add(getContentResolver());
+						int rc = sub.subscribe(getContentResolver());
 						
 						if(rc == Subscription.ADD_FAIL_DUP){
 							Toast.makeText(SearchChannel.this,

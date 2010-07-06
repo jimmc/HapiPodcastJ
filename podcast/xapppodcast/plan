@@ -1,9 +1,13 @@
 TODO
 --------------------------------
-review and refactor:
+1 unit test
+2 review refactor
+3 add detail hint
+
 ----------------------------------------
 IMPORTANT
-1 first channel update(update fail count/)
+
+1  add download cancel button
 
 2 service start when power on
 android.intent.action.BOOT_COMPLETED  
@@ -26,7 +30,8 @@ clear: download file (fail, no delete etc)
   if download == false, download status update
 5 set fast forward interval
 6 item view flip and playing control
-  
+7 parser feed fail reason???
+
 ----------------------------------------
 OTHER
 check sd, path name ..(download path)
@@ -54,6 +59,12 @@ PHASE 3
 
 
 1 web site, add search channel by web (other search engine)
+TABLE:
+ - channel: name, url, status, last update, sub_count, tag, description, category, language
+ - user:  id(mail), 
+ - subs: id, user, tag
+ - 
+
 2 sync feed subscribtion
 	when channel cannot get item?
 3 refactor db
@@ -66,6 +77,14 @@ BUG
 --------------------------------------------------------------
 
 DONE
+
+- 20090618  (TAG 29)
+add data format: EEE,dd MMM yyyy HH:mm:ss Z
+
+- 20090616  (TAG 28)
+update feed(repeat 3 times when fail)
+refactor download activity
+
 - 20090519  (TAG 26)
 add fast forward button
 add auto download hint

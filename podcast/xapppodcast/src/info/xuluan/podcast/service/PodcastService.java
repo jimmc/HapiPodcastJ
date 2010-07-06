@@ -39,6 +39,7 @@ import android.widget.Toast;
 
 public class PodcastService extends Service {
 
+	private static final int ERR_CODE_NO_ERROR = 0;
 	public static final int NO_CONNECT = 1;
 	public static final int WIFI_CONNECT = 2;
 	public static final int MOBILE_CONNECT = 4;
@@ -68,6 +69,8 @@ public class PodcastService extends Service {
 
 	//private DownloadItemListener mDownloadListener = null;
 
+
+	private static int mErrCode;
 
 	private static boolean mDownloading = false;
 	private FeedItem mDownloadingItem = null;
@@ -227,6 +230,11 @@ public class PodcastService extends Service {
 	
 	public FeedItem getDownloadingItem() {
 		return mDownloadingItem;
+	}
+
+
+	public int getErrCode() {
+		return mErrCode;
 	}
 
 	
@@ -467,6 +475,7 @@ public class PodcastService extends Service {
 	}
 
 	public FeedParserListenerAdapter fetchFeed(String url) {
+		mErrCode = 0;
 		log.debug("fetchFeed start");
 
 		FeedFetcher fetcher = new FeedFetcher();
@@ -480,10 +489,14 @@ public class PodcastService extends Service {
 			if (response != null)
 				FeedParser.getDefault().parse(
 						new ByteArrayInputStream(response.content), handler);
-			else
+			else{
 				log.debug("response == null");
+				mErrCode = R.string.network_fail;
+			}
 
 		} catch (Exception e) {
+			mErrCode = R.string.feed_format_error;
+
 			log.debug("Parse XML error:", e);
 			// e.printStackTrace();
 
@@ -528,13 +541,15 @@ public class PodcastService extends Service {
 		// sort feed items:
 		String feedTitle = listener.getFeedTitle();
 		String feedDescription = listener.getFeedDescription();
-		FeedItem[] feedItems = listener.getFeedItems();
+		FeedItem[] feedItems = listener.getSortItems();
 		log.debug("updateFeed start:"+url);
 		/*
 		 * for (FeedItem item : feedItems) {
 		 * 
 		 * log.warn("item_date: " + item.date); }
 		 */
+		
+		/*
 		Arrays.sort(feedItems, new Comparator<FeedItem>() {
 			public int compare(FeedItem i1, FeedItem i2) {
 				long d1 = i1.getDate();
@@ -545,6 +560,9 @@ public class PodcastService extends Service {
 				return d1 > d2 ? (-1) : 1;
 			}
 		});
+		
+		*/
+		
 		/*
 		 * for (FeedItem item : feedItems) {
 		 * 
@@ -567,12 +585,12 @@ public class PodcastService extends Service {
 				log.debug("item lastUpdated =" + d + " feed lastUpdated = "
 						+ subscription.lastUpdated);
 				log.debug("item date =" + item.date);
-				break;
+				continue;
 			}
 			log.debug("subscription.id : " + subscription.id);
 
 			log.debug("add item = " + item.title);
-			added.add(item);
+			added.add(0,item);
 
 		}
 		log.debug("added size: " + added.size());
@@ -599,10 +617,9 @@ public class PodcastService extends Service {
 	void addItems(Subscription subscription, List<FeedItem> items) {
 		Long sub_id = subscription.id;
 		ContentResolver cr = getContentResolver();
-		int len = items.size();
-		for (int i = len - 1; i >= 0; i--) {
 
-			FeedItem item = items.get(i);
+		for (FeedItem item : items) {
+
 			item.sub_id = sub_id;
 			if(subscription.auto_download>0){
 				item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
@@ -633,6 +650,7 @@ public class PodcastService extends Service {
 		}
 	}
 
+/*	
 	public Uri addSubscription(String url) {
 		Subscription sub = Subscription.getByUrl(getContentResolver(), url);
 
@@ -646,7 +664,7 @@ public class PodcastService extends Service {
 		return getContentResolver().insert(SubscriptionColumns.URI, cv);
 
 	}
-
+*/
 	public void removeSubscription(String sub_id) {
 		ContentResolver cr = getContentResolver();
 		cr.delete(SubscriptionColumns.URI, SubscriptionColumns._ID + "="
