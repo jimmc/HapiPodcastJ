@@ -74,6 +74,11 @@ BUG
 --------------------------------------------------------------
 
 DONE
+- 20090724  (TAG 32)
+refactor
+pref onPause if(!=null)
+show message when cannot found import opml file
+
 - 20090706  (TAG 30)
 create unit test
 show fail reason when add channel
