@@ -1,10 +1,38 @@
 TODO
 --------------------------------
 review refactor
+
+3 player
+
+2 search
+5 other parser(opml/json)
+
+6 provider
+7 item/sub
+
+8 cursor adapter
+
+10 reading refactor
+
+----------------------------
+
+
+1 waiting dialog(channels)
+
+google@mhohner.de/Michael
+http://www.br-online.de/podcast/gschmarri/cast.xml
+http://www.loe.org/podcast.rss
 ----------------------------------------
 IMPORTANT
 
+1 player add playing flag
+1 remove unittest to another project
+
 1  add download cancel button
+3 bluetooth control
+6 set fast forward interval
+7 set max item number added
+
 
 2 service start when power on
 android.intent.action.BOOT_COMPLETED  
@@ -25,14 +53,15 @@ only with mp3 as suffix
 4 video type
 clear: download file (fail, no delete etc)
   if download == false, download status update
-5 set fast forward interval
 6 item view flip and playing control
 
+8 sd card full?
+9 channel fail reason
 
+类似这种的有好几个吧，console log什么的，主要是在Thread里面注册handle uncaught exceptions。。。 
 ----------------------------------------
 OTHER
 check sd, path name ..(download path)
-sd card full?
 uni channel in search list
 2 channel status icon
 3 download pause
@@ -54,7 +83,9 @@ setImeOptions(EditorInfo.IME_ACTION_SEARCH);
 ---------------------------------------------------------------------
 PHASE 3
 
-
+http://www.blogkid.net/dreamhost 
+http://www.blogkid.net/linode 
+http://www.blogkid.net/archives/2595.html 
 1 web site, add search channel by web (other search engine)
 TABLE:
  - channel: name, url, status, last update, sub_count, tag, description, category, language
@@ -74,6 +105,14 @@ BUG
 --------------------------------------------------------------
 
 DONE
+
+-SDCardMgr: check sd, check sd_dir and create dir
+-LockHandler: start thread (lock)
+-search item by sql
+-download status
+-refactor feed parser and update
+
+
 - 20090724  (TAG 32)
 refactor
 pref onPause if(!=null)

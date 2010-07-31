@@ -2,7 +2,6 @@ package info.xuluan.podcast;
 
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
-import info.xuluan.podcast.service.PodcastService;
 import info.xuluan.podcast.utils.DialogMenu;
 import android.database.Cursor;
 import android.net.Uri;
@@ -11,12 +10,10 @@ import android.os.Handler;
 import android.os.Message;
 
 import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +31,7 @@ import java.util.HashMap;
 
 public class DownloadingActivity extends PodcastBaseActivity {
 
-	private static final int COLUMN_INDEX_TITLE = 1;
+
 
 	private static final int MENU_RESTART = Menu.FIRST + 1;
 

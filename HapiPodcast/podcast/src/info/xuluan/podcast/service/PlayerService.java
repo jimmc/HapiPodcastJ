@@ -9,6 +9,7 @@ import info.xuluan.podcast.R;
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.utils.Log;
+import info.xuluan.podcast.utils.SDCardMgr;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -20,16 +21,10 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.net.Uri;
 import android.os.Binder;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.os.PowerManager;
-import android.provider.MediaStore;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.widget.Toast;
@@ -375,7 +370,7 @@ public class PlayerService extends Service {
     }	
 	
 	public void play(long id) {
-		if(getSDCardStatus()==false){
+		if(SDCardMgr.getSDCardStatus()==false){
 			Toast.makeText(this, getResources().getString(R.string.sdcard_unmout), Toast.LENGTH_LONG).show();
 			return;
 		}
@@ -645,16 +640,7 @@ public class PlayerService extends Service {
 
 	}
     
-	private boolean getSDCardStatus()
-	{
-		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
-			return true;
-		}else{
-			return false;
-		}
-
-	}    
-    
+   
 	private final IBinder binder = new PlayerBinder();
 
 	public class PlayerBinder extends Binder {

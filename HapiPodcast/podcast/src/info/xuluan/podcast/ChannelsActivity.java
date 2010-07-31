@@ -1,7 +1,8 @@
 package info.xuluan.podcast;
 
 
-import info.xuluan.podcast.parser.FeedParserListenerAdapter;
+import info.xuluan.podcast.parser.FeedHandler;
+import info.xuluan.podcast.parser.FeedParserListener;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.utils.DialogMenu;
@@ -40,6 +41,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 	
 
 	private ProgressDialog progress = null;
+	private FeedHandler feed_handler = null;
 
 	private static final String[] PROJECTION = new String[] {
 			SubscriptionColumns._ID, // 0
@@ -255,49 +257,51 @@ public class ChannelsActivity extends PodcastBaseActivity {
 		this.progress = ProgressDialog.show(this, getResources().getText(
 				R.string.dialog_title_loading), getResources().getText(
 				R.string.dialog_message_loading), true);
-		AsyncTask<String, ProgressDialog, FeedParserListenerAdapter> asyncTask = new AsyncTask<String, ProgressDialog, FeedParserListenerAdapter>() {
+		AsyncTask<String, ProgressDialog, FeedParserListener> asyncTask 
+			= new AsyncTask<String, ProgressDialog, FeedParserListener>() {
 			String url;
 
 			@Override
-			protected FeedParserListenerAdapter doInBackground(String... params) {
+			protected FeedParserListener doInBackground(String... params) {
 
 				url = params[0];
 				// log.debug("doInBackground URL ="+url);
-				return mServiceBinder.fetchFeed(url);
+				feed_handler = new FeedHandler(getContentResolver());
+				return feed_handler.fetchFeed(url);
 			}
 
 			@Override
-			protected void onPostExecute(FeedParserListenerAdapter result) {
+			protected void onPostExecute(FeedParserListener result) {
 
 				if (ChannelsActivity.this.progress != null) {
 					ChannelsActivity.this.progress.dismiss();
 					ChannelsActivity.this.progress = null;
 				}
 				if (result != null) {
-					addFeed(url, result);
-					Toast.makeText(ChannelsActivity.this, getResources().getString(R.string.success),
-							Toast.LENGTH_SHORT).show();
-				} else {
-					int rc = mServiceBinder.getErrCode();
-					if(rc==0){
-						Toast.makeText(ChannelsActivity.this, getResources().getString(R.string.fail),
-								Toast.LENGTH_LONG).show();
+					if(result.resultCode==0){
+						Toast.makeText(ChannelsActivity.this, getResources().getString(R.string.success),
+								Toast.LENGTH_SHORT).show();		
+						addFeed(url, result);
+
 					}else{
-						Toast.makeText(ChannelsActivity.this, getResources().getString(rc),
-								Toast.LENGTH_LONG).show();
+						Toast.makeText(ChannelsActivity.this, getResources().getString(result.resultCode),
+								Toast.LENGTH_LONG).show();						
 					}
+
+				} else {
+					Toast.makeText(ChannelsActivity.this, getResources().getString(R.string.fail),
+							Toast.LENGTH_LONG).show();
 				}
 			}
 		};
 		asyncTask.execute(url);
 	}
 
-	private void addFeed(String url, FeedParserListenerAdapter feed) {
-		if (mServiceBinder == null)
-			return;
+	private void addFeed(String url, FeedParserListener feed) {
+
 		Subscription sub = new Subscription(url);
 		sub.subscribe(getContentResolver());
-		mServiceBinder.updateFeed(url, feed);
+		feed_handler.updateFeed(sub, feed);
 
 	}
 

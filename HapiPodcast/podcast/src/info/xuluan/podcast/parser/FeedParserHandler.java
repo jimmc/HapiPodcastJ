@@ -47,7 +47,7 @@ public class FeedParserHandler extends DefaultHandler {
 	private static final String NODE_FEED_PUBLISHED = "published";
 	private static final String NODE_FEED_AUTHOR_NAME = "name";
 
-	private final FeedParserListener listener;
+	private final FeedParserListenerInterface listener;
 	private final Log log = Log.getLog(getClass());
 
 	private boolean mFeedTitleLoaded = false;
@@ -82,7 +82,7 @@ public class FeedParserHandler extends DefaultHandler {
 		fetchChars.add(NODE_FEED_AUTHOR_NAME);
 	}
 
-	public FeedParserHandler(FeedParserListener listener) {
+	public FeedParserHandler(FeedParserListenerInterface listener) {
 		this.listener = listener;
 	}
 
@@ -266,7 +266,7 @@ public class FeedParserHandler extends DefaultHandler {
 				mCurrentItem.resource = attributes.getValue("url");
 				mCurrentItem.type = "audio/mp3";
 			} else {
-				Pattern p = Pattern.compile("^audio");
+				Pattern p = Pattern.compile("audio");
 				Matcher m = p.matcher(type);
 				if (m.find()) {
 					mCurrentItem.type = type;

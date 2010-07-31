@@ -1,13 +1,11 @@
 package info.xuluan.podcast.provider;
 
-import info.xuluan.podcast.R;
-import info.xuluan.podcast.SearchActivity;
+
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
-import android.widget.Toast;
 
 public class Subscription {
 	
@@ -28,6 +26,23 @@ public class Subscription {
 	public long fail_count;
 	public long auto_download;
 
+	public static Subscription getBySQL(ContentResolver context,String where,String order) 
+	{
+		Subscription sub = null;
+		Cursor cursor = null;
+	
+		try {		
+			cursor = context.query(SubscriptionColumns.URI,
+					SubscriptionColumns.ALL_COLUMNS, where, null, order);
+			if (cursor.moveToFirst()) {
+				sub =Subscription.getByCursor(cursor);
+			}
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}		
+		return sub;			
+	}
 	public static Subscription getByUrl(ContentResolver context, String url) {
 		Cursor cursor = null;
 		try {

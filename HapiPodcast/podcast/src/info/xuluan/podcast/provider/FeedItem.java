@@ -1,8 +1,8 @@
 package info.xuluan.podcast.provider;
 
 import info.xuluan.podcast.PlayerActivity;
-import info.xuluan.podcast.ItemActivity;
 import info.xuluan.podcast.utils.Log;
+import info.xuluan.podcast.utils.SDCardMgr;
 
 import java.io.File;
 import java.text.ParseException;
@@ -10,15 +10,16 @@ import java.text.SimpleDateFormat;
 import java.util.Locale;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 
 public class FeedItem {
+	
+	public static final int MAX_DOWNLOAD_FAIL = 5;
+	
 	private final Log log = Log.getLog(getClass());
 
 	public String url;
@@ -65,7 +66,29 @@ public class FeedItem {
 		"EEE,dd MMM yyyy HH:mm:ss Z",};
 	
 	static String default_format = "EEE, dd MMM yyyy HH:mm:ss Z";
+
+	public static FeedItem getBySQL(ContentResolver context,String where,String order) 
+	{
+		FeedItem item = null;
+		Cursor cursor = null;
 	
+		try {
+			cursor = context.query(
+					ItemColumns.URI,
+					ItemColumns.ALL_COLUMNS,
+					where,
+					null,
+					order);
+			if (cursor.moveToFirst()) {
+				item = FeedItem.getByCursor(cursor);
+			}
+		}finally {
+			if (cursor != null)
+				cursor.close();
+		}		
+		return item;
+						
+	}	
 	public static FeedItem getById(ContentResolver context, long id) {
 		Cursor cursor = null;
 		FeedItem item = null;
@@ -350,40 +373,7 @@ public class FeedItem {
 		act.startActivity(intent);
 		
 		return;
-/*
-		if (status <= ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW) 
-			return;
-		if (status == ItemColumns.ITEM_STATUS_NO_PLAY) {
-			status = ItemColumns.ITEM_STATUS_PLAYED;
-			update(act.getContentResolver());
-		}
-		
-		
-		Intent intent = new Intent(android.content.Intent.ACTION_VIEW);
 
-		Uri data = Uri.parse(uri);
-
-		intent.setDataAndType(data, getType());
-		log.debug("playing " + pathname);
-		
-			try {
-				act.startActivity(intent);
-			} catch (ActivityNotFoundException e) {
-				e.printStackTrace();
-				Intent intent2 = new Intent(android.content.Intent.ACTION_VIEW);
-
-				data = Uri.parse("file://" + pathname);
-				intent2.setDataAndType(data, "audio/mp3");
-				try {
-					act.startActivity(intent2);
-
-				} catch (Exception e2) {
-					e2.printStackTrace();
-
-				}
-
-			}
-*/		
 	}
 	
 	public void delFile(ContentResolver context){
@@ -392,7 +382,7 @@ public class FeedItem {
 			update(context);	
 		}
 
-		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
+		if (SDCardMgr.getSDCardStatus()) {
 			try {
 				File file = new File(pathname);
 				
@@ -427,6 +417,42 @@ public class FeedItem {
 		return text;
 		
 	}
+	
+	public void startDownload(ContentResolver context)
+	{
+		if (pathname.equals("")) {
+			pathname = SDCardMgr.getDownloadDir()
+					+ "/podcast_" + id + ".mp3";
+		}
+		status = ItemColumns.ITEM_STATUS_DOWNLOADING_NOW;
+		update(context);
+		
+	}
+
+	public void downloadSuccess()
+	{
+		status = ItemColumns.ITEM_STATUS_NO_PLAY;
+	}	
+	
+	public void endDownload(ContentResolver context)
+	{
+		
+		if (status == ItemColumns.ITEM_STATUS_NO_PLAY) {
+			update = Long.valueOf(System.currentTimeMillis());
+			failcount = 0;
+			offset = 0;
+
+		} else {
+			status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
+			failcount++;
+			if (failcount > MAX_DOWNLOAD_FAIL) {
+				status = ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE;
+				failcount = 0;
+			}
+		}
+
+		update(context);		
+	}	
 
 	public void sendMail(Activity act){
 	

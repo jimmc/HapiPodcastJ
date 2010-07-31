@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.database.Cursor;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Xml;
 import android.view.View;
 import android.widget.ListView;
@@ -21,6 +20,7 @@ import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.service.PlayerService;
 import info.xuluan.podcast.service.PodcastService;
 import info.xuluan.podcast.utils.Log;
+import info.xuluan.podcast.utils.SDCardMgr;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -35,12 +35,10 @@ import java.util.Map;
 
 import org.xmlpull.v1.XmlSerializer;
 
-import android.widget.Toast;
 
 
 public class MainActivity extends ListActivity{
 	
-	public static String SDCARD_DIR = "/sdcard"; 
 	public static String OPML_FILE = "hapi_podcast.opml"; 
 	
 	private final Log log = Log.getLog(getClass());
@@ -98,12 +96,6 @@ public class MainActivity extends ListActivity{
         return myData;
     }
 
-
-
-
-    
-
-
     protected void addItem(List<Map> data, String name,Integer icon, Intent intent, String cmd) {
         Map<String, Object> temp = new HashMap<String, Object>();
         temp.put("title", name);
@@ -113,35 +105,15 @@ public class MainActivity extends ListActivity{
         
         data.add(temp);
     }
-    
-	
-	private boolean getSDCardStatus()
-	{
-		if (android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED)) {
-			return true;
-		}else{
-			Toast.makeText(this, getResources().getString(R.string.sdcard_unmout), Toast.LENGTH_LONG).show();
-		
-			return false;
-		}
-
-	}
-	
-	private String getAppDir()
-	{
-		File sdDir = new File(Environment.getExternalStorageDirectory().getPath());
-		SDCARD_DIR = sdDir.getAbsolutePath();
-		log.debug("getDownloadDir: " + SDCARD_DIR + PodcastService.APP_DIR);
-		return SDCARD_DIR + PodcastService.APP_DIR;
-	}
+  
 	
 	private boolean pre_dir_handle()
 	{
-	    	if(getSDCardStatus()==false){
-	    		return false;
-	    	}		
+    	if(SDCardMgr.getSDCardStatusAndCreate()==false){
+    		return false;
+    	}
     	
-		File file = new File(getAppDir());
+		File file = new File(SDCardMgr.getAppDir());
 		
 		boolean exists = (file.exists());
 		if (exists==false) {
@@ -154,10 +126,11 @@ public class MainActivity extends ListActivity{
     {
 
     	if(pre_dir_handle()==false){
+		Toast.makeText(this, getResources().getString(R.string.sdcard_unmout), Toast.LENGTH_LONG).show();
     		return;   		
     	}
     	
-        File directory = new File(getAppDir());
+        File directory = new File(SDCardMgr.getAppDir());
         final File[] filesArray = directory.listFiles(new MyFileFilter());
         
         if(filesArray == null){
@@ -217,7 +190,7 @@ public class MainActivity extends ListActivity{
 			
         }else{
 		 Toast.makeText(MainActivity.this, " No OPML file found. \n  Please copy OPML file to the directory:\n"
-				 + getAppDir()+"\n", Toast.LENGTH_LONG).show();	
+				 + SDCardMgr.getAppDir()+"\n", Toast.LENGTH_LONG).show();	
 		}
     	
     }
@@ -286,7 +259,7 @@ public class MainActivity extends ListActivity{
 
             FileOutputStream fileOutputStream = null;
             try {
-                File writeFile = new File(getAppDir(), OPML_FILE);
+                File writeFile = new File(SDCardMgr.getAppDir(), OPML_FILE);
                 fileOutputStream = new FileOutputStream(writeFile);
 
                 fileOutputStream.write(xml.getBytes());
@@ -294,7 +267,7 @@ public class MainActivity extends ListActivity{
         		
         		new AlertDialog.Builder(this)
                 .setTitle("Success")
-                .setMessage("Export to : "+ getAppDir() + "/" + OPML_FILE)
+                .setMessage("Export to : "+ SDCardMgr.getAppDir() + "/" + OPML_FILE)
                 .setPositiveButton(R.string.menu_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                        }

@@ -17,19 +17,11 @@
 package info.xuluan.podcast.tests;
 
 import android.content.Intent;
-import android.test.ServiceTestCase;
 import info.xuluan.podcast.R;
-import info.xuluan.podcast.provider.Subscription;
+import info.xuluan.podcast.parser.FeedParserListener;
 import info.xuluan.podcast.service.PodcastService;
 
-/**
- * An example of a true unit test that tests the utility class {@link MorseCodeConverter}.
- * Since this test doesn't need a {@link android.content.Context}, or any other
- * dependencies injected, it simply extends the standard {@link TestCase}.
- *
- * See {@link com.example.android.apis.AllTests} for documentation on running
- * all tests and individual tests in this application.
- */
+
 public class FeedFetchTest extends android.test.ServiceTestCase<PodcastService> {
 
 	PodcastService PodcastServiceInstance;
@@ -49,29 +41,31 @@ public class FeedFetchTest extends android.test.ServiceTestCase<PodcastService> 
         }
 
     }
-    
+ /*
     
 	public void testFetchNetworkErr() throws Exception {
     	String url = "http://www.xxx.com/aaa/bbb";
-    	PodcastServiceInstance.fetchFeed(url);
-    	int code = PodcastServiceInstance.getErrCode();
+    	FeedParserListener handler = PodcastServiceInstance.fetchFeed(url);
+    	int code = handler.resultCode;
         assertTrue(code==R.string.network_fail);
 
     }
 
 	public void testFetchFormatErr() throws Exception {
     	String url = "http://www.baidu.com";
-    	PodcastServiceInstance.fetchFeed(url);
-    	int code = PodcastServiceInstance.getErrCode();
+    	FeedParserListener handler = PodcastServiceInstance.fetchFeed(url);
+    	int code = handler.resultCode;
         assertTrue(code==R.string.feed_format_error);
 
     }	
 	
 	public void testFetchOK() throws Exception {
-    	String url = "http://blog.sina.com.cn/rss/twocold.xml";
-    	PodcastServiceInstance.fetchFeed(url);
-    	int code = PodcastServiceInstance.getErrCode();
+    	String url = "http://podcast.rthk.org.hk/podcast/observeworld.xml";
+    	FeedParserListener handler = PodcastServiceInstance.fetchFeed(url);
+    	int code = handler.resultCode;
     	assertTrue(code==0);
 
     }	
+*/    
+  
 }

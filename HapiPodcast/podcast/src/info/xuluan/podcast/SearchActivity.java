@@ -16,7 +16,6 @@
 
 package info.xuluan.podcast;
 
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -186,7 +185,7 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 			}
 
 		} catch (Exception e) {
-			log.debug("Parse XML error:", e);
+			log.debug("fetcher exception: ", e);
 			// e.printStackTrace();
 
 		}

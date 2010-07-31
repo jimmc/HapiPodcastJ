@@ -22,17 +22,17 @@ public class FeedParser {
 
 	public FeedParser() {
 
-		//
 	}
 
 	public void parse(InputStream input,DefaultHandler handler){
-		//FeedParserListener listener) {
-	
-		//FeedParserHandler handler = new FeedParserHandler(listener);
+
 		try {
 			SAXParser parser = saxParserFactory.newSAXParser();
+
 			parser.parse(input, handler);
 		} catch (SAXException e) {
+			e.printStackTrace();
+			
 			throw new RuntimeException(e);
 		} catch (IOException e) {
 			throw new RuntimeException(e);

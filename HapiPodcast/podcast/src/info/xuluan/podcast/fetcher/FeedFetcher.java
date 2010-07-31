@@ -15,7 +15,7 @@ import java.util.zip.GZIPInputStream;
 
 public class FeedFetcher {
 
-	private int maxSize = 100 * 1024;
+	private static final int maxSize = 100 * 1024;
 	private static final int TIMEOUT = 10 * 1000;
 	private boolean canceled = false;
 	private String mAgent;
@@ -91,20 +91,7 @@ public class FeedFetcher {
 				return null;
 			if (code != 200)
 				throw new IOException("Connection failed: " + code);
-			// detect content type and charset:
-			String contentType = hc.getContentType();
-			String charset = null;
-			if (contentType != null) {
-				int n = contentType.indexOf("charset=");
-				if (n != (-1)) {
-					charset = contentType.substring(n + 8).trim();
-					contentType = contentType.substring(0, n).trim();
-					if (contentType.endsWith(";")) {
-						contentType = contentType.substring(0,
-								contentType.length() - 1).trim();
-					}
-				}
-			}
+
 			boolean gzip = "gzip".equals(hc.getContentEncoding());
 			input = gzip ? new GZIPInputStream(hc.getInputStream()) : hc
 					.getInputStream();
@@ -125,7 +112,7 @@ public class FeedFetcher {
 			output.close();
 			log.debug("download length = " + total);
 
-			return new Response(contentType, charset, output.toByteArray());
+			return new Response(output.toByteArray());
 		} catch (Exception e) {
 			e.printStackTrace();
 			log.debug("download length = " + total);
@@ -227,7 +214,7 @@ public class FeedFetcher {
 				item.offset = nStartPos;
 			}
 			if (nStartPos >= nEndPos)
-				item.status = ItemColumns.ITEM_STATUS_NO_PLAY;
+				item.downloadSuccess();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
