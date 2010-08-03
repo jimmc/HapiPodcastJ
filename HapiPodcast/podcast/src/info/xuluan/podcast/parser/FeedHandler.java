@@ -63,7 +63,7 @@ public class FeedHandler  {
 		log.debug("fetchFeed getFeedItemsSize = "
 						+ listener.getFeedItemsSize());
 
-		if (listener.getSortItems().length <= 0) {
+		if (listener.getFeedItemsSize() <= 0) {
 			listener.resultCode = R.string.no_new_items;
 		}else{
 			listener.resultCode = 0;
@@ -79,13 +79,12 @@ public class FeedHandler  {
 			sub.fail_count=0;
 		}
 		sub.update(cr);
-				
-
 	}
 	
 	public int updateFeed(Subscription subscription, FeedParserListener listener) {
 		FeedItem[] feedItems = listener.getSortItems();
-			 
+		log.debug("fetchFeed getSortItemsSize = "
+						+ feedItems.length);			 
 		long update_date = subscription.lastItemUpdated;
 		int add_num = 0;
 
@@ -108,6 +107,7 @@ public class FeedHandler  {
 		subscription.description = listener.getFeedDescription();
 		subscription.lastItemUpdated = update_date;
 		subscription.update(cr);
+		log.debug("add url: "+subscription.url+"\n add num = "+add_num);
 		return add_num;
 		
 	}

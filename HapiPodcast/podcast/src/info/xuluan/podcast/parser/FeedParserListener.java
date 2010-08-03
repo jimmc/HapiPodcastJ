@@ -56,7 +56,6 @@ public class FeedParserListener implements FeedParserListenerInterface {
 	}
 	
 	public FeedItem[] getSortItems() {
-		log.debug("feedItems size: " + items.size());
 
 		int size = items.size()>MAX_VALID_SIZE?MAX_VALID_SIZE:items.size();
 		FeedItem[] result = new FeedItem[size]; 

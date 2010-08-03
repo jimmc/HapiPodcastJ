@@ -39,6 +39,12 @@ public class PlayerService extends Service {
 	private static final long REPEAT_MODE_NO_REPEAT = 0;
 	private static final long REPEAT_MODE_REPEAT = 1;
 	private static final long REPEAT_MODE_REPEAT_ONE = 2;
+
+	private static final String WHERE =  ItemColumns.STATUS  + ">" + ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW 
+	+ " AND " + ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_PLAYLIST_VIEW
+	+ " AND " + ItemColumns.FAIL_COUNT + " > 100";
+	
+	private static final String ORDER = ItemColumns.FAIL_COUNT + " ASC";
 	
 	private final Log log = Log.getLog(getClass());
 	
@@ -62,14 +68,11 @@ public class PlayerService extends Service {
                     pause();
                 }
             } else if (state == TelephonyManager.CALL_STATE_OFFHOOK) {
-                // pause the music while a conversation is in progress
                 mResumeAfterCall = (isPlaying() || mResumeAfterCall) && (mItem!=null);
                 pause();
             } else if (state == TelephonyManager.CALL_STATE_IDLE) {
-                // start playing again
                 if (mResumeAfterCall) {
-                    // resume playback only if music was playing
-                    // when the call was answered
+
                     startAndFadeIn();
                     mResumeAfterCall = false;
                 }
@@ -147,9 +150,6 @@ public class PlayerService extends Service {
             mIsInitialized = false;
         }
 
-        /**
-         * You CANNOT use this player anymore after calling release()
-         */
         public void release() {
             stop();
             mMediaPlayer.release();
@@ -171,14 +171,9 @@ public class PlayerService extends Service {
 
         MediaPlayer.OnCompletionListener listener = new MediaPlayer.OnCompletionListener() {
             public void onCompletion(MediaPlayer mp) {
-                // Acquire a temporary wakelock, since when we return from
-                // this callback the MediaPlayer will release its wakelock
-                // and allow the device to go to sleep.
-                // This temporary wakelock is released when the RELEASE_WAKELOCK
-                // message is processed, but just in case, put a timeout on it.
-                //mWakeLock.acquire(30000);
+
                 mHandler.sendEmptyMessage(TRACK_ENDED);
-                //mHandler.sendEmptyMessage(RELEASE_WAKELOCK);
+
             }
         };
 
@@ -194,15 +189,12 @@ public class PlayerService extends Service {
 	    		
                 switch (what) {
                 case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-    	            //mNotificationManager.cancel(R.layout.audio_player);
+
     	            dis_notifyStatus();
                     mIsInitialized = false;
                     mMediaPlayer.release();
-                    // Creating a new MediaPlayer and settings its wakemode does not
-                    // require the media service, so it's OK to do this now, while the
-                    // service is still being restarted
+
                     mMediaPlayer = new MediaPlayer(); 
-                    //mMediaPlayer.setWakeMode(AudioPlayer.this, PowerManager.PARTIAL_WAKE_LOCK);
                     mHandler.sendMessageDelayed(mHandler.obtainMessage(SERVER_DIED), 2000);
                     return true;
                 default:
@@ -257,8 +249,6 @@ public class PlayerService extends Service {
 				
 				if(mItem != null) {
 					FeedItem next_item = getNext(mItem);
-					
-		            //mNotificationManager.cancel(R.layout.audio_player);
 		            dis_notifyStatus();
 					mItem.played(getContentResolver());
 					mPlayer.stop();
@@ -304,7 +294,6 @@ public class PlayerService extends Service {
         TelephonyManager tmgr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
         tmgr.listen(mPhoneStateListener, PhoneStateListener.LISTEN_CALL_STATE);
 		log.debug("onCreate()");
-		//ftriggerNextTimer(1);
 	}
 	
 
@@ -319,7 +308,6 @@ public class PlayerService extends Service {
 	public void onDestroy() {
 		super.onDestroy();
 		if(mPlayer!=null){
-			//mNotificationManager.cancel(R.layout.audio_player);
 			dis_notifyStatus();
 			mPlayer.release();
 		}
@@ -341,15 +329,12 @@ public class PlayerService extends Service {
     private void dis_notifyStatus() {
         mNotificationManager.cancel(R.layout.audio_player);    	
         setForeground(false);
-        //stopForeground(true);
     }
     
     private void notifyStatus() {
     	
-        // choose the ticker text
         String tickerText = mItem == null ? "player" : mItem.title;
 
-        // Set the icon, scrolling text and timestamp
         Notification notification = new Notification(R.drawable.notify_player, tickerText, 0);
         notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
@@ -362,9 +347,7 @@ public class PlayerService extends Service {
         notification.setLatestEventInfo(this, tickerText,
         		null, contentIntent);        
         setForeground(true);
-        //startForeground(PlayerService_STATUS, notification);
-        // Send the notification.
-        // We use a layout id because it is a unique number.  We use it later to cancel.
+
         mNotificationManager.notify(R.layout.audio_player, notification);
         
     }	
@@ -424,7 +407,6 @@ public class PlayerService extends Service {
     		log.error("playing but no item!!!");
 
 		}
-        //mNotificationManager.cancel(R.layout.audio_player);
         dis_notifyStatus();
 		
 		mPlayer.pause();
@@ -434,7 +416,6 @@ public class PlayerService extends Service {
 		pause();
 		mPlayer.stop();		
 		mItem = null;
-        //mNotificationManager.cancel(R.layout.audio_player);
         dis_notifyStatus();
 		mUpdate = true;		
 	}	
@@ -514,13 +495,8 @@ public class PlayerService extends Service {
 	private FeedItem getFirst() {
 		Cursor cursor = null;		
 		try{
-			String where =  ItemColumns.STATUS  + ">" + ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW 
-			+ " AND " + ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_PLAYLIST_VIEW
-			+ " AND " + ItemColumns.FAIL_COUNT + " > 100";
-			
-			String order = ItemColumns.FAIL_COUNT + " ASC";
 
-			cursor = getContentResolver().query(ItemColumns.URI, ItemColumns.ALL_COLUMNS, where, null, order);
+			cursor = getContentResolver().query(ItemColumns.URI, ItemColumns.ALL_COLUMNS, WHERE, null, ORDER);
 			if(cursor==null){
 				return null;
 			}
@@ -550,13 +526,9 @@ public class PlayerService extends Service {
 		
 		
 		try{
-			String where =  ItemColumns.STATUS  + ">" + ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW 
-			+ " AND " + ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_PLAYLIST_VIEW
-			+ " AND " + ItemColumns.FAIL_COUNT + " > 100";
-			
-			String order = ItemColumns.FAIL_COUNT + " ASC";
 
-			cursor = getContentResolver().query(ItemColumns.URI, ItemColumns.ALL_COLUMNS, where, null, order);
+
+			cursor = getContentResolver().query(ItemColumns.URI, ItemColumns.ALL_COLUMNS, WHERE, null, ORDER);
 			if(cursor==null){
 				return null;
 			}
@@ -600,13 +572,7 @@ public class PlayerService extends Service {
 		}
 		
 		try{
-			String where =  ItemColumns.STATUS  + ">" + ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW 
-			+ " AND " + ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_PLAYLIST_VIEW
-			+ " AND " + ItemColumns.FAIL_COUNT + " > 100";
-			
-			String order = ItemColumns.FAIL_COUNT + " ASC";
-
-			cursor = getContentResolver().query(ItemColumns.URI, ItemColumns.ALL_COLUMNS, where, null, order);
+			cursor = getContentResolver().query(ItemColumns.URI, ItemColumns.ALL_COLUMNS, WHERE, null, ORDER);
 			if(cursor==null){
 				return null;
 			}

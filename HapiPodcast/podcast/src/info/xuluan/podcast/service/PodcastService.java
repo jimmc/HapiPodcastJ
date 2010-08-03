@@ -1,14 +1,9 @@
 package info.xuluan.podcast.service;
 
-import java.io.ByteArrayInputStream;
-
 import info.xuluan.podcast.R;
 import info.xuluan.podcast.fetcher.FeedFetcher;
-import info.xuluan.podcast.fetcher.Response;
 import info.xuluan.podcast.parser.FeedHandler;
-import info.xuluan.podcast.parser.FeedParser;
-import info.xuluan.podcast.parser.FeedParserHandler;
-import info.xuluan.podcast.parser.FeedParserListener;
+
 
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
@@ -19,7 +14,6 @@ import info.xuluan.podcast.utils.Log;
 import info.xuluan.podcast.utils.SDCardMgr;
 
 import android.app.Service;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -47,7 +41,7 @@ public class PodcastService extends Service {
 
 	private long pref_update = 2 * 60 * ONE_MINUTE;
 
-	public int pref_connection_sel = MOBILE_CONNECT;
+	public int pref_connection_sel = MOBILE_CONNECT|WIFI_CONNECT;
 
 	public long pref_update_wifi = 0;
 	public long pref_update_mobile = 0;
@@ -171,6 +165,8 @@ public class PodcastService extends Service {
 					int add_num;
 					Subscription sub = findSubscription();
 					while (sub != null) {
+					if (updateConnectStatus() == NO_CONNECT)
+							break;
 						FeedHandler handler = new FeedHandler(getContentResolver());
 						add_num = handler.update(sub);
 						if((add_num>0)&&(sub.auto_download>0))
@@ -337,7 +333,14 @@ public class PodcastService extends Service {
 
 	}
 
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		updateSetting();
+		SDCardMgr.getSDCardStatusAndCreate();
+		triggerNextTimer(1);
 
+	}
 
 	@Override
 	public void onStart(Intent intent, int startId) {

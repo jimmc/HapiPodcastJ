@@ -211,7 +211,7 @@ public class MainActivity extends ListActivity{
 			
 			
 			serializer.startTag("", "body");			
-			serializer.startTag("", "outline");
+			//serializer.startTag("", "outline");
 
 			Cursor cursor = managedQuery(SubscriptionColumns.URI, SubscriptionColumns.ALL_COLUMNS,
 					null, null, null);
@@ -236,7 +236,7 @@ public class MainActivity extends ListActivity{
 				cursor.close();
 			
 			
-			serializer.endTag("", "outline");
+			//serializer.endTag("", "outline");
 			serializer.endTag("", "body");		
 			serializer.endTag("", "opml");
 			serializer.endDocument();

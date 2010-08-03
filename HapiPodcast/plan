@@ -2,17 +2,16 @@ TODO
 --------------------------------
 review refactor
 
-3 player
-
 2 search
+ (search channel/ add)
 5 other parser(opml/json)
+
+3 player
+8 cursor adapter
+
 
 6 provider
 7 item/sub
-
-8 cursor adapter
-
-10 reading refactor
 
 ----------------------------
 
@@ -24,14 +23,29 @@ http://www.br-online.de/podcast/gschmarri/cast.xml
 http://www.loe.org/podcast.rss
 ----------------------------------------
 IMPORTANT
+1 formatTime
+1 formatLength
 
-1 player add playing flag
-1 remove unittest to another project
+1 updateInfo/refreshNow
+1 set fast forward interval
 
-1  add download cancel button
-3 bluetooth control
-6 set fast forward interval
-7 set max item number added
+2 set max item number added
+
+
+3 bug: mItem update bug
+3 update episode duration
+
+4 player add playing flag
+5 add download cancel button
+6 bluetooth control
+--------------------------------------------
+
+3 remove unittest to another project
+
+
+
+
+
 
 
 2 service start when power on
@@ -105,49 +119,54 @@ BUG
 --------------------------------------------------------------
 
 DONE
+- 20100731  (TAG 34)
+fix bug: update feed
+release 
 
--SDCardMgr: check sd, check sd_dir and create dir
--LockHandler: start thread (lock)
--search item by sql
--download status
--refactor feed parser and update
+- 20100731  (TAG 33)
+
+SDCardMgr: check sd, check sd_dir and create dir
+LockHandler: start thread (lock)
+search item by sql
+download status
+refactor feed parser and update
 
 
-- 20090724  (TAG 32)
+- 20100724  (TAG 32)
 refactor
 pref onPause if(!=null)
 show message when cannot found import opml file
 
-- 20090706  (TAG 30)
+- 20100706  (TAG 30)
 create unit test
 show fail reason when add channel
 parse feed when item sort is asc
 
-- 20090618  (TAG 29)
+- 20100618  (TAG 29)
 add data format: EEE,dd MMM yyyy HH:mm:ss Z
 
-- 20090616  (TAG 28)
+- 20100616  (TAG 28)
 update feed(repeat 3 times when fail)
 refactor download activity
 
-- 20090519  (TAG 26)
+- 20100519  (TAG 26)
 add fast forward button
 add auto download hint
 
-- 20090424  (TAG 25)
+- 20100424  (TAG 25)
 service setForeground
 thread for load all/ remove all/ load channel at audio player activity
 
-- 20090412  (TAG 23)
+- 20100412  (TAG 23)
 manual update channel
 
-- 20090411  (TAG 22)
+- 20100411  (TAG 22)
 add alterdialog/ remove long click
 
-- 20090410  (TAG 21)
+- 20100410  (TAG 21)
 	change search engine to google listen
 	
-- 20090328  (TAG 20)
+- 20100328  (TAG 20)
  up/down
 
 - 20090328 
@@ -162,32 +181,32 @@ add alterdialog/ remove long click
 10 play check file exist or sd mount
 
 
-- 20090315  (TAG 19)
+- 20100315  (TAG 19)
 
 undiscribe text
 backup  
 
-- 20090311
+- 20100311
 
 share by feeditem
 auto download
 
-- 20090310
+- 20100310
 
 2 offset
 6 item view, add date info (pading)
 7 share
 
-- 20090307  (TAG 17)
+- 20100307  (TAG 17)
 fix sdcard bug
 fix delete bug
 
-- 20090303 (TAG 16)
+- 20100303 (TAG 16)
 are you sure for delete channel?
 fix bug, from channel activity to read activity
 
 
-- 20090302
+- 20100302
 refresh update
 
 1 when press download button, display " put it into downloading queue, 
@@ -214,47 +233,47 @@ del button
 
 
 PHASE ONE
-- 20090219[TAG 11]
+- 20100219[TAG 11]
 fix bug: expire overflow
 - string
 - find default podcast(talk show, funny story, joke, music)
 - introduce
 
 
-- 20090219[TAG 9]
+- 20100219[TAG 9]
    modify manifest.xml
    string 
    name
  
-- 20090217[TAG 8]
+- 20100217[TAG 8]
  * UI style ( HOME )
  * download and play button
  
-- 20090216
+- 20100216
  SEARCH ENGINE
  remove origin link
  
-- 20090209
+- 20100209
  low memory finish
  input method bug
 
-- 20090204
+- 20100204
  readview: add scroll
  SEARCH FEED
  http://www.feedzie.com/scripts/getSearchListing_v2.php?stype=podcast&query=radio&searchbtn=Search&version=1.0
  language + content
  
-- 20090131
+- 20100131
   refactor
   no entries, bug
   
-- 20090127
+- 20100127
  lock?
  update continue
   download list bug??? some download items will disappear ....
 
   
-- 20090124
+- 20100124
 2  audio type: mp3,aac, ogg, ... TEST??
  is audio?
 fied: rating, comment
@@ -263,22 +282,22 @@ fied: rating, comment
 MENU
 2 settings update
 
-- 20090123
+- 20100123
   pref view
   fix download bug,   http timeout
   layout bug: 1 weight, 2 center
   modify   webview 
   expire: item, played ...
-- 20090121
+- 20100121
 1 playlist view(delete,status)
 2 download view(start,pause, priority, download progress ...)
 
-- 20090120
+- 20100120
 	play list and download view, layout
    bug no items
    
 	
-- 20090119h
+- 20100119h
   for summary, \n -> <br/>
   no music service
   create adapter
@@ -286,40 +305,40 @@ MENU
   add item(channel title, duration, icon) to view
 
 
-- 20090117
+- 20100117
   updateConnectStatus
   
   check sdcard mount
-- 20090114
+- 20100114
   check wifi or cell or none
 
-- 20090113
+- 20100113
   directory
   play bug?
   HTTP Status Code > 500
   download launch when user set item download
 
 
-- 20090111
+- 20100111
   play
   download continue
   delete only for no download item
 
 
-- 20090110
+- 20100110
 5 add download list view
 6 add play list view
-- 20090109
+- 20100109
 1 clean table: feed, item (update)
  parser 		<pubDate>Tue, 05 Jan 2010 02:34:09 +0000</pubDate>
  rss update fail, (update time ) 
 
-- 20090108
+- 20100108
 1 modify provider notifyChange, feed:update date,
 1 update feed
 2 add feed
 
-- 20090107
+- 20100107
 1 database(2 table, structucture , review)
 6 podcast parser and download
 2 modify item list view

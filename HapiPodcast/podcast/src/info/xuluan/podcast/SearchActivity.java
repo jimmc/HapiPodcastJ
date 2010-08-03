@@ -166,35 +166,22 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 		
 		return items;
 	}
-	public String fetchFeed(String url) {
-		log.debug("fetchFeed start");
-
+	public String fetchChannelInfo(String url) {
 		FeedFetcher fetcher = new FeedFetcher("Google-Listen/1.1.2 (droid)");
-
 		try {
-
 			Response response = fetcher.fetch(url);
 
-			log.debug("fetcher.fetch end");
-			// log.debug("print string " + response.getContentAsString());
 			if (response != null) {
-				log.debug("response != null");
 				return response.getContentAsString();
-			} else {
-				log.debug("response == null");
 			}
 
 		} catch (Exception e) {
-			log.debug("fetcher exception: ", e);
 			// e.printStackTrace();
-
 		}
-
 		return null;
-
 	}
 
-	private void start_search(String zie_url) {
+	private void start_search(String search_url) {
 		SearchActivity.this.progress = ProgressDialog.show(SearchActivity.this,
 				getResources().getText(R.string.dialog_title_loading),
 				getResources().getText(R.string.dialog_message_loading), true);
@@ -206,7 +193,7 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 
 				url = params[0];
 				// log.debug("doInBackground URL ="+url);
-				return fetchFeed(url);
+				return fetchChannelInfo(url);
 
 			}
 
@@ -239,7 +226,7 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 				updateBtn();
 			}
 		};
-		asyncTask.execute(zie_url);
+		asyncTask.execute(search_url);
 	}
 
 	@Override
