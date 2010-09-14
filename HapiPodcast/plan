@@ -131,15 +131,14 @@ BUG
 
 DONE
 - 20100915  (TAG 36)
-1 export audio file
-2 strip string(feed and item title)
-3 play audio file with other player
-4 max updated new items
-5 fast-forward step
-
-- 20100826  (TAG 35)
 1 set fast forward interval
 2 set max item number added
+3 export audio file
+4 strip string(feed and item title)
+5 play audio file with other player
+
+
+
 
 - 20100803  (TAG 34)
 fix bug: update feed
