@@ -40,6 +40,7 @@ import info.xuluan.podcast.service.PodcastService;
 import info.xuluan.podcast.utils.DialogMenu;
 import info.xuluan.podcast.utils.IconCursorAdapter;
 import info.xuluan.podcast.utils.Log;
+import info.xuluan.podcast.utils.StrUtils;
 
 
 public class PlayerActivity  extends ListActivity 
@@ -64,12 +65,13 @@ public class PlayerActivity  extends ListActivity
 	private static final int STATE_MAIN = 0;
 	private static final int STATE_VIEW = 1;
 	
-	private static final long ffwd_interval = 30*1000;	
+	private long ffwd_interval = 30*1000;	
 	
 
 	private boolean mShow = false;
 	private long mID;
 	private long pref_repeat;
+	private long pref_fas_fwd_interval;
 	private String mTitle = "Player";
 	//private FeedItem mCurrentItem;
 
@@ -205,7 +207,7 @@ public class PlayerActivity  extends ListActivity
             
         	if(mServiceBinder.isPlaying() == false) {
                 mCurrentTime.setVisibility(View.VISIBLE);
-                mCurrentTime.setText(formatTime( pos ));
+                mCurrentTime.setText(StrUtils.formatTime( pos ));
 
                 mProgress.setProgress((int) (1000 * pos / duration));
                 return 500;
@@ -213,7 +215,7 @@ public class PlayerActivity  extends ListActivity
         	
             long remaining = 1000 - (pos % 1000);
             if ((pos >= 0) && (duration > 0)) {
-                mCurrentTime.setText(formatTime( pos ));
+                mCurrentTime.setText(StrUtils.formatTime( pos ));
                 
                 if (mServiceBinder.isInitialized()) {
                     mCurrentTime.setVisibility(View.VISIBLE);
@@ -272,7 +274,7 @@ public class PlayerActivity  extends ListActivity
     	}
     	
         mTotalTime.setVisibility(View.VISIBLE);
-        mTotalTime.setText(formatTime( mServiceBinder.duration() ));    
+        mTotalTime.setText(StrUtils.formatTime( mServiceBinder.duration() ));    
 		setTitle(item.title);	
         
     	if(mServiceBinder.isPlaying() == false){    	
@@ -422,13 +424,14 @@ public class PlayerActivity  extends ListActivity
 	@Override
 	protected void onResume() {
 		super.onResume();
+        getPref();
+		
 		mShow = true;
         if(mID>=0) {
         	startPlay();
         }
         queueNextRefresh(1);
         updateInfo();
-
 
 	}
 
@@ -759,27 +762,14 @@ public class PlayerActivity  extends ListActivity
 
     }
     
-    private String formatTime(long ms) {
-    	long s = ms / 1000;
-    	long m = s / 60;
-    	s = s % 60;
-    	long h = m / 60;
-    	m = m % 60;
-    	String m_s = mTimeDecimalFormat.format(m) + ":" 
-    		+ mTimeDecimalFormat.format(s);
-    	if (h > 0) {
-    		// show also hour
-    		return "" + h + ":" + m_s;
-    	} else {
-    		// Show only minute:second
-    		return m_s;
-    	}
-    }
     
     private void getPref() {
 		SharedPreferences pref = getSharedPreferences(
 				"info.xuluan.podcast_preferences", Service.MODE_PRIVATE);
 		pref_repeat = pref.getLong("pref_repeat",0);
+		pref_fas_fwd_interval = Integer.parseInt(pref.getString("pref_fast_forward_interval",
+		"30"));		
+		ffwd_interval = pref_fas_fwd_interval*1000;
 
 	}    
 

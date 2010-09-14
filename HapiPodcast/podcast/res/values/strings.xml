@@ -17,6 +17,9 @@
     <string name="menu_move_down">Move Down</string>
 	
     <string name="menu_play">Play</string>
+    <string name="menu_played_by">Played by</string>
+    <string name="menu_export_audio_file">Export audio file</string>
+	
     <string name="menu_view">View</string>
     <string name="menu_keep">Keep</string>
     <string name="menu_download">Download</string>
@@ -85,6 +88,11 @@
     <string name="pref_played_file_expire_description">Setup the automatic expiration time of the downloaded items</string>	
     <string name="pref_played_file_expire_title">Played file expire in</string>	
 
+    <string name="pref_fast_forward_interval_description">Setup fast-forward step</string>	
+    <string name="pref_fast_forward_interval_title">Player Fast-Forward Step</string>	
+	
+    <string name="pref_max_new_items_description">Setup maximum updated new items</string>	
+    <string name="pref_max_new_items_title">Maximum Updated New Items</string>	
 	
     <string name="dialog_title_loading">Loading</string>
     <string name="dialog_message_loading">Loading channel...</string>

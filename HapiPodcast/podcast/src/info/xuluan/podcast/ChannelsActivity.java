@@ -14,10 +14,12 @@ import java.util.regex.Pattern;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.app.Service;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -266,7 +268,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 
 				url = params[0];
 				// log.debug("doInBackground URL ="+url);
-				feed_handler = new FeedHandler(getContentResolver());
+				feed_handler = new FeedHandler(getContentResolver(),getPrefMaxSize());
 				return feed_handler.fetchFeed(url);
 			}
 
@@ -332,4 +334,11 @@ public class ChannelsActivity extends PodcastBaseActivity {
 
 		super.startInit();
 	}
+    private int getPrefMaxSize() {
+		SharedPreferences pref = getSharedPreferences(
+				"info.xuluan.podcast_preferences", Service.MODE_PRIVATE);
+		return  Integer.parseInt(pref.getString(
+				"pref_max_new_items", "10"));
+
+	}    	
 }

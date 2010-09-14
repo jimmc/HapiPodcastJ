@@ -32,7 +32,7 @@ import info.xuluan.podcast.provider.Subscription;
 public class FeedParserListenerTest extends TestCase {
 
     public void testSortASC() throws Exception {
-    	FeedParserListener listener = new FeedParserListener();
+    	FeedParserListener listener = new FeedParserListener(10);
     	FeedItem item = new FeedItem();
     	item.id = 1;
     	item.date = "Fri, 30 Jul 2000 00:00:00 PST";
@@ -62,7 +62,7 @@ public class FeedParserListenerTest extends TestCase {
     }
 
     public void testSortDESC() throws Exception {
-    	FeedParserListener listener = new FeedParserListener();
+    	FeedParserListener listener = new FeedParserListener(10);
     	FeedItem item = new FeedItem();
     	item.id = 1;
     	item.date = "Fri, 30 Jul 2010 00:00:00 PST";    	
@@ -93,7 +93,7 @@ public class FeedParserListenerTest extends TestCase {
     }    
     
     public void testSort() throws Exception {
-    	FeedParserListener listener = new FeedParserListener();
+    	FeedParserListener listener = new FeedParserListener(10);
     	FeedItem item = new FeedItem();
     	item.id = 1;
     	item.date = "Fri, 10 Jul 2010 00:00:00 PST";        	
@@ -126,7 +126,7 @@ public class FeedParserListenerTest extends TestCase {
     }        
     
     public void testSortEqual() throws Exception {
-    	FeedParserListener listener = new FeedParserListener();
+    	FeedParserListener listener = new FeedParserListener(10);
     	FeedItem item = new FeedItem();
     	item.id = 1;
     	item.title = "1";
@@ -147,5 +147,35 @@ public class FeedParserListenerTest extends TestCase {
         assertTrue(items[1].id == 2 );
    
    	
-    }      
+    }  
+    
+    public void testSortOnly3() throws Exception {
+    	FeedParserListener listener = new FeedParserListener(3);
+    	FeedItem item = new FeedItem();
+    	item.id = 1;
+    	item.date = "Fri, 30 Jul 2010 00:00:00 PST";    	
+
+    	listener.onItemLoad(item);
+    	item = new FeedItem();
+    	item.id = 2;
+    	item.date = "Fri, 10 Jul 2010 00:00:00 PST";    	
+    	listener.onItemLoad(item);    	
+    	item = new FeedItem();
+    	item.id = 3;
+    	item.date = "Fri, 30 Jun 2010 00:00:00 PST";
+    	listener.onItemLoad(item);    	    	
+    	item = new FeedItem();
+    	item.id = 4; 
+    	item.date = "Fri, 30 Jul 2000 00:00:00 PST";
+    	listener.onItemLoad(item);   
+    	
+        assertTrue(listener.getFeedItemsSize()==4);
+        FeedItem[] items = listener.getSortItems();
+        assertTrue(items.length==3);
+       
+        assertTrue(items[0].id == 3 );
+        assertTrue(items[1].id == 2 );
+        assertTrue(items[2].id == 1 );        
+   	
+    }     
 }

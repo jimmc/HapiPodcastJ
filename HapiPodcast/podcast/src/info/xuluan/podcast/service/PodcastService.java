@@ -48,6 +48,8 @@ public class PodcastService extends Service {
 	public long pref_item_expire = 0;
 	public long pref_download_file_expire = 0;
 	public long pref_played_file_expire = 0;
+	public int pref_max_valid_size = 0;
+	
 
 	private FeedItem mDownloadingItem = null;
 	private static final LockHandler mDownloadLock = new LockHandler();
@@ -167,7 +169,7 @@ public class PodcastService extends Service {
 					while (sub != null) {
 					if (updateConnectStatus() == NO_CONNECT)
 							break;
-						FeedHandler handler = new FeedHandler(getContentResolver());
+						FeedHandler handler = new FeedHandler(getContentResolver(),pref_max_valid_size);
 						add_num = handler.update(sub);
 						if((add_num>0)&&(sub.auto_download>0))
 							do_download(false);
@@ -399,7 +401,9 @@ public class PodcastService extends Service {
 		pref_played_file_expire = Integer.parseInt(pref.getString(
 				"pref_played_file_expire", "24"));
 		pref_played_file_expire *= ONE_HOUR;
-
+		
+		pref_max_valid_size= Integer.parseInt(pref.getString(
+				"pref_max_new_items", "10"));
 	}
 
 }

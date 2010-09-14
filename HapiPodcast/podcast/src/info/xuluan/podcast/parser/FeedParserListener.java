@@ -10,11 +10,12 @@ import java.util.List;
 
 import org.xml.sax.SAXException;
 
+
 public class FeedParserListener implements FeedParserListenerInterface {
 
 	public static final int MAX_SIZE = 100;
-	public static final int MAX_VALID_SIZE = 10;
 	public int resultCode = 0;
+	private int max_valid_size = 10;
 
 	private String feedTitle;
 	private String feedDescription;
@@ -23,6 +24,12 @@ public class FeedParserListener implements FeedParserListenerInterface {
 	
 	private final Log log = Log.getLog(getClass());
 
+
+	public FeedParserListener(int max_valid_sz) {
+		max_valid_size = max_valid_sz;
+	}	
+
+	
 	public String getFeedTitle() {
 		return feedTitle;
 	}
@@ -57,7 +64,7 @@ public class FeedParserListener implements FeedParserListenerInterface {
 	
 	public FeedItem[] getSortItems() {
 
-		int size = items.size()>MAX_VALID_SIZE?MAX_VALID_SIZE:items.size();
+		int size = items.size()>max_valid_size?max_valid_size:items.size();
 		FeedItem[] result = new FeedItem[size]; 
 		FeedItem[] item_list = items.toArray(new FeedItem[items.size()]);
 		Arrays.sort( item_list,

@@ -3,6 +3,7 @@ package info.xuluan.podcast;
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.utils.DialogMenu;
+import info.xuluan.podcast.utils.StrUtils;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -156,12 +157,8 @@ public class DownloadingActivity extends PodcastBaseActivity {
 					String str = "0% ( 0 KB / 0 KB )";
 					if (length > 0) {
 
-						double d = 100.0 * offset / length;
-
-						int status = (int) d;
-
-						str = "" + status + "% ( " + (formatLength(offset))
-								+ " / " + (formatLength(length)) + " )";
+						str = StrUtils.formatDownloadString( offset , length);
+						
 					}
 
 					// log.debug("str = "+ str);
@@ -390,24 +387,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
         }		
 	}	
 
-	private static String formatLength(int length) {
 
-		length /= 1024;
-
-		int i = (length % 1000);
-		String s = "";
-		if (i < 10) {
-			s = "00" + i;
-		} else if (i < 100) {
-			s = "0" + i;
-		} else {
-			s += i;
-		}
-
-		String str = "" + (length / 1000) + "," + s + " KB";
-
-		return str;
-	}
 
 	private void updateDownloadInfo(FeedItem item) {
 		
@@ -425,15 +405,9 @@ public class DownloadingActivity extends PodcastBaseActivity {
 
 			title.setText(item.title);
 			if (item.length > 0) {
-				double d = 100.0 * item.offset / item.length;
-	
-				int status = (int) d;
-	
-				String str = "" + status + "% ( " + (formatLength(item.offset))
-						+ " / " + (formatLength((int) item.length)) + " )";
-	
+				String str = StrUtils.formatDownloadString( item.offset , item.length);
 				dl_status.setText(str);
-				progress.setProgress(status);
+				progress.setProgress(StrUtils.formatDownloadPrecent(item.offset , item.length));
 	
 			} else {
 				dl_status.setText("0% ( 0 KB / 0 KB )");

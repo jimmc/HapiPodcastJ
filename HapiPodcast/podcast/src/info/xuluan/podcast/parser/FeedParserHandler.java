@@ -122,7 +122,7 @@ public class FeedParserHandler extends DefaultHandler {
 						if (!mFeedTitleLoaded) {
 							mFeedTitleLoaded = true;
 							mFeedTitle = mCache.toString();
-							listener.onFeedTitleLoad(mFeedTitle);
+							listener.onFeedTitleLoad(strip(mFeedTitle));
 						}
 					} else if (NODE_RSS_DESCRIPTION.equalsIgnoreCase(localName)) {
 						if (!mFeedDescriptionLoaded) {
@@ -205,13 +205,15 @@ public class FeedParserHandler extends DefaultHandler {
 	FeedItem checkItem(FeedItem item) throws SAXException {
 		if (item.title == null)
 			item.title = "(Untitled)";
-
+		item.title = strip(item.title);
+		
 		if (item.resource == null) {
 			log.warn("item have not a resource link: " + item.title);
 			return null;
 		}
 		if (item.author == null)
 			item.author = "(Unknown)";
+		
 		if (item.content == null)
 			item.content = "(No content)";
 
@@ -288,4 +290,25 @@ public class FeedParserHandler extends DefaultHandler {
 		return m.replaceAll("<br/>");
 	}
 
+	public String strip(String str) 
+	{
+		
+		Pattern pattern = Pattern.compile("\\n");
+		Matcher matcher = pattern.matcher(str);
+		str = matcher.replaceAll("");
+
+		pattern = Pattern.compile("\\s+");
+		matcher = pattern.matcher(str);
+		str = matcher.replaceAll(" ");
+		
+		pattern = Pattern.compile("^\\s+");
+		matcher = pattern.matcher(str);
+		str = matcher.replaceAll("");
+
+		pattern = Pattern.compile("\\s+$");
+		matcher = pattern.matcher(str);
+		str = matcher.replaceAll("");		
+	
+		return str;
+	}
 }

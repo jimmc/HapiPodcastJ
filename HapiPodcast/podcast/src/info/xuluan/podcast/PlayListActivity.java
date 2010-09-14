@@ -1,11 +1,15 @@
 package info.xuluan.podcast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.HashMap;
 
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.utils.DialogMenu;
 import info.xuluan.podcast.utils.IconCursorAdapter;
+import info.xuluan.podcast.utils.SDCardMgr;
 
 import android.app.AlertDialog;
 import android.content.ContentUris;
@@ -16,6 +20,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class PlayListActivity extends PodcastBaseActivity {
 
@@ -43,6 +48,10 @@ public class PlayListActivity extends PodcastBaseActivity {
 	public static final int MENU_ITEM_VIEW = Menu.FIRST + 12;
 	public static final int MENU_ITEM_DELETE = Menu.FIRST + 13;
 	public static final int MENU_ITEM_SHARE = Menu.FIRST + 14;
+	public static final int MENU_ITEM_PLAYED_BY = Menu.FIRST + 15;
+	public static final int MENU_ITEM_EXPORT = Menu.FIRST + 16;
+	
+	
 	
 	
 
@@ -88,7 +97,10 @@ public class PlayListActivity extends PodcastBaseActivity {
 		dialog_menu.setHeader(feed_item.title);
 		dialog_menu.addMenu(MENU_ITEM_PLAY,
 				getResources().getString(R.string.menu_play));
-		
+		dialog_menu.addMenu(MENU_ITEM_PLAYED_BY,
+				getResources().getString(R.string.menu_played_by));		
+		dialog_menu.addMenu(MENU_ITEM_EXPORT,
+				getResources().getString(R.string.menu_export_audio_file));			
 		if(feed_item.status!=ItemColumns.ITEM_STATUS_KEEP){
 			dialog_menu.addMenu(MENU_ITEM_KEEP, 
 					getResources().getString(R.string.menu_keep));			
@@ -134,6 +146,35 @@ public class PlayListActivity extends PodcastBaseActivity {
     			select_item.play(PlayListActivity.this);
     			return;
     		}
+    		case MENU_ITEM_PLAYED_BY: {
+    			Intent intent = new Intent(android.content.Intent.ACTION_VIEW); 
+    	        Uri data = Uri.parse("file://"+select_item.pathname); 
+				log.error(select_item.pathname);
+ 	        
+    	        intent.setDataAndType(data,"audio/mp3"); 
+    	        try { 
+    	             startActivity(intent); 
+    	        } catch (Exception e) { 
+    	                  e.printStackTrace(); 
+    	        }     			
+    			return;
+    		} 
+    		case MENU_ITEM_EXPORT: {
+    			String filename = get_export_file_name(select_item.title, select_item.id);
+    			filename = SDCardMgr.getExportDir()+"/"+filename;
+				log.error(filename);   			
+      			 Toast.makeText(PlayListActivity.this, "Please waiting... ", 
+    					 Toast.LENGTH_LONG).show();  
+      			 
+    			boolean b  = copy_file(select_item.pathname,filename);
+    			if(b)
+    			 Toast.makeText(PlayListActivity.this, "Export audio file to : "+ filename, 
+    					 Toast.LENGTH_LONG).show();
+    			else
+       			 Toast.makeText(PlayListActivity.this, "Export failed ", 
+    					 Toast.LENGTH_LONG).show();    				
+    			return;
+    		}    		
     		case MENU_ITEM_KEEP: {
     			if (select_item.status != ItemColumns.ITEM_STATUS_KEEP) {
     				select_item.status = ItemColumns.ITEM_STATUS_KEEP;
@@ -155,7 +196,54 @@ public class PlayListActivity extends PodcastBaseActivity {
 		}        	
        }
 
+	public boolean copy_file(String src, String dst)
+	{
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
+        boolean b=true;
+        try {
+            File readFile = new File(src);
 
+            File writeFile = new File(dst);
+
+            fileInputStream = new FileInputStream(readFile);
+
+            fileOutputStream = new FileOutputStream(writeFile);
+
+            byte[] buffer = new byte[1024];
+            while (true) {
+                int bytesRead = fileInputStream.read(buffer);
+                if (bytesRead == -1) {
+                    break;
+                }
+                fileOutputStream.write(buffer, 0, bytesRead);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            b = false;
+        } finally {
+            try {
+                if (fileInputStream != null) {
+                    fileInputStream.close();
+                }
+            } catch (Exception ex) {}
+            try {
+                if (fileOutputStream != null) {
+                    fileOutputStream.close();
+                }
+            } catch (Exception ex) {}
+        }	
+        
+        return b;
+	}
+	
+	public String get_export_file_name(String title, long id)
+	{
+		title = title.replaceAll("[\\s\\\\:\\<\\>\\[\\]\\*\\|\\/\\?\\{\\}]+", "_");		
+
+		return title+"_"+id+".mp3";
+	}
+	
 	public void startInit() {
 		String where = ItemColumns.STATUS + ">"
 				+ ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW + " AND " 

@@ -27,10 +27,27 @@ IMPORTANT
 1 formatLength
 
 1 updateInfo/refreshNow
-1 set fast forward interval
 
-2 set max item number added
+1 fix resume bug
+2 fix player cancel
 
+
+
+5 download cancel
+6 http auth
+http://hi.baidu.com/hellokit1985/blog/item/c5732c637f792cd38cb10d47.html
+
+      url = new URL(targetURL);
+      connection = (HttpURLConnection)url.openConnection();
+      connection.setRequestMethod("POST");
+      ...
+      BASE64Encoder enc = new sun.misc.BASE64Encoder();
+      String userpassword = username + ":" + password;
+      String encodedAuthorization = enc.encode( userpassword.getBytes() );
+      connection.setRequestProperty("Authorization", "Basic "+
+            encodedAuthorization);
+      ...
+7 play/pause with volume +/-
 
 3 bug: mItem update bug
 3 update episode duration
@@ -41,12 +58,6 @@ IMPORTANT
 --------------------------------------------
 
 3 remove unittest to another project
-
-
-
-
-
-
 
 2 service start when power on
 android.intent.action.BOOT_COMPLETED  
@@ -119,7 +130,18 @@ BUG
 --------------------------------------------------------------
 
 DONE
-- 20100731  (TAG 34)
+- 20100915  (TAG 36)
+1 export audio file
+2 strip string(feed and item title)
+3 play audio file with other player
+4 max updated new items
+5 fast-forward step
+
+- 20100826  (TAG 35)
+1 set fast forward interval
+2 set max item number added
+
+- 20100803  (TAG 34)
 fix bug: update feed
 release 
 

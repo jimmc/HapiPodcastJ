@@ -67,7 +67,25 @@
                 android:entries="@array/entries_played_file_expire"
                 android:entryValues="@array/entryvalues_played_file_expire"
 				android:defaultValue="168"
-                android:dialogTitle="Played File Expire" />				
+                android:dialogTitle="Played File Expire" />		
+
+        <ListPreference
+                android:key="pref_fast_forward_interval"
+                android:title="@string/pref_fast_forward_interval_title"
+                android:summary="@string/pref_fast_forward_interval_description"
+                android:entries="@array/entries_pref_fast_forward_interval"
+                android:entryValues="@array/entryvalues_pref_fast_forward_interval"
+				android:defaultValue="30"
+                android:dialogTitle="Player Fast-Forward Step" />
+				
+        <ListPreference
+                android:key="pref_max_new_items"
+                android:title="@string/pref_max_new_items_title"
+                android:summary="@string/pref_max_new_items_description"
+                android:entries="@array/entries_pref_max_new_items"
+                android:entryValues="@array/entryvalues_pref_max_new_items"
+				android:defaultValue="10"
+                android:dialogTitle="Maximum Updated New Items" />					
 
     
 </PreferenceScreen>

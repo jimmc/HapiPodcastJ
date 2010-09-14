@@ -23,11 +23,11 @@ import info.xuluan.podcast.utils.SDCardMgr;
 public class SDCardTest extends TestCase {
 
     public void testAppDir() throws Exception {
-        assertTrue(SDCardMgr.getAppDir().equals("/sdcard/xuluan.podcast"));
+        assertTrue(SDCardMgr.getAppDir().equals("/mnt/sdcard/xuluan.podcast"));
     }
 
     public void testDownloadDir() throws Exception {
-        assertTrue(SDCardMgr.getDownloadDir().equals("/sdcard/xuluan.podcast/download"));
+        assertTrue(SDCardMgr.getDownloadDir().equals("/mnt/sdcard/xuluan.podcast/download"));
     }
     
     public void testSDCardStatus() throws Exception {

@@ -19,9 +19,11 @@ public class FeedHandler  {
 	private final Log log = Log.getLog(getClass());
 	
 	private ContentResolver cr;
+	private int max_valid_size;
 	
-	public FeedHandler(ContentResolver context){
+	public FeedHandler(ContentResolver context, int max_valid_sz){
 		cr = context;
+		max_valid_size = max_valid_sz;
 	}
 
 	public int update(Subscription sub){
@@ -37,7 +39,7 @@ public class FeedHandler  {
 	public FeedParserListener fetchFeed(String url) {
 
 		FeedFetcher fetcher = new FeedFetcher();
-		FeedParserListener listener = new FeedParserListener();
+		FeedParserListener listener = new FeedParserListener(max_valid_size);
 		FeedParserHandler handler = new FeedParserHandler(listener);
 		Response response = null;
 		try {

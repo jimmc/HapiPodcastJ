@@ -19,6 +19,7 @@ package info.xuluan.podcast.tests;
 import android.test.mock.MockContentResolver;
 import info.xuluan.podcast.R;
 import info.xuluan.podcast.parser.FeedHandler;
+import info.xuluan.podcast.parser.FeedParserHandler;
 import info.xuluan.podcast.parser.FeedParserListener;
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.PodcastProvider;
@@ -42,10 +43,10 @@ public class FeedHandlerTest extends android.test.ProviderTestCase<PodcastProvid
 
     }   
 
- 
+ /*
 	public void testFetchNetworkErr() throws Exception {
     	String url = "http://www.xxx.com/aaa/bbb";
-    	FeedHandler handler = new FeedHandler(context);
+    	FeedHandler handler = new FeedHandler(context,10);
     	FeedParserListener result = handler.fetchFeed(url);
     	int code = result.resultCode;
         assertTrue(code==R.string.network_fail);
@@ -54,7 +55,7 @@ public class FeedHandlerTest extends android.test.ProviderTestCase<PodcastProvid
 
 	public void testFetchFormatErr() throws Exception {
     	String url = "http://www.baidu.com";
-    	FeedHandler handler = new FeedHandler(context);
+    	FeedHandler handler = new FeedHandler(context,10);
     	FeedParserListener result = handler.fetchFeed(url);
     	int code = result.resultCode;
         assertTrue(code==R.string.feed_format_error);
@@ -63,15 +64,15 @@ public class FeedHandlerTest extends android.test.ProviderTestCase<PodcastProvid
 	
 	public void testFetchOK() throws Exception {
     	String url = "http://podcast.rthk.org.hk/podcast/observeworld.xml";
-    	FeedHandler handler = new FeedHandler(context);
+    	FeedHandler handler = new FeedHandler(context,10);
     	FeedParserListener result = handler.fetchFeed(url);
     	int code = result.resultCode;
     	assertTrue(code==0);
 
     }	
-
+*/
     public void testUpdateFail() throws Exception {
-    	FeedHandler handler = new FeedHandler(context);
+    	FeedHandler handler = new FeedHandler(context,10);
     	
     	Subscription sub = new Subscription();
     	sub.fail_count = 0;
@@ -84,8 +85,8 @@ public class FeedHandlerTest extends android.test.ProviderTestCase<PodcastProvid
     }
     
     public void testUpdateFeedFirst() throws Exception {
-    	FeedHandler handler = new FeedHandler(context);
-    	FeedParserListener listener = new FeedParserListener();
+    	FeedHandler handler = new FeedHandler(context,10);
+    	FeedParserListener listener = new FeedParserListener(10);
     	listener.onFeedTitleLoad("title");
     	listener.onFeedDescriptionLoad("description");
     	FeedItem item = new FeedItem();
@@ -108,8 +109,8 @@ public class FeedHandlerTest extends android.test.ProviderTestCase<PodcastProvid
     }    
     
     public void testUpdateFeedNone() throws Exception {
-    	FeedHandler handler = new FeedHandler(context);
-    	FeedParserListener listener = new FeedParserListener();
+    	FeedHandler handler = new FeedHandler(context,10);
+    	FeedParserListener listener = new FeedParserListener(10);
     	listener.onFeedTitleLoad("title");
     	listener.onFeedDescriptionLoad("description");
     	FeedItem item = new FeedItem();
@@ -137,8 +138,8 @@ public class FeedHandlerTest extends android.test.ProviderTestCase<PodcastProvid
     }  
     
     public void testUpdateFeed2() throws Exception {
-    	FeedHandler handler = new FeedHandler(context);
-    	FeedParserListener listener = new FeedParserListener();
+    	FeedHandler handler = new FeedHandler(context,10);
+    	FeedParserListener listener = new FeedParserListener(10);
     	listener.onFeedTitleLoad("title");
     	listener.onFeedDescriptionLoad("description");
     	FeedItem item = new FeedItem();
@@ -165,4 +166,15 @@ public class FeedHandlerTest extends android.test.ProviderTestCase<PodcastProvid
     	assertTrue(sub.description.equalsIgnoreCase("description"));
 	
     }     
+
+
+    public void testStrip() throws Exception {
+    	FeedParserHandler handler = new FeedParserHandler(null);
+
+    	String str= "\n                    abc\n                ";
+    	
+    	String str2 = handler.strip(str);
+    	assertTrue(str2.equals("abc"));
+    	
+    }
 }
