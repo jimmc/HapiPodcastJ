@@ -101,11 +101,13 @@ public class PlayerActivity  extends ListActivity
 	
 	static {
 		mIconMap = new HashMap<Integer, Integer>();
-
+		AllItemActivity.initFullIconMap(mIconMap);
+/*
 		mIconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.music);
 		mIconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.music);
 		mIconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.music);		
-	}	
+*/
+		}	
 	
 
 	protected static ServiceConnection serviceConnection = new ServiceConnection() {

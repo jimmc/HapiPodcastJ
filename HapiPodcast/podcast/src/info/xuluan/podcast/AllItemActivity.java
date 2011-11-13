@@ -52,6 +52,8 @@ public class AllItemActivity extends PodcastBaseActivity {
 	static {
 
 		mIconMap = new HashMap<Integer, Integer>();
+		initFullIconMap(mIconMap);
+/*
 		mIconMap.put(ItemColumns.ITEM_STATUS_UNREAD, R.drawable.new_item);
 		mIconMap.put(ItemColumns.ITEM_STATUS_READ, R.drawable.open_item);
 		mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE, R.drawable.download);
@@ -61,7 +63,20 @@ public class AllItemActivity extends PodcastBaseActivity {
 		mIconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.music);
 		mIconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.music);
 		mIconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.music);		
-
+*/
+	}
+	
+	public static void initFullIconMap(HashMap<Integer,Integer> iconMap) {
+		iconMap.put(ItemColumns.ITEM_STATUS_UNREAD, R.drawable.new_item);
+		iconMap.put(ItemColumns.ITEM_STATUS_READ, R.drawable.open_item);
+		
+		iconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE, R.drawable.pause);
+		iconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE, R.drawable.waiting);
+		iconMap.put(ItemColumns.ITEM_STATUS_DOWNLOADING_NOW, R.drawable.download);
+		
+		iconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.no_play);
+		iconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.played);
+		iconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.keep);		
 	}
 
 	@Override

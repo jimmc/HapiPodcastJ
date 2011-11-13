@@ -87,10 +87,13 @@ public class DownloadingActivity extends PodcastBaseActivity {
 			super(context, layout, cursor, from, to);
 
 			mIconMap = new HashMap<Integer, Integer>();
+			AllItemActivity.initFullIconMap(mIconMap);
+/*
 			mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE,
 					R.drawable.waiting);
 			mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE,
 					R.drawable.pause);
+*/
 
 			mTo2 = to;
 			if (cursor != null) {

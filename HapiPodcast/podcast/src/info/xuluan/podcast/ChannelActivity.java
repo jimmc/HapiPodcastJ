@@ -47,6 +47,8 @@ public class ChannelActivity extends PodcastBaseActivity {
 	static {
 
 		mIconMap = new HashMap<Integer, Integer>();
+		AllItemActivity.initFullIconMap(mIconMap);
+/*
 		mIconMap.put(ItemColumns.ITEM_STATUS_UNREAD, R.drawable.new_item);
 		mIconMap.put(ItemColumns.ITEM_STATUS_READ, R.drawable.open_item);
 		mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE, R.drawable.download);
@@ -56,7 +58,7 @@ public class ChannelActivity extends PodcastBaseActivity {
 		mIconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.music);
 		mIconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.music);
 		mIconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.music);		
-
+*/
 	}
 	
 	@Override

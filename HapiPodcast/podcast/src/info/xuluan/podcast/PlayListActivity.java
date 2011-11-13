@@ -28,10 +28,12 @@ public class PlayListActivity extends PodcastBaseActivity {
 	static {
 
 		mIconMap = new HashMap<Integer, Integer>();
+		AllItemActivity.initFullIconMap(mIconMap);
+/*
 		mIconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.no_play);
 		mIconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.played);
 		mIconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.keep);
-		
+*/		
 	}
 
 	private static final String[] PROJECTION = new String[] { ItemColumns._ID, // 0
