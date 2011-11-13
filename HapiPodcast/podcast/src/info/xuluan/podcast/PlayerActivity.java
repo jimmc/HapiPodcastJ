@@ -65,12 +65,14 @@ public class PlayerActivity  extends ListActivity
 	private static final int STATE_MAIN = 0;
 	private static final int STATE_VIEW = 1;
 	
-	private long ffwd_interval = 30*1000;	
-	
+	private long rwnd_interval = 7*1000;
+	private long ffwd_interval = 30*1000;
+		
 
 	private boolean mShow = false;
 	private long mID;
 	private long pref_repeat;
+	private long pref_rwnd_interval;
 	private long pref_fas_fwd_interval;
 	private String mTitle = "Player";
 	//private FeedItem mCurrentItem;
@@ -80,7 +82,7 @@ public class PlayerActivity  extends ListActivity
 	private static HashMap<Integer, Integer> mIconMap;
 	
 
-
+	private ImageButton mRwndButton;
     private ImageButton mFfwdButton;
 	
     private ImageButton mPauseButton;
@@ -341,6 +343,22 @@ public class PlayerActivity  extends ListActivity
     };    
     
     
+    private View.OnClickListener mRwndListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            try {
+                if (mServiceBinder != null && mServiceBinder.isInitialized()) {
+                	long pos = mServiceBinder.position();
+                	long newPos = pos - rwnd_interval;
+                	if (newPos<0) newPos = 0;
+                	mServiceBinder.seek( newPos );
+
+                }
+            } catch (Exception ex) {
+            } 
+            updateInfo();
+       }
+    };    
+    
     private View.OnClickListener mFfwdListener = new View.OnClickListener() {
         public void onClick(View v) {
             try {
@@ -352,11 +370,9 @@ public class PlayerActivity  extends ListActivity
             } catch (Exception ex) {
             } 
             updateInfo();
-
        }
     };    
-        
-    
+
     @Override
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
@@ -372,11 +388,14 @@ public class PlayerActivity  extends ListActivity
         mPauseButton.requestFocus();
         mPauseButton.setOnClickListener(mPauseListener);
 
+        mRwndButton = (ImageButton) findViewById(R.id.rwnd);
+        mRwndButton.requestFocus();
+        mRwndButton.setOnClickListener(mRwndListener);        
+        
         mFfwdButton = (ImageButton) findViewById(R.id.ffwd);
         mFfwdButton.requestFocus();
         mFfwdButton.setOnClickListener(mFfwdListener);        
         
-
         mPrevButton = (ImageButton) findViewById(R.id.prev);
         mPrevButton.requestFocus();
         mPrevButton.setOnClickListener(mPrevListener);        
@@ -767,9 +786,10 @@ public class PlayerActivity  extends ListActivity
 		SharedPreferences pref = getSharedPreferences(
 				"info.xuluan.podcast_preferences", Service.MODE_PRIVATE);
 		pref_repeat = pref.getLong("pref_repeat",0);
-		pref_fas_fwd_interval = Integer.parseInt(pref.getString("pref_fast_forward_interval",
-		"30"));		
+		pref_fas_fwd_interval = Integer.parseInt(pref.getString("pref_fast_forward_interval","30"));		
 		ffwd_interval = pref_fas_fwd_interval*1000;
+		pref_rwnd_interval = Integer.parseInt(pref.getString("pref_rewind_interval","7"));		
+		rwnd_interval = pref_rwnd_interval*1000;
 
 	}    
 

@@ -34,6 +34,7 @@
             android:gravity="center">
 
             <ImageButton android:id="@+id/prev" style="@android:style/MediaButton.Previous" />
+            <ImageButton android:id="@+id/rwnd" style="@android:style/MediaButton.Rew" />            
             <ImageButton android:id="@+id/pause" style="@android:style/MediaButton.Play" />
             <ImageButton android:id="@+id/ffwd" style="@android:style/MediaButton.Ffwd" />            
             <ImageButton android:id="@+id/next" style="@android:style/MediaButton.Next" />

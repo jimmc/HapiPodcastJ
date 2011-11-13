@@ -70,6 +70,15 @@
                 android:dialogTitle="Played File Expire" />		
 
         <ListPreference
+                android:key="pref_rewind_interval"
+                android:title="@string/pref_rewind_interval_title"
+                android:summary="@string/pref_rewind_interval_description"
+                android:entries="@array/entries_pref_rewind_interval"
+                android:entryValues="@array/entryvalues_pref_rewind_interval"
+				android:defaultValue="7"
+                android:dialogTitle="Player Rewind Step" />
+				
+        <ListPreference
                 android:key="pref_fast_forward_interval"
                 android:title="@string/pref_fast_forward_interval_title"
                 android:summary="@string/pref_fast_forward_interval_description"

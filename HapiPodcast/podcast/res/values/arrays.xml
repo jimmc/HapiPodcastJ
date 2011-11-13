@@ -101,6 +101,26 @@
         <item>Repeat One</item>
     </string-array>  
 
+    <string-array name="entries_pref_rewind_interval">
+    	<item>3 seconds</item>
+        <item>5 seconds</item>
+        <item>7 seconds</item>	
+        <item>10 seconds</item>
+        <item>15 seconds</item>
+        <item>20 seconds</item>
+        <item>30 seconds</item>
+    </string-array>
+
+    <string-array name="entryvalues_pref_rewind_interval">
+    	<item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>10</item>
+        <item>15</item>  
+        <item>20</item>  
+		<item>30</item>  
+    </string-array>	  	
+	
     <string-array name="entries_pref_fast_forward_interval">
         <item>5 seconds</item>	
         <item>10 seconds</item>
