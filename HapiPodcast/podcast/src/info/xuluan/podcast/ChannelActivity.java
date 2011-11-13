@@ -31,6 +31,8 @@ public class ChannelActivity extends PodcastBaseActivity {
 	private static final int MENU_ITEM_VIEW = Menu.FIRST + 9;
 	private static final int MENU_ITEM_START_DOWNLOAD = Menu.FIRST + 10;
 	private static final int MENU_ITEM_START_PLAY = Menu.FIRST + 11;
+	private static final int MENU_ITEM_ADD_TO_PLAYLIST = Menu.FIRST + 12;
+	
 	private static final String[] PROJECTION = new String[] { ItemColumns._ID, // 0
 			ItemColumns.TITLE, // 1
 			ItemColumns.DURATION, ItemColumns.SUB_TITLE, ItemColumns.STATUS, // 1
@@ -192,7 +194,9 @@ public class ChannelActivity extends PodcastBaseActivity {
 					getResources().getString(R.string.menu_download));			
 		}else if(feed_item.status>ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW){
 			dialog_menu.addMenu(MENU_ITEM_START_PLAY, 
-					getResources().getString(R.string.menu_play));	
+					getResources().getString(R.string.menu_play));
+			dialog_menu.addMenu(MENU_ITEM_ADD_TO_PLAYLIST, 
+					getResources().getString(R.string.menu_add_to_playlist));
 		}
 
 		return dialog_menu;
@@ -243,7 +247,16 @@ public class ChannelActivity extends PodcastBaseActivity {
 		
 				feeditem.play(ChannelActivity.this);
 				return;
-			}		
+			}
+			case MENU_ITEM_ADD_TO_PLAYLIST: {
+				
+				FeedItem feeditem = FeedItem.getById(getContentResolver(), item_id);
+				if (feeditem == null)
+					return;
+		
+				feeditem.addtoPlaylist(getContentResolver());
+				return;
+			}
     		}
 		}        	
        }

@@ -18,6 +18,7 @@
 	
     <string name="menu_play">Play</string>
     <string name="menu_played_by">Played by</string>
+    <string name="menu_add_to_playlist">Add To Playlist</string>
     <string name="menu_export_audio_file">Export audio file</string>
 	
     <string name="menu_view">View</string>

@@ -50,6 +50,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 	public static final int MENU_ITEM_SHARE = Menu.FIRST + 14;
 	public static final int MENU_ITEM_PLAYED_BY = Menu.FIRST + 15;
 	public static final int MENU_ITEM_EXPORT = Menu.FIRST + 16;
+	public static final int MENU_ITEM_ADD_TO_PLAYLIST = Menu.FIRST + 17;
 	
 	
 	
@@ -98,7 +99,9 @@ public class PlayListActivity extends PodcastBaseActivity {
 		dialog_menu.addMenu(MENU_ITEM_PLAY,
 				getResources().getString(R.string.menu_play));
 		dialog_menu.addMenu(MENU_ITEM_PLAYED_BY,
-				getResources().getString(R.string.menu_played_by));		
+				getResources().getString(R.string.menu_played_by));
+		dialog_menu.addMenu(MENU_ITEM_ADD_TO_PLAYLIST,
+				getResources().getString(R.string.menu_add_to_playlist));	
 		dialog_menu.addMenu(MENU_ITEM_EXPORT,
 				getResources().getString(R.string.menu_export_audio_file));			
 		if(feed_item.status!=ItemColumns.ITEM_STATUS_KEEP){
@@ -158,7 +161,11 @@ public class PlayListActivity extends PodcastBaseActivity {
     	                  e.printStackTrace(); 
     	        }     			
     			return;
-    		} 
+    		}
+    		case MENU_ITEM_ADD_TO_PLAYLIST: {
+    			select_item.addtoPlaylist(getContentResolver());
+    			return;
+    		}
     		case MENU_ITEM_EXPORT: {
     			String filename = get_export_file_name(select_item.title, select_item.id);
     			filename = SDCardMgr.getExportDir()+"/"+filename;
