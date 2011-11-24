@@ -178,15 +178,9 @@ public class PlayerActivity  extends ListActivity
     private void play(FeedItem item) {
     	if(item==null)
     		return;
-		if(mServiceBinder!=null) {
+		if(mServiceBinder!=null)
 			mServiceBinder.play(item.id);
-			item.status = ItemColumns.ITEM_STATUS_START_PLAY;
-			item.update(getContentResolver());
-		}
-
-		
-        updateInfo();
-		
+        updateInfo();		
     }    
 
     private long refreshNow() {
@@ -289,11 +283,8 @@ public class PlayerActivity  extends ListActivity
             mPauseButton.setImageResource(android.R.drawable.ic_media_play);
     	} else {
             mPauseButton.setImageResource(android.R.drawable.ic_media_pause); 
-            if (item.status!=ItemColumns.ITEM_STATUS_START_PLAY) {
-            	item.status = ItemColumns.ITEM_STATUS_START_PLAY;
-    			item.update(getContentResolver());
-            }
     	}
+    	item.playingOrPaused(mServiceBinder.isPlaying(), getContentResolver());
 
     }    
 
@@ -322,10 +313,8 @@ public class PlayerActivity  extends ListActivity
 
                 }
             } catch (Exception ex) {
-            }   
-            
+            }               
             updateInfo();
-
         }
     };   
     
@@ -348,7 +337,6 @@ public class PlayerActivity  extends ListActivity
             } catch (Exception ex) {
             } 
             updateInfo();
-
        }
     };    
     

@@ -53,9 +53,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 	public static final int MENU_ITEM_PLAYED_BY = Menu.FIRST + 15;
 	public static final int MENU_ITEM_EXPORT = Menu.FIRST + 16;
 	public static final int MENU_ITEM_ADD_TO_PLAYLIST = Menu.FIRST + 17;
-	
-	
-	
+	public static final int MENU_ITEM_MARK_NEW = Menu.FIRST + 18;
 	
 
 
@@ -118,7 +116,10 @@ public class PlayListActivity extends PodcastBaseActivity {
 				getResources().getString(R.string.menu_view));
 		
 		dialog_menu.addMenu(MENU_ITEM_DELETE,
-				getResources().getString(R.string.menu_delete));	
+				getResources().getString(R.string.menu_delete));
+		dialog_menu.addMenu(MENU_ITEM_MARK_NEW,
+				getResources().getString(R.string.menu_mark_new));
+
 
 		return dialog_menu;
 	}
@@ -200,7 +201,16 @@ public class PlayListActivity extends PodcastBaseActivity {
     		case MENU_ITEM_SHARE: {
     			select_item.sendMail(PlayListActivity.this);
     			return;
-    		}		
+    		}
+    		case MENU_ITEM_MARK_NEW: {
+    			if (select_item.status > ItemColumns.ITEM_STATUS_NO_PLAY &&
+    					select_item.status!=ItemColumns.ITEM_STATUS_PLAYING_NOW) {
+    				select_item.status = ItemColumns.ITEM_STATUS_NO_PLAY;
+    				select_item.failcount = 0;
+    				select_item.updateOffset(PlayListActivity.this.getContentResolver(),0);
+    			}
+    			return;
+    		}
     		}
 		}        	
        }

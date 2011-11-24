@@ -76,10 +76,9 @@ public class IconCursorAdapter extends SimpleCursorAdapter {
 				Integer iconI = mIconMap.get(status);
 				int icon = (iconI!=null)?
 					iconI.intValue():
-					R.drawable.open_item;	//Use this icon for any unknown status.
+					R.drawable.status_unknown;	//Use this icon for any unknown status.
 						//This allows going back to a previous version after data has been
 						//added in a new version with additional status codes.
-						//TODO - create a special icon for unknown status values
 				setViewImage2((ImageView) v_icon, icon);
 
 				break;

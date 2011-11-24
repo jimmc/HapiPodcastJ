@@ -387,6 +387,7 @@ public class PlayerService extends Service {
 		int offset = mItem.offset < 0 ? 0: mItem.offset;
 		mPlayer.seek(offset);
 		start();
+		mItem.playing(getContentResolver());
 	}
 
 	public void start() {
@@ -450,6 +451,8 @@ public class PlayerService extends Service {
 	
 	public void prev() {
 		FeedItem item = mItem;
+		if (mItem.status==ItemColumns.ITEM_STATUS_PLAYING_NOW)
+			mItem.paused(getContentResolver());
 		
 		item = getPrev(item);
 		if(item==null){
@@ -466,6 +469,8 @@ public class PlayerService extends Service {
 	
 	public void next() {
 		FeedItem item = mItem;
+		if (mItem.status==ItemColumns.ITEM_STATUS_PLAYING_NOW)
+			mItem.paused(getContentResolver());
 		
 		item = getNext(item);
 		if(item==null){

@@ -15,6 +15,7 @@
     <string name="menu_remove">Remove</string>
     <string name="menu_move_up">Move Up</string>
     <string name="menu_move_down">Move Down</string>
+    <string name="menu_mark_new">Reset to New</string>
 	
     <string name="menu_play">Play</string>
     <string name="menu_played_by">Played by</string>

@@ -75,7 +75,9 @@ public class AllItemActivity extends PodcastBaseActivity {
 		iconMap.put(ItemColumns.ITEM_STATUS_DOWNLOADING_NOW, R.drawable.download);
 		
 		iconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.no_play);
-		iconMap.put(ItemColumns.ITEM_STATUS_START_PLAY, R.drawable.music);
+		iconMap.put(ItemColumns.ITEM_STATUS_PLAY_READY, R.drawable.play_ready);
+		iconMap.put(ItemColumns.ITEM_STATUS_PLAYING_NOW, R.drawable.playing);
+		iconMap.put(ItemColumns.ITEM_STATUS_PLAY_PAUSE, R.drawable.play_pause);
 		iconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.played);
 		iconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.keep);		
 	}

@@ -19,7 +19,9 @@ public class ItemColumns implements BaseColumns {
 
 	public static final int ITEM_STATUS_MAX_DOWNLOADING_VIEW = 30;
 	public static final int ITEM_STATUS_NO_PLAY = 50;
-	public static final int ITEM_STATUS_START_PLAY = 51;
+	public static final int ITEM_STATUS_PLAY_READY = 51;
+	public static final int ITEM_STATUS_PLAYING_NOW = 52;
+	public static final int ITEM_STATUS_PLAY_PAUSE = 53;
 
 	public static final int ITEM_STATUS_KEEP = 63;
 	public static final int ITEM_STATUS_PLAYED = 66;

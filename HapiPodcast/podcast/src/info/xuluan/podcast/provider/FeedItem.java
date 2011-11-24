@@ -158,23 +158,55 @@ public class FeedItem {
 		
 	}
 	
+	public void playingOrPaused(boolean isPlaying, ContentResolver context)
+	{
+		if (isPlaying)
+			playing(context);
+		else
+			paused(context);				
+	}
+	
+	public void playing(ContentResolver context)
+	{
+		if(status != ItemColumns.ITEM_STATUS_PLAYING_NOW) {
+			status = ItemColumns.ITEM_STATUS_PLAYING_NOW;
+			update = Long.valueOf(System.currentTimeMillis());
+		}else{
+			update = -1;
+		}
+		update(context);		
+	}
+	
+	public void paused(ContentResolver context)
+	{
+		if(status == ItemColumns.ITEM_STATUS_PLAYING_NOW) {
+			status = ItemColumns.ITEM_STATUS_PLAY_PAUSE;
+			update = Long.valueOf(System.currentTimeMillis());
+		}else{
+			update = -1;
+		}
+		update(context);		
+	}
+	
 	public void played(ContentResolver context)
 	{
 		offset = 0;
 		if(status == ItemColumns.ITEM_STATUS_NO_PLAY ||
-           status == ItemColumns.ITEM_STATUS_START_PLAY) {
+           status == ItemColumns.ITEM_STATUS_PLAYING_NOW) {
 			status = ItemColumns.ITEM_STATUS_PLAYED;
 			update = Long.valueOf(System.currentTimeMillis());
 		}else{
 			update = -1;
 		}
-		update(context);
-		
+		update(context);		
 	}
 	
 	public void addtoPlaylistByOrder(ContentResolver context, long order)
 	{
 		failcount = order;
+		if(status == ItemColumns.ITEM_STATUS_NO_PLAY) {
+			status = ItemColumns.ITEM_STATUS_PLAY_READY;
+		}
 		update = -1;
 		update(context);
 		
@@ -182,10 +214,7 @@ public class FeedItem {
 	
 	public void addtoPlaylist(ContentResolver context)
 	{
-		failcount = Long.valueOf(System.currentTimeMillis());
-		update = -1;
-		update(context);
-		
+		addtoPlaylistByOrder(context,Long.valueOf(System.currentTimeMillis()));		
 	}		
 
 	public void update(ContentResolver context) {
