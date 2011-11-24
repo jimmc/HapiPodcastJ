@@ -161,7 +161,8 @@ public class FeedItem {
 	public void played(ContentResolver context)
 	{
 		offset = 0;
-		if(status == ItemColumns.ITEM_STATUS_NO_PLAY) {
+		if(status == ItemColumns.ITEM_STATUS_NO_PLAY ||
+           status == ItemColumns.ITEM_STATUS_START_PLAY) {
 			status = ItemColumns.ITEM_STATUS_PLAYED;
 			update = Long.valueOf(System.currentTimeMillis());
 		}else{
