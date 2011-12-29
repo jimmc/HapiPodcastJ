@@ -278,7 +278,8 @@ public class PodcastService extends Service {
 		try {
 			String where = ItemColumns.CREATED + "<" + expiredTime + " and "
 					+ ItemColumns.STATUS + "<"
-					+ ItemColumns.ITEM_STATUS_MAX_READING_VIEW;
+					+ ItemColumns.ITEM_STATUS_MAX_READING_VIEW + " and "
+					+ ItemColumns.KEEP + "=0";
 
 			getContentResolver().delete(ItemColumns.URI, where, null);
 		} catch (Exception e) {
@@ -293,7 +294,8 @@ public class PodcastService extends Service {
 		try {
 			String where = ItemColumns.LAST_UPDATE + "<" + expiredTime
 					+ " and " + ItemColumns.STATUS + "="
-					+ ItemColumns.ITEM_STATUS_PLAYED;
+					+ ItemColumns.ITEM_STATUS_PLAYED + " and "
+					+ ItemColumns.KEEP + "=0";
 
 			Cursor cursor = getContentResolver().query(ItemColumns.URI,
 					ItemColumns.ALL_COLUMNS, where, null, null);
@@ -307,7 +309,8 @@ public class PodcastService extends Service {
 		try {
 			String where = ItemColumns.LAST_UPDATE + "<" + expiredTime
 					+ " and " + ItemColumns.STATUS + "="
-					+ ItemColumns.ITEM_STATUS_NO_PLAY;
+					+ ItemColumns.ITEM_STATUS_NO_PLAY + " and "
+					+ ItemColumns.KEEP + "=0";
 
 			Cursor cursor = getContentResolver().query(ItemColumns.URI,
 					ItemColumns.ALL_COLUMNS, where, null, null);
@@ -320,6 +323,7 @@ public class PodcastService extends Service {
 		try {
 			String where = ItemColumns.STATUS + "="
 					+ ItemColumns.ITEM_STATUS_DELETE;
+					//DELETE status takes priority over KEEP flag
 
 			Cursor cursor = getContentResolver().query(ItemColumns.URI,
 					ItemColumns.ALL_COLUMNS, where, null, null);
@@ -329,8 +333,7 @@ public class PodcastService extends Service {
 			e.printStackTrace();
 		}
 		
-		String where = ItemColumns.STATUS + "="
-		+ ItemColumns.ITEM_STATUS_DELETED;		
+		String where = ItemColumns.STATUS + "=" + ItemColumns.ITEM_STATUS_DELETED;		
 		getContentResolver().delete(ItemColumns.URI, where, null);
 
 	}

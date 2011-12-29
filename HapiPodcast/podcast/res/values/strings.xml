@@ -24,6 +24,7 @@
 	
     <string name="menu_view">View</string>
     <string name="menu_keep">Keep</string>
+    <string name="menu_unkeep">Unkeep</string>
     <string name="menu_download">Download</string>
     <string name="menu_pause">Pause</string>
     <string name="menu_resume">Resume</string>	

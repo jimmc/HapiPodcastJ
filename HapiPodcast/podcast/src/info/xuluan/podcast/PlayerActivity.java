@@ -93,10 +93,13 @@ public class PlayerActivity  extends ListActivity
 	private TextView mTotalTime;	
 	private ProgressBar mProgress;
 	
-	private static final String[] PROJECTION = new String[] { ItemColumns._ID, // 0
+	private static final String[] PROJECTION = new String[] {
+		ItemColumns._ID, // 0
 		ItemColumns.TITLE, // 1
-		ItemColumns.DURATION, ItemColumns.SUB_TITLE, ItemColumns.STATUS, // 1
-
+		ItemColumns.DURATION,
+		ItemColumns.SUB_TITLE,
+		ItemColumns.STATUS,
+		ItemColumns.KEEP
 	};
 	
 	static {

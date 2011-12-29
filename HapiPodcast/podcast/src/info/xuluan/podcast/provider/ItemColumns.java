@@ -23,7 +23,9 @@ public class ItemColumns implements BaseColumns {
 	public static final int ITEM_STATUS_PLAYING_NOW = 52;
 	public static final int ITEM_STATUS_PLAY_PAUSE = 53;
 
-	public static final int ITEM_STATUS_KEEP = 63;
+	//KEEP status has been replaced by the KEEP database column starting in DB version 13,
+	//so is no longer used except for upgrading from version 12, which strings are all in this file.
+	private static final int ITEM_STATUS_KEEP = 63;
 	public static final int ITEM_STATUS_PLAYED = 66;
 	public static final int ITEM_STATUS_MAX_PLAYLIST_VIEW = 100;
 	
@@ -72,11 +74,12 @@ public class ItemColumns implements BaseColumns {
 	public static final String SUB_TITLE = "sub_title";
 	public static final String CREATED = "created";
 	public static final String TYPE = "audio_type";
+	public static final String KEEP = "keep";
 
 	public static final String[] ALL_COLUMNS = { _ID, SUBS_ID, TITLE, AUTHOR,
 			DATE, LAST_UPDATE, CONTENT, STATUS, URL, RESOURCE, DURATION,
 			LENGTH, OFFSET, PATHNAME, FAIL_COUNT, MEDIA_URI, SUB_TITLE,
-			CREATED, TYPE };
+			CREATED, TYPE, KEEP };
 
 	public static final String DEFAULT_SORT_ORDER = CREATED + " DESC";
 
@@ -100,9 +103,20 @@ public class ItemColumns implements BaseColumns {
 		+ MEDIA_URI + " VARCHAR(128), " 
 		+ SUB_TITLE + " VARCHAR(128), "
 		+ TYPE + " VARCHAR(64), " 
-		+ CREATED + " INTEGER " 
+		+ CREATED + " INTEGER, "
+		+ KEEP + " INTEGER NOT NULL DEFAULT 0"
 		+ ");";
 
+	//To upgrade from database version 12 to version 13
+	public static final String sql_upgrade_table_add_keep_column = "ALTER TABLE "
+			+ TABLE_NAME + " ADD COLUMN " + KEEP + " INTEGER NOT NULL DEFAULT 0;";
+	public static final String sql_populate_keep_from_status =
+			"UPDATE " + TABLE_NAME + " SET " + KEEP + " = 1 "
+			+ " WHERE " + STATUS + "=" + ITEM_STATUS_KEEP;
+	public static final String sql_change_keep_status_to_played =
+			"UPDATE " + TABLE_NAME + " SET " + STATUS + "=" + ITEM_STATUS_PLAYED
+			+ " WHERE " + STATUS + "=" + ITEM_STATUS_KEEP;
+	
 	public static final String sql_index_item_res = "CREATE INDEX IDX_"
 			+ TABLE_NAME + "_" + RESOURCE + " ON " + TABLE_NAME + " ("
 			+ RESOURCE + ");";
@@ -188,6 +202,9 @@ public class ItemColumns implements BaseColumns {
 		}
 		if (values.containsKey(TYPE) == false) {
 			values.put(TYPE, "");
+		}
+		if (values.containsKey(KEEP) == false) {
+			values.put(KEEP, 0);
 		}
 		return values;
 	}

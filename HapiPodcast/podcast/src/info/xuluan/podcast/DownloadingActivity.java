@@ -74,7 +74,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 			ItemColumns._ID, // 0
 			ItemColumns.TITLE, // 1
 			ItemColumns.DURATION, ItemColumns.SUB_TITLE, ItemColumns.OFFSET,
-			ItemColumns.LENGTH, ItemColumns.STATUS, };
+			ItemColumns.LENGTH, ItemColumns.STATUS, ItemColumns.KEEP };
 
 	private int offset;
 	class OffsetFieldHandler implements IconCursorAdapter.FieldHandler {
@@ -344,7 +344,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 
 		// Used to map notes entries from the database to views
 		String[] fromColNames = { ItemColumns.TITLE, ItemColumns.OFFSET,
-				ItemColumns.LENGTH, ItemColumns.STATUS, ItemColumns.STATUS };
+				ItemColumns.LENGTH, ItemColumns.STATUS, ItemColumns.KEEP };
 		int[] toColIds = { R.id.dtext1, R.id.dtext2, R.id.dtext3, R.id.icon, R.id.keep_icon };
 		IconCursorAdapter.FieldHandler[] fieldHandlers = {
 				IconCursorAdapter.defaultTextFieldHandler,

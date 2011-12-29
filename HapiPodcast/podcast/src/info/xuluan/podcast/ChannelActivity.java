@@ -33,10 +33,13 @@ public class ChannelActivity extends PodcastBaseActivity {
 	private static final int MENU_ITEM_START_PLAY = Menu.FIRST + 11;
 	private static final int MENU_ITEM_ADD_TO_PLAYLIST = Menu.FIRST + 12;
 	
-	private static final String[] PROJECTION = new String[] { ItemColumns._ID, // 0
-			ItemColumns.TITLE, // 1
-			ItemColumns.DURATION, ItemColumns.SUB_TITLE, ItemColumns.STATUS, // 1
-
+	private static final String[] PROJECTION = new String[] {
+		ItemColumns._ID, // 0
+		ItemColumns.TITLE, // 1
+		ItemColumns.DURATION,
+		ItemColumns.SUB_TITLE,
+		ItemColumns.STATUS,
+		ItemColumns.KEEP
 	};
 
 	private static HashMap<Integer, Integer> mIconMap;

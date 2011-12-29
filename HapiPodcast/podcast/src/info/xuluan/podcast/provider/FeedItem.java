@@ -43,7 +43,8 @@ public class FeedItem {
             //   when we exceed a predefined max, we pause the download.
             //2. when an item is in the player, failcount is used as
             //   the order of the item in the list.
-
+	public int keep;	//1 if we should not expire this item
+	
 	public long length;
 
 	public long update;
@@ -147,6 +148,7 @@ public class FeedItem {
 		failcount = -1;
 		length = -1;
 		update = -1;
+		keep = -1;
 
 		created = -1;
 		sub_title = null;
@@ -248,6 +250,8 @@ public class FeedItem {
 				cv.put(ItemColumns.MEDIA_URI, uri);
 			if (type != null)
 				cv.put(ItemColumns.TYPE, type);
+			if (keep>=0)
+				cv.put(ItemColumns.KEEP, keep);
 
 			context.update(ItemColumns.URI, cv, ItemColumns._ID + "=" + id,
 					null);
@@ -293,14 +297,14 @@ public class FeedItem {
 			if (duration != null) {
 				// Log.w("ITEM","  duration: " + duration);
 				cv.put(ItemColumns.DURATION, duration);
-
 			}
 			if (sub_title != null) {
 				cv.put(ItemColumns.SUB_TITLE, sub_title);
-
 			}
 			if (uri != null)
 				cv.put(ItemColumns.MEDIA_URI, uri);
+			if (keep >= 0)
+				cv.put(ItemColumns.KEEP, keep);
 
 			return context.insert(ItemColumns.URI, cv);
 
@@ -381,6 +385,7 @@ public class FeedItem {
 		item.sub_title = cursor.getString(cursor
 				.getColumnIndex(ItemColumns.SUB_TITLE));
 		item.type = cursor.getString(cursor.getColumnIndex(ItemColumns.TYPE));
+		item.keep = cursor.getInt(cursor.getColumnIndex(ItemColumns.KEEP));
 	}
 
 	@Override

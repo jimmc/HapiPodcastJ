@@ -36,9 +36,13 @@ public class PlayListActivity extends PodcastBaseActivity {
 */		
 	}
 
-	private static final String[] PROJECTION = new String[] { ItemColumns._ID, // 0
-			ItemColumns.TITLE, // 1
-			ItemColumns.DURATION, ItemColumns.SUB_TITLE, ItemColumns.STATUS, // 1
+	private static final String[] PROJECTION = new String[] {
+		ItemColumns._ID, // 0
+		ItemColumns.TITLE, // 1
+		ItemColumns.DURATION,
+		ItemColumns.SUB_TITLE,
+		ItemColumns.STATUS,
+		ItemColumns.KEEP
 	};
 
 	// static final int MENU_REFRESH = Menu.FIRST + 1;
@@ -54,6 +58,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 	public static final int MENU_ITEM_EXPORT = Menu.FIRST + 16;
 	public static final int MENU_ITEM_ADD_TO_PLAYLIST = Menu.FIRST + 17;
 	public static final int MENU_ITEM_MARK_NEW = Menu.FIRST + 18;
+	public static final int MENU_ITEM_UNKEEP = Menu.FIRST + 19;
 	
 
 
@@ -104,7 +109,10 @@ public class PlayListActivity extends PodcastBaseActivity {
 				getResources().getString(R.string.menu_add_to_playlist));	
 		dialog_menu.addMenu(MENU_ITEM_EXPORT,
 				getResources().getString(R.string.menu_export_audio_file));			
-		if(feed_item.status!=ItemColumns.ITEM_STATUS_KEEP){
+		if(feed_item.keep>0){
+			dialog_menu.addMenu(MENU_ITEM_UNKEEP, 
+					getResources().getString(R.string.menu_unkeep));
+		} else {
 			dialog_menu.addMenu(MENU_ITEM_KEEP, 
 					getResources().getString(R.string.menu_keep));			
 		}		
@@ -186,8 +194,15 @@ public class PlayListActivity extends PodcastBaseActivity {
     			return;
     		}    		
     		case MENU_ITEM_KEEP: {
-    			if (select_item.status != ItemColumns.ITEM_STATUS_KEEP) {
-    				select_item.status = ItemColumns.ITEM_STATUS_KEEP;
+    			if (select_item.keep <= 1) {
+    				select_item.keep = 1;
+    				select_item.update(PlayListActivity.this.getContentResolver());
+    			}
+    			return;
+    		}
+    		case MENU_ITEM_UNKEEP: {
+    			if (select_item.keep > 0) {
+    				select_item.keep = 0;
     				select_item.update(PlayListActivity.this.getContentResolver());
     			}
     			return;
