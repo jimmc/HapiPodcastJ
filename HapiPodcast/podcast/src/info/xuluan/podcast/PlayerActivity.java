@@ -431,9 +431,11 @@ public class PlayerActivity  extends ListActivity
 
 		mCursor = managedQuery(ItemColumns.URI, PROJECTION, where, null, order);
 
-		mAdapter = new IconCursorAdapter(this, R.layout.channel_list_item, mCursor,
+		mAdapter = AllItemActivity.channelListItemCursorAdapter(this, mCursor);
+/*		mAdapter = new IconCursorAdapter(this, R.layout.channel_list_item, mCursor,
 				new String[] { ItemColumns.TITLE,ItemColumns.STATUS }, new int[] {
 						R.id.text1}, mIconMap);
+*/
 		setListAdapter(mAdapter);
 
 	}   

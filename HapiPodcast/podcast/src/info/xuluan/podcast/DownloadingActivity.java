@@ -344,12 +344,15 @@ public class DownloadingActivity extends PodcastBaseActivity {
 
 		// Used to map notes entries from the database to views
 		String[] fromColNames = { ItemColumns.TITLE, ItemColumns.OFFSET,
-				ItemColumns.LENGTH, ItemColumns.STATUS };
-		int[] toColIds = { R.id.dtext1, R.id.dtext2, R.id.dtext3, R.id.icon };
+				ItemColumns.LENGTH, ItemColumns.STATUS, ItemColumns.STATUS };
+		int[] toColIds = { R.id.dtext1, R.id.dtext2, R.id.dtext3, R.id.icon, R.id.keep_icon };
 		IconCursorAdapter.FieldHandler[] fieldHandlers = {
 				IconCursorAdapter.defaultTextFieldHandler,
-				new OffsetFieldHandler(), new LengthFieldHandler(),
-				new IconCursorAdapter.IconFieldHandler(mIconMap)};
+				new OffsetFieldHandler(),
+				new LengthFieldHandler(),
+				new IconCursorAdapter.IconFieldHandler(mIconMap),
+				new IconCursorAdapter.IconFieldHandler(AllItemActivity.mKeepIconMap)
+				};
 		mAdapter = new IconCursorAdapter(this, R.layout.download_item, mCursor,
 				fromColNames, toColIds, fieldHandlers);
 

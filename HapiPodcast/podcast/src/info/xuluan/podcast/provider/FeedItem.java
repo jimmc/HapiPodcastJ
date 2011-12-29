@@ -38,6 +38,11 @@ public class FeedItem {
 	public int offset;
 	public int status;
 	public long failcount;
+            //failcount is currently used for two purposes:
+            //1. counts the number of times we fail to download, and
+            //   when we exceed a predefined max, we pause the download.
+            //2. when an item is in the player, failcount is used as
+            //   the order of the item in the list.
 
 	public long length;
 

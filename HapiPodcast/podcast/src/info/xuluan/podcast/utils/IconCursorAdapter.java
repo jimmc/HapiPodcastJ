@@ -14,6 +14,8 @@ import java.util.HashMap;
 
 public class IconCursorAdapter extends SimpleCursorAdapter {
 
+	public static final int ICON_DEFAULT_ID = -1;
+	
 	public interface FieldHandler {
 		public void setViewValue(IconCursorAdapter adapter, Cursor cursor,
 				View v, int fromColumnId);
@@ -46,9 +48,11 @@ public class IconCursorAdapter extends SimpleCursorAdapter {
 			int status = cursor.getInt(fromColumnId);
 
 			Integer iconI = mIconMap.get(status);
+			if (iconI==null)
+				iconI = mIconMap.get(ICON_DEFAULT_ID);	//look for default value in map
 			int icon = (iconI!=null)?
 				iconI.intValue():
-				R.drawable.status_unknown;	//Use this icon for any unknown status.
+				R.drawable.status_unknown;	//Use this icon when not in map and no map default.
 					//This allows going back to a previous version after data has been
 					//added in a new version with additional status codes.
 			adapter.setViewImage2((ImageView) v, icon);

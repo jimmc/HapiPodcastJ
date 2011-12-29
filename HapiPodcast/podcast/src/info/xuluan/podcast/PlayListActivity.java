@@ -274,11 +274,18 @@ public class PlayListActivity extends PodcastBaseActivity {
 		mCursor = managedQuery(ItemColumns.URI, PROJECTION, where, null, order);
 
 		// Used to map notes entries from the database to views
+		mAdapter = AllItemActivity.listItemCursorAdapter(this, mCursor);
+/*		IconCursorAdapter.FieldHandler[] fields = {
+				IconCursorAdapter.defaultTextFieldHandler,
+				IconCursorAdapter.defaultTextFieldHandler,
+				IconCursorAdapter.defaultTextFieldHandler,
+				new IconCursorAdapter.IconFieldHandler(mIconMap)
+		};
 		mAdapter = new IconCursorAdapter(this, R.layout.list_item, mCursor,
 				new String[] { ItemColumns.TITLE, ItemColumns.SUB_TITLE,
 						ItemColumns.DURATION, ItemColumns.STATUS }, new int[] {
-						R.id.text1, R.id.text2, R.id.text3 }, mIconMap);
-
+						R.id.text1, R.id.text2, R.id.text3, R.id.icon }, fields);
+*/
 		setListAdapter(mAdapter);
 
 		super.startInit();

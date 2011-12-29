@@ -16,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,6 +46,7 @@ public class AllItemActivity extends PodcastBaseActivity {
 	};
 
 	private static HashMap<Integer, Integer> mIconMap;
+	public static HashMap<Integer, Integer> mKeepIconMap;
 	
 	private long pref_order;
 	private long pref_where;
@@ -53,17 +55,11 @@ public class AllItemActivity extends PodcastBaseActivity {
 
 		mIconMap = new HashMap<Integer, Integer>();
 		initFullIconMap(mIconMap);
-/*
-		mIconMap.put(ItemColumns.ITEM_STATUS_UNREAD, R.drawable.new_item);
-		mIconMap.put(ItemColumns.ITEM_STATUS_READ, R.drawable.open_item);
-		mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE, R.drawable.download);
-		mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE, R.drawable.download);
-		mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOADING_NOW, R.drawable.download);
 		
-		mIconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.music);
-		mIconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.music);
-		mIconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.music);		
-*/
+		mKeepIconMap = new HashMap<Integer, Integer>();
+		mKeepIconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.keep);		
+		mKeepIconMap.put(IconCursorAdapter.ICON_DEFAULT_ID, R.drawable.blank);	 //anything other than KEEP	
+
 	}
 	
 	public static void initFullIconMap(HashMap<Integer,Integer> iconMap) {
@@ -79,7 +75,38 @@ public class AllItemActivity extends PodcastBaseActivity {
 		iconMap.put(ItemColumns.ITEM_STATUS_PLAYING_NOW, R.drawable.playing);
 		iconMap.put(ItemColumns.ITEM_STATUS_PLAY_PAUSE, R.drawable.play_pause);
 		iconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.played);
-		iconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.keep);		
+		//iconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.keep);
+		iconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.played);
+			//we now show KEEP status with a separate icon (in preparation for separate keep flag)
+		
+		iconMap.put(IconCursorAdapter.ICON_DEFAULT_ID, R.drawable.status_unknown);		//default for unknowns
+	}
+	
+	public static IconCursorAdapter listItemCursorAdapter(Context context, Cursor cursor) {
+		IconCursorAdapter.FieldHandler[] fields = {
+				IconCursorAdapter.defaultTextFieldHandler,
+				IconCursorAdapter.defaultTextFieldHandler,
+				IconCursorAdapter.defaultTextFieldHandler,
+				new IconCursorAdapter.IconFieldHandler(mIconMap),
+				new IconCursorAdapter.IconFieldHandler(mKeepIconMap)
+		};
+		return new IconCursorAdapter(context, R.layout.list_item, cursor,
+				new String[] { ItemColumns.TITLE, ItemColumns.SUB_TITLE,
+						ItemColumns.DURATION, ItemColumns.STATUS, ItemColumns.STATUS },
+				new int[] { R.id.text1, R.id.text2, R.id.text3, R.id.icon, R.id.keep_icon },
+				fields);
+	}
+
+	public static IconCursorAdapter channelListItemCursorAdapter(Context context, Cursor cursor) {
+		IconCursorAdapter.FieldHandler[] fields = {
+				IconCursorAdapter.defaultTextFieldHandler,
+				new IconCursorAdapter.IconFieldHandler(mIconMap),
+				new IconCursorAdapter.IconFieldHandler(mKeepIconMap)
+		};
+		return new IconCursorAdapter(context, R.layout.channel_list_item, cursor,
+				new String[] { ItemColumns.TITLE, ItemColumns.STATUS, ItemColumns.STATUS },
+				new int[] { R.id.text1, R.id.icon, R.id.keep_icon },
+				fields);
 	}
 
 	@Override
@@ -293,10 +320,18 @@ public class AllItemActivity extends PodcastBaseActivity {
 
 		mCursor = managedQuery(ItemColumns.URI, PROJECTION, getWhere(), null, getOrder());
 
+		mAdapter = AllItemActivity.listItemCursorAdapter(this, mCursor);
+/*		IconCursorAdapter.FieldHandler[] fields = {
+				IconCursorAdapter.defaultTextFieldHandler,
+				IconCursorAdapter.defaultTextFieldHandler,
+				IconCursorAdapter.defaultTextFieldHandler,
+				new IconCursorAdapter.IconFieldHandler(mIconMap)
+		};
 		mAdapter = new IconCursorAdapter(this, R.layout.list_item, mCursor,
 				new String[] { ItemColumns.TITLE, ItemColumns.SUB_TITLE,
 						ItemColumns.DURATION, ItemColumns.STATUS }, new int[] {
-						R.id.text1, R.id.text2, R.id.text3 }, mIconMap);
+						R.id.text1, R.id.text2, R.id.text3, R.id.icon }, fields);
+*/
 		setListAdapter(mAdapter);
 
 		super.startInit();
