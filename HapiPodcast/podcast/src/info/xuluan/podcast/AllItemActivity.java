@@ -64,14 +64,14 @@ public class AllItemActivity extends PodcastBaseActivity {
 	}
 	
 	public static void initFullIconMap(HashMap<Integer,Integer> iconMap) {
-		iconMap.put(ItemColumns.ITEM_STATUS_UNREAD, R.drawable.new_item);
-		iconMap.put(ItemColumns.ITEM_STATUS_READ, R.drawable.open_item);
+		iconMap.put(ItemColumns.ITEM_STATUS_UNREAD, R.drawable.feed_new);
+		iconMap.put(ItemColumns.ITEM_STATUS_READ, R.drawable.feed_viewed);
 		
-		iconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE, R.drawable.pause);
-		iconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE, R.drawable.waiting);
-		iconMap.put(ItemColumns.ITEM_STATUS_DOWNLOADING_NOW, R.drawable.download);
+		iconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE, R.drawable.download_pause);
+		iconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE, R.drawable.download_wait);
+		iconMap.put(ItemColumns.ITEM_STATUS_DOWNLOADING_NOW, R.drawable.downloading);
 		
-		iconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.no_play);
+		iconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.playable);
 		iconMap.put(ItemColumns.ITEM_STATUS_PLAY_READY, R.drawable.play_ready);
 		iconMap.put(ItemColumns.ITEM_STATUS_PLAYING_NOW, R.drawable.playing);
 		iconMap.put(ItemColumns.ITEM_STATUS_PLAY_PAUSE, R.drawable.play_pause);

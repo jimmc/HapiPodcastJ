@@ -34,7 +34,7 @@
 	        android:layout_alignParentBottom="true"	
 	 		android:layout_marginRight="0px"   
 	 		android:layout_marginLeft="0px"        	
-	 		android:layout_marginTop="0px"        	
+	 		android:layout_marginTop="2px"        	
 	 		android:layout_marginBottom="0px"        	
 	        android:layout_gravity="center_vertical"
 	        android:layout_width="24px"
