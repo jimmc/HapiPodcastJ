@@ -3,6 +3,7 @@ package info.xuluan.podcast;
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.utils.DialogMenu;
+import info.xuluan.podcast.utils.IconCursorAdapter;
 import info.xuluan.podcast.utils.StrUtils;
 import android.database.Cursor;
 import android.net.Uri;
@@ -19,13 +20,10 @@ import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ImageView;
 
 import java.io.File;
 import java.util.HashMap;
@@ -42,7 +40,11 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	private static final int MENU_ITEM_RESUME = Menu.FIRST + 12;
 	
     private static final int REFRESH = 1;
-	
+	private static HashMap<Integer, Integer> mIconMap;
+    static {
+    	mIconMap = new HashMap<Integer, Integer>();
+    	AllItemActivity.initFullIconMap(mIconMap);
+    }
     private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -74,124 +76,31 @@ public class DownloadingActivity extends PodcastBaseActivity {
 			ItemColumns.DURATION, ItemColumns.SUB_TITLE, ItemColumns.OFFSET,
 			ItemColumns.LENGTH, ItemColumns.STATUS, };
 
-
-
-	class MyListCursorAdapter extends SimpleCursorAdapter {
-
-		protected int[] mFrom2;
-		protected int[] mTo2;
-		private HashMap<Integer, Integer> mIconMap;
-
-		MyListCursorAdapter(Context context, int layout, Cursor cursor,
-				String[] from, int[] to) {
-			super(context, layout, cursor, from, to);
-
-			mIconMap = new HashMap<Integer, Integer>();
-			AllItemActivity.initFullIconMap(mIconMap);
-/*
-			mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE,
-					R.drawable.waiting);
-			mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE,
-					R.drawable.pause);
-*/
-
-			mTo2 = to;
-			if (cursor != null) {
-				int i;
-				int count = from.length;
-				if (mFrom2 == null || mFrom2.length != count) {
-					mFrom2 = new int[count];
-				}
-				for (i = 0; i < count; i++) {
-					mFrom2[i] = cursor.getColumnIndexOrThrow(from[i]);
-				}
+	private int offset;
+	class OffsetFieldHandler implements IconCursorAdapter.FieldHandler {
+		public void setViewValue(IconCursorAdapter adapter, Cursor cursor,
+				View v, int fromColumnId) {
+			offset = cursor.getInt(fromColumnId);
+			if (v != null) {
+				adapter.setViewText((TextView) v, "");
+			}
+		}
+	}
+	class LengthFieldHandler implements IconCursorAdapter.FieldHandler {
+		public void setViewValue(IconCursorAdapter adapter, Cursor cursor,
+				View v, int fromColumnId) {
+			int length = cursor.getInt(fromColumnId);
+			String str = "0% ( 0 KB / 0 KB )";
+			if (length > 0) {
+				str = StrUtils.formatDownloadString( offset , length);				
 			}
 
-		}
+			// log.debug("str = "+ str);
 
-		@Override
-		public View newView(Context context, Cursor cursor, ViewGroup parent) {
-			View v = super.newView(context, cursor, parent);
-			final int[] to = mTo2;
-			final int count = to.length;
-			final View[] holder = new View[count + 1];
-
-			for (int i = 0; i < count; i++) {
-				holder[i] = v.findViewById(to[i]);
+			if (v != null) {
+				adapter.setViewText((TextView) v, str);
 			}
-			holder[count] = v.findViewById(R.id.icon);
-			v.setTag(holder);
-
-			return v;
-
 		}
-
-		public void setViewImage2(ImageView v, int value) {
-
-			v.setImageResource(value);
-		}
-
-		@Override
-		public void bindView(View view, Context context, Cursor cursor) {
-			final View[] holder = (View[]) view.getTag();
-			final int count = mTo2.length;
-			final int[] from = mFrom2;
-			int offset = 0;
-			int length = -1;
-
-			for (int i = 0; i < count + 1; i++) {
-				final View v = holder[i];
-				// log.debug("offset = "+ offset+" length = "+length);
-				if (i == count) {
-					View v_icon = view.findViewById(R.id.icon);
-					int status = cursor.getInt(from[i]);
-
-					setViewImage2((ImageView) v_icon, mIconMap.get(status));
-
-					break;
-				} else if (i == 1) {
-					offset = cursor.getInt(from[i]);
-					if (v != null) {
-						setViewText((TextView) v, "");
-
-					}
-				} else if (i == 2) {
-					length = cursor.getInt(from[i]);
-					String str = "0% ( 0 KB / 0 KB )";
-					if (length > 0) {
-
-						str = StrUtils.formatDownloadString( offset , length);
-						
-					}
-
-					// log.debug("str = "+ str);
-
-					if (v != null) {
-						setViewText((TextView) v, str);
-
-					}
-
-					continue;
-				} else {
-					if (v != null) {
-						String text = cursor.getString(from[i]);
-
-						if (text == null) {
-							text = "";
-						}
-
-						if (v instanceof TextView) {
-							setViewText((TextView) v, text);
-						} else if (v instanceof ImageView) {
-							setViewImage((ImageView) v, text);
-						}
-					}
-				}
-
-			}
-
-		}
-
 	}
 
 	@Override
@@ -206,9 +115,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 		intent.setData(ItemColumns.URI);
 		mPrevIntent = new Intent(this, AllItemActivity.class);
 		mNextIntent = new Intent(this, PlayListActivity.class);			
-		startInit();
-
-		
+		startInit();		
 
 	}
 
@@ -436,10 +343,16 @@ public class DownloadingActivity extends PodcastBaseActivity {
 				order);
 
 		// Used to map notes entries from the database to views
-		mAdapter = new MyListCursorAdapter(this, R.layout.download_item,
-				mCursor, new String[] { ItemColumns.TITLE, ItemColumns.OFFSET,
-						ItemColumns.LENGTH, ItemColumns.STATUS }, new int[] {
-						R.id.dtext1, R.id.dtext2, R.id.dtext3 });
+		String[] fromColNames = { ItemColumns.TITLE, ItemColumns.OFFSET,
+				ItemColumns.LENGTH, ItemColumns.STATUS };
+		int[] toColIds = { R.id.dtext1, R.id.dtext2, R.id.dtext3, R.id.icon };
+		IconCursorAdapter.FieldHandler[] fieldHandlers = {
+				IconCursorAdapter.defaultTextFieldHandler,
+				new OffsetFieldHandler(), new LengthFieldHandler(),
+				new IconCursorAdapter.IconFieldHandler(mIconMap)};
+		mAdapter = new IconCursorAdapter(this, R.layout.download_item, mCursor,
+				fromColNames, toColIds, fieldHandlers);
+
 		setListAdapter(mAdapter);
 
 		super.startInit();
