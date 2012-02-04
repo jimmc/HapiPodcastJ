@@ -224,6 +224,16 @@ public class FeedItem {
 		addtoPlaylistByOrder(context,Long.valueOf(System.currentTimeMillis()));		
 	}		
 
+	public void removeFromPlaylist(ContentResolver context)
+	{
+		failcount = 0;
+		if(status == ItemColumns.ITEM_STATUS_PLAY_READY) {
+			status = ItemColumns.ITEM_STATUS_NO_PLAY;
+		}
+		update = -1;
+		update(context);		
+	}
+	
 	public void update(ContentResolver context) {
 		log.debug("item update start");
 		try {

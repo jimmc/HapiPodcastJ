@@ -622,7 +622,7 @@ public class PlayerActivity  extends ListActivity
 		    				mServiceBinder.stop();
 		    		}
 		    	}
-				feeditem.addtoPlaylistByOrder(getContentResolver(), 0);
+				feeditem.removeFromPlaylist(getContentResolver());
 				return ;
 			}			
 		}
