@@ -17,7 +17,7 @@ import android.view.View;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.widget.SimpleCursorAdapter;
 
-public class PodcastBaseActivity extends ListActivity {
+public class PodcastBaseActivity extends HapiListActivity {
 
     private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_MAX_OFF_PATH = 250;

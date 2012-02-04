@@ -25,7 +25,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.PreferenceActivity;
 
-public class Pref extends PreferenceActivity {
+public class Pref extends HapiPreferenceActivity {
 
 	private PodcastService serviceBinder = null;
 	ComponentName service = null;

@@ -328,7 +328,7 @@ public class PlayerService extends Service {
 
     private void dis_notifyStatus() {
         mNotificationManager.cancel(R.layout.audio_player);    	
-        setForeground(false);
+        //setForeground(false);
     }
     
     private void notifyStatus() {
@@ -346,7 +346,7 @@ public class PlayerService extends Service {
         
         notification.setLatestEventInfo(this, tickerText,
         		null, contentIntent);        
-        setForeground(true);
+        //setForeground(true);
 
         mNotificationManager.notify(R.layout.audio_player, notification);
         

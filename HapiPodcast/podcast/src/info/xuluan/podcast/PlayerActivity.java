@@ -43,7 +43,7 @@ import info.xuluan.podcast.utils.Log;
 import info.xuluan.podcast.utils.StrUtils;
 
 
-public class PlayerActivity  extends ListActivity 
+public class PlayerActivity  extends HapiListActivity 
 {
 	protected  static PlayerService mServiceBinder = null;
 	protected final Log log = Log.getLog(getClass());

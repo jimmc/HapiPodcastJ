@@ -28,7 +28,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ItemActivity extends Activity {
+public class ItemActivity extends HapiActivity {
 
 	private static final int MENU_SHARE = Menu.FIRST + 1;
 

@@ -8,6 +8,7 @@ import android.database.Cursor;
 
 import android.os.Bundle;
 import android.util.Xml;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -37,7 +38,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 
 
-public class MainActivity extends ListActivity{
+public class MainActivity extends HapiListActivity{
 	
 	public static String OPML_FILE = "hapi_podcast.opml"; 
 	
@@ -45,7 +46,7 @@ public class MainActivity extends ListActivity{
 	
 	class MyFileFilter implements FileFilter{
 
-		@Override
+		//@Override
 		public boolean accept(File pathname) {
 			return pathname.isFile();
 		}
@@ -64,7 +65,7 @@ public class MainActivity extends ListActivity{
         		R.layout.select_item, new String[] { "title" ,"icon"},
                 new int[] { R.id.text1, R.id.icon, }));
     }
-
+    
     protected List getData() {
         List<Map> myData = new ArrayList<Map>();
 
@@ -319,5 +320,10 @@ public class MainActivity extends ListActivity{
         		backup();
         	}
         }
+    }
+    
+    @Override
+    protected void tapHome() {
+    	Toast.makeText(this, "Already Home", Toast.LENGTH_SHORT).show();
     }
 }
