@@ -34,6 +34,9 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.Html;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -112,6 +115,29 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.search_activity, menu);
+	    return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case R.id.backup_channels:
+			startActivity(new Intent(this, BackupChannelsActivity.class));
+			return true;
+		case R.id.add_channel:
+			startActivity(new Intent(this, AddChannelActivity.class));
+			return true;
+		case R.id.list_channels:
+			startActivity(new Intent(this, ChannelsActivity.class));
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+	
 	public String getUrl() {
 		String prefix = "http://lfe-alpo-gm.appspot.com/search?q=";
 		String suffix = "";
@@ -290,7 +316,7 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 		}
 	}
 
-	@Override
+	//@Override
 	public void afterTextChanged(Editable arg0) {
 		mStart = 0;
 		mItems.clear();
@@ -298,14 +324,14 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 		updateBtn();
 	}
 
-	@Override
+	//@Override
 	public void beforeTextChanged(CharSequence s, int start, int count,
 			int after) {
 		// TODO Auto-generated method stub
 
 	}
 
-	@Override
+	//@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 		// TODO Auto-generated method stub
 

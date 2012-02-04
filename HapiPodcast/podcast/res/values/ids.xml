@@ -27,8 +27,11 @@
     <item type="id" name="actionbar_compat_title" />
     <item type="id" name="actionbar_compat_item_refresh_progress" />
     <item type="id" name="actionbar_compat_item_refresh" />
+    <item type="id" name="add_channel" />
     <item type="id" name="menu_refresh" />
-  
+    <item type="id" name="search_channels" />
+    <item type="id" name="list_channels" />
+      
     <drawable name="solid_red">#f00</drawable>
     <drawable name="solid_blue">#0000ff</drawable>
     <drawable name="solid_green">#f0f0</drawable>  
