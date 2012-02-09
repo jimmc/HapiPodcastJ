@@ -63,7 +63,7 @@ public class BackupChannelsActivity extends HapiActivity {
 			}
 		});
 		
-		ChannelTabsHelper.setTabClickListeners(this, R.id.channel_bar_backup_button);
+		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_backup_button);
 	}
 	
 	@Override

@@ -113,7 +113,7 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 			}
 		});
 		
-		ChannelTabsHelper.setTabClickListeners(this, R.id.channel_bar_search_button);
+		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_search_button);
 	}
 
 	@Override

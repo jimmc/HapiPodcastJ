@@ -107,14 +107,17 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.download);
-		setTitle(getResources().getString(R.string.title_download_list));
+		setTitle(getResources().getString(R.string.title_episodes));
 
 		getListView().setOnCreateContextMenuListener(this);
 
 		Intent intent = getIntent();
 		intent.setData(ItemColumns.URI);
 		mPrevIntent = new Intent(this, AllItemActivity.class);
-		mNextIntent = new Intent(this, PlayListActivity.class);			
+		mNextIntent = new Intent(this, PlayListActivity.class);	
+		
+		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_download_button);
+
 		startInit();		
 
 	}

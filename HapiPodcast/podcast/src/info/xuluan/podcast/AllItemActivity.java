@@ -115,7 +115,7 @@ public class AllItemActivity extends PodcastBaseActivity {
 		super.onCreate(savedInstanceState);
 
 		setContentView(R.layout.main);
-		setTitle(getResources().getString(R.string.title_read_list));
+		setTitle(getResources().getString(R.string.title_episodes));
 
 		getListView().setOnCreateContextMenuListener(this);
 		Intent intent = getIntent();
@@ -125,6 +125,8 @@ public class AllItemActivity extends PodcastBaseActivity {
 		mNextIntent = new Intent(this, DownloadingActivity.class);
 		
 		getPref();
+
+		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_all_button);
 
 		startInit();
 

@@ -379,6 +379,7 @@ public class PlayerActivity  extends HapiListActivity
         super.onCreate(icicle);
 		startService(new Intent(this, PlayerService.class));
         setContentView(R.layout.audio_player);
+		setTitle(getResources().getString(R.string.title_episodes));
 		getListView().setOnCreateContextMenuListener(this);
         
         final Intent intent = getIntent();
@@ -414,6 +415,9 @@ public class PlayerActivity  extends HapiListActivity
         mProgress.setMax(1000);    
         mTotalTime = (TextView) findViewById(R.id.totaltime); 
         mCurrentTime = (TextView) findViewById(R.id.currenttime); 
+        
+		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_play_button);
+
         startInit();
 
         //updateInfo();

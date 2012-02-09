@@ -53,7 +53,7 @@ public class AddChannelActivity extends HapiActivity {
 			}
 		});
 		
-		ChannelTabsHelper.setTabClickListeners(this, R.id.channel_bar_add_button);		
+		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_add_button);		
 	}
 
 	@Override

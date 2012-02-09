@@ -48,7 +48,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 		mPrevIntent = new Intent(this, SearchActivity.class);
 		mNextIntent = new Intent(this, AllItemActivity.class);	
 		
-		ChannelTabsHelper.setTabClickListeners(this, R.id.channel_bar_manage_button);
+		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_manage_button);
 
 		startInit();
 

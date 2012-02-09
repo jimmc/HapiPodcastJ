@@ -79,15 +79,18 @@ public class PlayListActivity extends PodcastBaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
-		setTitle(getResources().getString(R.string.title_play_list));
+		setContentView(R.layout.episodes);
+		setTitle(getResources().getString(R.string.title_episodes));
 
 		getListView().setOnCreateContextMenuListener(this);
 		Intent intent = getIntent();
 		intent.setData(ItemColumns.URI);
 		
 		mPrevIntent = new Intent(this, DownloadingActivity.class);
-		mNextIntent = new Intent(this, SearchActivity.class);		
+		mNextIntent = new Intent(this, SearchActivity.class);
+		
+		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_manage_button);
+
 		startInit();
 	}
 
