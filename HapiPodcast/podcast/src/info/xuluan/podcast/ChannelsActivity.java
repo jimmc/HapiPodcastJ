@@ -38,7 +38,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.subs);
-		setTitle(getResources().getString(R.string.title_subs));
+		setTitle(getResources().getString(R.string.title_channels));
 
 		getListView().setOnCreateContextMenuListener(this);
 
@@ -46,7 +46,10 @@ public class ChannelsActivity extends PodcastBaseActivity {
 		intent.setData(SubscriptionColumns.URI);
 
 		mPrevIntent = new Intent(this, SearchActivity.class);
-		mNextIntent = new Intent(this, AllItemActivity.class);		
+		mNextIntent = new Intent(this, AllItemActivity.class);	
+		
+		ChannelTabsHelper.setTabClickListeners(this, R.id.channel_bar_manage_button);
+
 		startInit();
 
 	}
@@ -61,7 +64,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.add_channel:
+/*		case R.id.add_channel:
 			startActivity(new Intent(this, AddChannelActivity.class));
 			return true;
 		case R.id.backup_channels:
@@ -69,7 +72,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 			return true;
 		case R.id.search_channels:
 			startActivity(new Intent(this, SearchActivity.class));
-			return true;
+			return true;*/
 		}
 		return super.onOptionsItemSelected(item);
 	}

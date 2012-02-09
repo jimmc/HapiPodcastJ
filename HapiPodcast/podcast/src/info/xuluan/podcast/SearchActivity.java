@@ -68,7 +68,7 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.addchannel);
-		setTitle(getResources().getString(R.string.title_search_channel));
+		setTitle(getResources().getString(R.string.title_channels));
 
 		mAdapter = new ArrayAdapter<String>(this,
 				android.R.layout.simple_list_item_1, mStrings);
@@ -112,7 +112,8 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 				}
 			}
 		});
-
+		
+		ChannelTabsHelper.setTabClickListeners(this, R.id.channel_bar_search_button);
 	}
 
 	@Override
@@ -125,7 +126,7 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.backup_channels:
+/*		case R.id.backup_channels:
 			startActivity(new Intent(this, BackupChannelsActivity.class));
 			return true;
 		case R.id.add_channel:
@@ -133,7 +134,7 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 			return true;
 		case R.id.list_channels:
 			startActivity(new Intent(this, ChannelsActivity.class));
-			return true;
+			return true;*/
 		}
 		return super.onOptionsItemSelected(item);
 	}

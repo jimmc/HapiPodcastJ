@@ -53,6 +53,7 @@ public class AddChannelActivity extends HapiActivity {
 			}
 		});
 		
+		ChannelTabsHelper.setTabClickListeners(this, R.id.channel_bar_add_button);		
 	}
 
 	@Override
@@ -65,7 +66,7 @@ public class AddChannelActivity extends HapiActivity {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case R.id.backup_channels:
+/*		case R.id.backup_channels:
 			startActivity(new Intent(this, BackupChannelsActivity.class));
 			return true;
 		case R.id.search_channels:
@@ -74,7 +75,7 @@ public class AddChannelActivity extends HapiActivity {
 		case R.id.list_channels:
 			startActivity(new Intent(this, ChannelsActivity.class));
 			return true;
-		}
+*/		}
 		return super.onOptionsItemSelected(item);
 	}
 	

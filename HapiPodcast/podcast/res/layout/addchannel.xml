@@ -20,6 +20,46 @@
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent">
 
+        <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:paddingBottom="0dip" android:paddingTop="3dip" android:layout_marginBottom="0dip" android:layout_weight="0">
+
+        <Button
+            android:id="@+id/channel_bar_search_button"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/channel_bar_button_search" android:background="#FFFFFFFF" android:layout_gravity="bottom" android:height="30dip" android:layout_width="fill_parent"/>
+
+        <Button
+            android:id="@+id/channel_bar_add_button"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/channel_bar_button_add" android:layout_gravity="bottom" android:background="#FFC0C0C0" android:height="30dip" android:layout_marginLeft="2dip" android:layout_width="fill_parent"/>
+
+        <Button
+            android:id="@+id/channel_bar_manage_button"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/channel_bar_button_manage" android:layout_gravity="bottom" android:background="#FFC0C0C0" android:height="30dip" android:layout_marginLeft="2dip" android:layout_width="fill_parent"/>
+
+        <Button
+            android:id="@+id/channel_bar_backup_button"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/channel_bar_button_backup" android:layout_gravity="bottom" android:background="#FFC0C0C0" android:height="30dip" android:layout_marginLeft="2dip" android:layout_width="fill_parent"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/frameLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="5dip"
+        android:layout_weight="0"
+        android:background="#FFFFFFFF" android:layout_marginBottom="3dip">
+
+    </FrameLayout>
+    
 	<LinearLayout android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
 		android:orientation="horizontal">

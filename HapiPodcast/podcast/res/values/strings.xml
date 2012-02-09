@@ -5,6 +5,7 @@
 	<string name="title_player">Player</string>	
 	<string name="title_download_list">Downloading List</string>
 	<string name="title_read_list">All Items</string>
+    <string name="title_channels">Channels</string>
     <string name="title_subs">Channels</string>
     <string name="title_pref">Settings</string>
 	<string name="title_search_channel">Search Channel</string>	
@@ -13,6 +14,11 @@
 	<string name="button_opml_import">Import from OPML</string>
     <string name="button_opml_export">Export to OPML</string>	
 
+    <string name="channel_bar_button_add">Add</string>
+    <string name="channel_bar_button_backup">Backup</string>
+    <string name="channel_bar_button_manage">Manage</string>
+    <string name="channel_bar_button_search">Search</string>
+        
     <string name="menu_delete">Delete</string>
     <string name="menu_remove">Remove</string>
     <string name="menu_move_up">Move Up</string>
