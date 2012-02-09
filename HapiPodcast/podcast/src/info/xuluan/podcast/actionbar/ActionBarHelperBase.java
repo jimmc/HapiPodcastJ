@@ -51,6 +51,7 @@ public class ActionBarHelperBase extends ActionBarHelper {
     private static final String MENU_ATTR_SHOW_AS_ACTION = "showAsAction";
 
     protected Set<Integer> mActionItemIds = new HashSet<Integer>();
+    protected TextView mTitleView;
 
     protected ActionBarHelperBase(Activity activity) {
         super(activity);
@@ -105,6 +106,7 @@ public class ActionBarHelperBase extends ActionBarHelper {
         titleText.setLayoutParams(springLayoutParams);
         titleText.setText(mActivity.getTitle());
         actionBarCompat.addView(titleText);
+        mTitleView = titleText;
     }
 
     /**{@inheritDoc}*/
@@ -139,7 +141,9 @@ public class ActionBarHelperBase extends ActionBarHelper {
     /**{@inheritDoc}*/
     @Override
     public void onTitleChanged(CharSequence title, int color) {
-        TextView titleView = (TextView) mActivity.findViewById(R.id.actionbar_compat_title);
+        //TextView titleView = (TextView) mActivity.findViewById(R.id.actionbar_compat_title);
+    		//titleView was not assigned an ID when created, so just use a local var to get it
+    	TextView titleView = mTitleView;
         if (titleView != null) {
             titleView.setText(title);
         }

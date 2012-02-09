@@ -5,8 +5,8 @@
 	<string name="title_player">Player</string>	
 	<string name="title_download_list">Downloading List</string>
 	<string name="title_read_list">All Items</string>
-    <string name="title_channels">Hapi Podcast - Channels</string>
-    <string name="title_episodes">Hapi Podcast - Episodes</string>
+    <string name="title_channels">Channels</string>
+    <string name="title_episodes">Episodes</string>
     <string name="title_subs">Channels</string>
     <string name="title_pref">Settings</string>
 	<string name="title_search_channel">Search Channel</string>	
