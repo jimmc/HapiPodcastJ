@@ -8,7 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ListView;
@@ -52,11 +54,11 @@ public class MainActivity extends HapiListActivity{
 	    		new Intent(this, PlayerActivity.class),"");		    
 
 	    addItem(myData, getResources().getString(R.string.title_backup), R.drawable.backup_big_pic , 
-	    		null,"backup");	
+	    		new Intent(this, BackupChannelsActivity.class),"");	
 	    
 	    addItem(myData, getResources().getString(R.string.title_pref), R.drawable.settings_big_pic , 
 	    		new Intent(this, Pref.class),"");	
-	           
+
         return myData;
     }
 
@@ -77,17 +79,16 @@ public class MainActivity extends HapiListActivity{
         Intent intent = (Intent) map.get("intent");
         if(intent!=null){
         	startActivity(intent);
-        } else {
-        	String cmd = (String) map.get("cmd");
-        	if(cmd.equals("backup")){
-        		//backup();
-        		startActivity(new Intent(this, BackupChannelsActivity.class));
-        	}
         }
     }
     
     @Override
     protected void tapHome() {
-    	Toast.makeText(this, "Already Home", Toast.LENGTH_SHORT).show();
+    	//Toast.makeText(this, "Already Home", Toast.LENGTH_SHORT).show();
+		SharedPreferences prefsPrivate = getSharedPreferences("info.xuluan.podcast_preferences", Context.MODE_PRIVATE);
+		SharedPreferences.Editor ed = prefsPrivate.edit();
+		ed.putInt("homeActivity",1);
+        ed.commit();
+    	startActivity(new Intent(this,HomeActivity.class));
     }
 }
