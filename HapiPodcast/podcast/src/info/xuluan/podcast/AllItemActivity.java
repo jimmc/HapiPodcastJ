@@ -2,11 +2,11 @@ package info.xuluan.podcast;
 
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
+import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.utils.DialogMenu;
 import info.xuluan.podcast.utils.IconCursorAdapter;
 
-import android.net.Uri;
-import android.os.Bundle;
+import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.app.Service;
@@ -17,12 +17,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.database.Cursor;
-
+import android.net.Uri;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import java.util.HashMap;
+import android.widget.Toast;
 
 public class AllItemActivity extends PodcastBaseActivity {
 
@@ -30,6 +31,7 @@ public class AllItemActivity extends PodcastBaseActivity {
 	private static final int MENU_SORT = Menu.FIRST + 2;
 	private static final int MENU_DISPLAY = Menu.FIRST + 3;
 
+	private static final int MENU_ITEM_VIEW_CHANNEL = Menu.FIRST + 8;
 	private static final int MENU_ITEM_VIEW = Menu.FIRST + 9;
 	private static final int MENU_ITEM_START_DOWNLOAD = Menu.FIRST + 10;
 	private static final int MENU_ITEM_START_PLAY = Menu.FIRST + 11;
@@ -243,6 +245,8 @@ public class AllItemActivity extends PodcastBaseActivity {
 		
 		dialog_menu.addMenu(MENU_ITEM_VIEW, 
 				getResources().getString(R.string.menu_view));
+		dialog_menu.addMenu(MENU_ITEM_VIEW_CHANNEL, 
+				getResources().getString(R.string.menu_view_channel));
 		
 		if(feed_item.status<ItemColumns.ITEM_STATUS_MAX_READING_VIEW){
 			dialog_menu.addMenu(MENU_ITEM_START_DOWNLOAD, 
@@ -282,8 +286,24 @@ public class AllItemActivity extends PodcastBaseActivity {
     			}    			
     			startActivity(new Intent(Intent.ACTION_EDIT, uri));   
     			return;
-    		}    		
-			case MENU_ITEM_START_DOWNLOAD: {
+    		} 
+    		case MENU_ITEM_VIEW_CHANNEL: {
+    			FeedItem item = FeedItem.getById(getContentResolver(), item_id);
+    			//Subscription sub = Subscription.getSubbyId(getContentResolver(), item.sub_id);
+    			Uri chUri = ContentUris.withAppendedId(SubscriptionColumns.URI, item.sub_id);
+    			if (ChannelActivity.channelExists(AllItemActivity.this,chUri))
+    				startActivity(new Intent(Intent.ACTION_EDIT, chUri));
+    			else {
+    				String subTitle = item.sub_title;
+    				if (subTitle==null || subTitle.equals(""))
+    					subTitle = "(no channel title)";
+    				String tstr = String.format("Channel not found: '%s'", subTitle);
+    				Toast.makeText(AllItemActivity.this, tstr, Toast.LENGTH_SHORT).show();
+    			}
+    			return;
+    		}  
+
+    		case MENU_ITEM_START_DOWNLOAD: {
 	
 				FeedItem feeditem = FeedItem.getById(getContentResolver(), item_id);
 				if (feeditem == null)

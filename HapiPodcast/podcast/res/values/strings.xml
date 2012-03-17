@@ -38,6 +38,7 @@
     <string name="menu_backup_channels">Backup Channels</string>
 	
     <string name="menu_view">View</string>
+    <string name="menu_view_channel">View Channel</string>
     <string name="menu_keep">Keep</string>
     <string name="menu_unkeep">Unkeep</string>
     <string name="menu_download">Download</string>

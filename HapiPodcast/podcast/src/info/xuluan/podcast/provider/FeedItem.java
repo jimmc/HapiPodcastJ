@@ -152,6 +152,7 @@ public class FeedItem {
 
 		created = -1;
 		sub_title = null;
+		sub_id = -1;
 		
 		m_date = -1;
 
@@ -394,6 +395,7 @@ public class FeedItem {
 				.getColumnIndex(ItemColumns.LAST_UPDATE));		
 		item.sub_title = cursor.getString(cursor
 				.getColumnIndex(ItemColumns.SUB_TITLE));
+		item.sub_id = cursor.getLong(cursor.getColumnIndex(ItemColumns.SUBS_ID));
 		item.type = cursor.getString(cursor.getColumnIndex(ItemColumns.TYPE));
 		item.keep = cursor.getInt(cursor.getColumnIndex(ItemColumns.KEEP));
 	}

@@ -27,7 +27,7 @@ public class FeedHandler  {
 	}
 
 	public int update(Subscription sub){
-		FeedParserListener listener = fetchFeed(sub.url);
+		FeedParserListener listener = fetchFeed(sub.url,sub.id);
 		if ((listener != null) && (listener.resultCode==0))
 			return updateFeed(sub, listener);
 
@@ -36,11 +36,11 @@ public class FeedHandler  {
 		return 0;
 	}
 	
-	public FeedParserListener fetchFeed(String url) {
+	public FeedParserListener fetchFeed(String url, long sub_id) {
 
 		FeedFetcher fetcher = new FeedFetcher();
 		FeedParserListener listener = new FeedParserListener(max_valid_size);
-		FeedParserHandler handler = new FeedParserHandler(listener);
+		FeedParserHandler handler = new FeedParserHandler(listener, sub_id);
 		Response response = null;
 		try {
 			response = fetcher.fetch(url);

@@ -169,7 +169,7 @@ public class FeedHandlerTest extends android.test.ProviderTestCase<PodcastProvid
 
 
     public void testStrip() throws Exception {
-    	FeedParserHandler handler = new FeedParserHandler(null);
+    	FeedParserHandler handler = new FeedParserHandler(null,0);
 
     	String str= "\n                    abc\n                ";
     	

@@ -48,6 +48,7 @@ public class FeedParserHandler extends DefaultHandler {
 	private static final String NODE_FEED_AUTHOR_NAME = "name";
 
 	private final FeedParserListenerInterface listener;
+	private final long sub_id;
 	private final Log log = Log.getLog(getClass());
 
 	private boolean mFeedTitleLoaded = false;
@@ -82,8 +83,9 @@ public class FeedParserHandler extends DefaultHandler {
 		fetchChars.add(NODE_FEED_AUTHOR_NAME);
 	}
 
-	public FeedParserHandler(FeedParserListenerInterface listener) {
+	public FeedParserHandler(FeedParserListenerInterface listener, long sub_id) {
 		this.listener = listener;
+		this.sub_id = sub_id;
 	}
 
 	@Override
@@ -105,6 +107,7 @@ public class FeedParserHandler extends DefaultHandler {
 
 			if (mCurrentItem != null) {
 				mCurrentItem.sub_title = mFeedTitle;
+				mCurrentItem.sub_id = sub_id;
 				listener.onItemLoad(mCurrentItem);
 			} else
 				log.debug("item=null ");

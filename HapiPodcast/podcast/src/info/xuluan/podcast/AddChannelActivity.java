@@ -120,7 +120,7 @@ public class AddChannelActivity extends HapiActivity {
 				url = params[0];
 				// log.debug("doInBackground URL ="+url);
 				feed_handler = new FeedHandler(getContentResolver(),getPrefMaxSize());
-				return feed_handler.fetchFeed(url);
+				return feed_handler.fetchFeed(url,-1); //TODO
 			}
 
 			@Override

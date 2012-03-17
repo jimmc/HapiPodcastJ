@@ -5,22 +5,21 @@ import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.utils.DialogMenu;
-import info.xuluan.podcast.utils.IconCursorAdapter;
 
-import android.database.Cursor;
-import android.net.Uri;
-import android.os.Bundle;
+import java.util.HashMap;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.DialogInterface;
 import android.content.Intent;
-
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import java.util.HashMap;
 
 public class ChannelActivity extends PodcastBaseActivity {
 
@@ -62,6 +61,20 @@ public class ChannelActivity extends PodcastBaseActivity {
 		mIconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.music);
 		mIconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.music);		
 */
+	}
+
+	public static boolean channelExists(Activity act, Uri uri) {
+		Cursor cursor = act.getContentResolver().query(uri,
+				SubscriptionColumns.ALL_COLUMNS, null, null, null);
+		if (!cursor.moveToFirst()) {
+			return false;
+		}
+		
+		Subscription ch = Subscription.getByCursor(cursor);
+
+		cursor.close();
+		
+		return (ch!=null);
 	}
 	
 	@Override
