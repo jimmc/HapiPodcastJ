@@ -66,7 +66,7 @@ public class HapiActivity extends Activity {
     protected void tapHome() {
     	//Toast.makeText(this, "Tapped Home", Toast.LENGTH_SHORT).show();
 		SharedPreferences prefsPrivate = getSharedPreferences(Pref.HAPI_PREFS_FILE_NAME, Context.MODE_PRIVATE);
-		int homeActivity = prefsPrivate.getInt("homeActivity", 0);
+		int homeActivity = prefsPrivate.getInt("homeActivity", 1);
 		if (homeActivity!=0)
 			startActivity(new Intent(this, HomeActivity.class));
 		else
