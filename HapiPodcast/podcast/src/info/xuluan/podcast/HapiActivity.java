@@ -1,5 +1,6 @@
 package info.xuluan.podcast;
 
+import info.xuluan.podcast.actionbar.ActionBarHelper;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -8,8 +9,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
-import info.xuluan.podcast.actionbar.ActionBarHelper;
 
 public class HapiActivity extends Activity {
 	final ActionBarHelper mActionBarHelper = ActionBarHelper.createInstance(this);
@@ -66,7 +65,7 @@ public class HapiActivity extends Activity {
 
     protected void tapHome() {
     	//Toast.makeText(this, "Tapped Home", Toast.LENGTH_SHORT).show();
-		SharedPreferences prefsPrivate = getSharedPreferences("info.xuluan.podcast_preferences", Context.MODE_PRIVATE);
+		SharedPreferences prefsPrivate = getSharedPreferences(Pref.HAPI_PREFS_FILE_NAME, Context.MODE_PRIVATE);
 		int homeActivity = prefsPrivate.getInt("homeActivity", 0);
 		if (homeActivity!=0)
 			startActivity(new Intent(this, HomeActivity.class));

@@ -518,7 +518,7 @@ public class PlayerActivity  extends HapiListActivity
                  public void onClick(DialogInterface dialog, int select) {
          			
                 	pref_repeat = select;
-         			SharedPreferences prefsPrivate = getSharedPreferences("info.xuluan.podcast_preferences", Context.MODE_PRIVATE);
+         			SharedPreferences prefsPrivate = getSharedPreferences(Pref.HAPI_PREFS_FILE_NAME, Context.MODE_PRIVATE);
     				Editor prefsPrivateEditor = prefsPrivate.edit();
     				prefsPrivateEditor.putLong("pref_repeat", pref_repeat);
     				prefsPrivateEditor.commit();
@@ -791,7 +791,7 @@ public class PlayerActivity  extends HapiListActivity
     
     private void getPref() {
 		SharedPreferences pref = getSharedPreferences(
-				"info.xuluan.podcast_preferences", Service.MODE_PRIVATE);
+				Pref.HAPI_PREFS_FILE_NAME, Service.MODE_PRIVATE);
 		pref_repeat = pref.getLong("pref_repeat",0);
 		pref_fas_fwd_interval = Integer.parseInt(pref.getString("pref_fast_forward_interval","30"));		
 		ffwd_interval = pref_fas_fwd_interval*1000;

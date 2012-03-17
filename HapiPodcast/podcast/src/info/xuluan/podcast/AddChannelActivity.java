@@ -172,7 +172,7 @@ public class AddChannelActivity extends HapiActivity {
 	
     private int getPrefMaxSize() {
 		SharedPreferences pref = getSharedPreferences(
-				"info.xuluan.podcast_preferences", Service.MODE_PRIVATE);
+				Pref.HAPI_PREFS_FILE_NAME, Service.MODE_PRIVATE);
 		return  Integer.parseInt(pref.getString(
 				"pref_max_new_items", "10"));
 	}    	

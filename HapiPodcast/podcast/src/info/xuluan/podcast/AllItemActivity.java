@@ -176,7 +176,7 @@ public class AllItemActivity extends PodcastBaseActivity {
          				mCursor.close();
          			
          			pref_order = select;
-         			SharedPreferences prefsPrivate = getSharedPreferences("info.xuluan.podcast_preferences", Context.MODE_PRIVATE);
+         			SharedPreferences prefsPrivate = getSharedPreferences(Pref.HAPI_PREFS_FILE_NAME, Context.MODE_PRIVATE);
     				Editor prefsPrivateEditor = prefsPrivate.edit();
     				prefsPrivateEditor.putLong("pref_order", pref_order);
     				prefsPrivateEditor.commit();
@@ -195,7 +195,7 @@ public class AllItemActivity extends PodcastBaseActivity {
  				mCursor.close();
  			pref_where = 1- pref_where;
 
- 			SharedPreferences prefsPrivate = getSharedPreferences("info.xuluan.podcast_preferences", Context.MODE_PRIVATE);
+ 			SharedPreferences prefsPrivate = getSharedPreferences(Pref.HAPI_PREFS_FILE_NAME, Context.MODE_PRIVATE);
 			Editor prefsPrivateEditor = prefsPrivate.edit();
 			prefsPrivateEditor.putLong("pref_where", pref_where);
 			prefsPrivateEditor.commit();
@@ -359,7 +359,7 @@ public class AllItemActivity extends PodcastBaseActivity {
 	
 	public void getPref() {
 		SharedPreferences pref = getSharedPreferences(
-				"info.xuluan.podcast_preferences", Service.MODE_PRIVATE);
+				Pref.HAPI_PREFS_FILE_NAME, Service.MODE_PRIVATE);
 		pref_order = pref.getLong("pref_order",2);
 
 		pref_where = pref.getLong("pref_where", 0);

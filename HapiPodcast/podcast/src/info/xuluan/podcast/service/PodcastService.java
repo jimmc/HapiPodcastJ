@@ -1,5 +1,6 @@
 package info.xuluan.podcast.service;
 
+import info.xuluan.podcast.Pref;
 import info.xuluan.podcast.R;
 import info.xuluan.podcast.fetcher.FeedFetcher;
 import info.xuluan.podcast.parser.FeedHandler;
@@ -381,7 +382,7 @@ public class PodcastService extends Service {
 
 	public void updateSetting() {
 		SharedPreferences pref = getSharedPreferences(
-				"info.xuluan.podcast_preferences", Service.MODE_PRIVATE);
+				Pref.HAPI_PREFS_FILE_NAME, Service.MODE_PRIVATE);
 
 		boolean b = pref.getBoolean("pref_download_only_wifi", false);
 		pref_connection_sel = b ? WIFI_CONNECT

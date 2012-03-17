@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 
 import info.xuluan.podcast.PlayerActivity;
+import info.xuluan.podcast.Pref;
 import info.xuluan.podcast.R;
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
@@ -606,7 +607,7 @@ public class PlayerService extends Service {
 	
     private long getPref() {
 		SharedPreferences pref = getSharedPreferences(
-				"info.xuluan.podcast_preferences", Service.MODE_PRIVATE);
+				Pref.HAPI_PREFS_FILE_NAME, Service.MODE_PRIVATE);
 		return pref.getLong("pref_repeat",0);
 
 	}

@@ -67,7 +67,7 @@ public class HapiPreferenceActivity extends PreferenceActivity {
 
     protected void tapHome() {
     	//Toast.makeText(this, "Tapped Home", Toast.LENGTH_SHORT).show();
-		SharedPreferences prefsPrivate = getSharedPreferences("info.xuluan.podcast_preferences", Context.MODE_PRIVATE);
+		SharedPreferences prefsPrivate = getSharedPreferences(Pref.HAPI_PREFS_FILE_NAME, Context.MODE_PRIVATE);
 		int homeActivity = prefsPrivate.getInt("homeActivity", 0);
 		if (homeActivity!=0)
 			startActivity(new Intent(this, HomeActivity.class));

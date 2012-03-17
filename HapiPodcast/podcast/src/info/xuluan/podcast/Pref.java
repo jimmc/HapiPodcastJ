@@ -17,16 +17,18 @@
 package info.xuluan.podcast;
 
 import info.xuluan.podcast.service.PodcastService;
+import android.app.Service;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.preference.PreferenceActivity;
 
 public class Pref extends HapiPreferenceActivity {
 
+	public static final String HAPI_PREFS_FILE_NAME = "info.xuluan.podcast_preferences";
 	private PodcastService serviceBinder = null;
 	ComponentName service = null;
 
