@@ -90,7 +90,11 @@ public class ItemActivity extends HapiActivity {
 		String content = cursor.getString(cursor
 				.getColumnIndex(ItemColumns.CONTENT));
 		Long time = cursor.getLong(cursor
-				.getColumnIndex(ItemColumns.CREATED));		
+				.getColumnIndex(ItemColumns.CREATED));
+		String channelText = cursor.getString(
+				cursor.getColumnIndex(ItemColumns.SUB_TITLE));
+		String durationText = cursor.getString(
+				cursor.getColumnIndex(ItemColumns.DURATION));
 		cursor.close();
 
 		// set title:
@@ -100,8 +104,17 @@ public class ItemActivity extends HapiActivity {
 		
 		contentView.setText(Html.fromHtml(content));
 
+		TextView channelView = (TextView) findViewById(R.id.channel_view);
+		channelView.setText(channelText);
+		
+		TextView fullTitleView = (TextView) findViewById(R.id.full_title_view);
+		fullTitleView.setText(title);
+		
 		TextView timeView = (TextView) findViewById(R.id.time_view);
 		timeView.setText("at "+getTimeString(time));
+		
+		TextView durationView = (TextView) findViewById(R.id.duration_view);
+		durationView.setText(durationText);
 		
 		service = startService(new Intent(this, PodcastService.class));
 
