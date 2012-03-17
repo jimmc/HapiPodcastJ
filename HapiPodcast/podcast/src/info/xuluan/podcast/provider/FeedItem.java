@@ -407,14 +407,14 @@ public class FeedItem {
 
 	public String getType() {
 		if (type == null) {
-			return "audio/mp3";
+			return "audio/mpeg";
 		}
 
 		if (!type.equalsIgnoreCase("")) {
 			return type;
 		}
 
-		return "audio/mp3";
+		return "audio/mpeg";
 	}
 	
 	public void play(Activity act){

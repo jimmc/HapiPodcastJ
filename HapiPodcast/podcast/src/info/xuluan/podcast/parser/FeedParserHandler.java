@@ -183,7 +183,7 @@ public class FeedParserHandler extends DefaultHandler {
 						if (m.find()) {
 							// log.warn("item match");
 							mCurrentItem.resource = url;
-							mCurrentItem.type = "audio/mp3";
+							mCurrentItem.type = "audio/mpeg";
 						}
 					}
 
@@ -269,7 +269,7 @@ public class FeedParserHandler extends DefaultHandler {
 			String type = attributes.getValue("type");
 			if (type == null) {
 				mCurrentItem.resource = attributes.getValue("url");
-				mCurrentItem.type = "audio/mp3";
+				mCurrentItem.type = "audio/mpeg";
 			} else {
 				Pattern p = Pattern.compile("audio");
 				Matcher m = p.matcher(type);

@@ -21,6 +21,39 @@ public class FeedFetcher {
 	private String mAgent;
 	protected final Log log = Log.getLog(getClass());
 
+    private static final int[] mp3Sig = { 0x49, 0x44, 0x33};
+    
+    private boolean isAudioFile(byte[] buffer, int size, String type) {  
+        //if not mp3 , skip     
+        if(!(type.equals("audio/mpeg") || type.equals(""))) return true;
+    
+        if(ismp3File(buffer, size)){
+            return true;
+        }
+        
+        return false;
+    }
+    
+    private static boolean ismp3File(byte[] buffer, int size) {
+        return matchesSignature(mp3Sig, buffer, size);
+    }    
+    
+    private static boolean matchesSignature(int[] signature, byte[] buffer, int size) {
+        if (size < signature.length) {
+            return false;
+        }
+
+        boolean b = true;
+        for (int i = 0; i < signature.length; i++) {
+            if (signature[i] != (0x00ff & buffer[i])) {
+                b = false;
+                break;
+            }
+        }
+        
+        return b;
+    }   
+
 	public FeedFetcher() {
 		mAgent = "Mozilla/4.0 (compatible; Windows XP 5.1; MSIE 6.0.2900.2180)";
 	}
@@ -208,7 +241,12 @@ public class FeedFetcher {
 
 			while ((nRead = input.read(b, 0, buff_size)) > 0
 					&& nStartPos < nEndPos) {
-
+                                if(item.offset == 0) {
+                                    if(!isAudioFile(b, nRead, item.type)){
+                                        log.debug(" using public wifi!!! ");
+                                        break;
+                                    }
+                                }
 				oSavedFile.write(b, 0, nRead);
 				nStartPos += nRead;
 				item.offset = nStartPos;

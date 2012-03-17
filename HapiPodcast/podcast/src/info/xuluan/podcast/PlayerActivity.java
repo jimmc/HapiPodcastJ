@@ -246,7 +246,7 @@ public class PlayerActivity  extends HapiListActivity
                 case REFRESH:
                     long next = refreshNow();
                     queueNextRefresh(next);
-                    log.debug("REFRESH: "+next);
+                    //log.debug("REFRESH: "+next);
                     break;
 
                 default:
@@ -384,7 +384,7 @@ public class PlayerActivity  extends HapiListActivity
         
         final Intent intent = getIntent();
         mID = intent.getLongExtra("item_id", -1);
-        
+        setIntent(new Intent());
        
         mPauseButton = (ImageButton) findViewById(R.id.pause);
         mPauseButton.requestFocus();
