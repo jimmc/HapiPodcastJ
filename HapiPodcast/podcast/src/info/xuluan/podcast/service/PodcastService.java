@@ -256,7 +256,6 @@ public class PodcastService extends Service {
 		}.start();
 	}
 
-
 	private void deleteExpireFile(Cursor cursor) {
 		
 		if(cursor==null)
@@ -277,10 +276,10 @@ public class PodcastService extends Service {
 	private void removeExpires() {
 		long expiredTime = System.currentTimeMillis() - pref_item_expire;
 		try {
-			String where = ItemColumns.CREATED + "<" + expiredTime + " and "
-					+ ItemColumns.STATUS + "<"
-					+ ItemColumns.ITEM_STATUS_MAX_READING_VIEW + " and "
-					+ ItemColumns.KEEP + "=0";
+			String where =
+				ItemColumns.CREATED + "<" + expiredTime + " and " +
+				ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_READING_VIEW + " and " +
+				ItemColumns.KEEP + "=0";
 
 			getContentResolver().delete(ItemColumns.URI, where, null);
 		} catch (Exception e) {
@@ -291,27 +290,13 @@ public class PodcastService extends Service {
 			return;
 		}
 
-		expiredTime = System.currentTimeMillis() - pref_played_file_expire;
-		try {
-			String where = ItemColumns.LAST_UPDATE + "<" + expiredTime
-					+ " and " + ItemColumns.STATUS + "="
-					+ ItemColumns.ITEM_STATUS_PLAYED + " and "
-					+ ItemColumns.KEEP + "=0";
-
-			Cursor cursor = getContentResolver().query(ItemColumns.URI,
-					ItemColumns.ALL_COLUMNS, where, null, null);
-			deleteExpireFile(cursor);
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
 		expiredTime = System.currentTimeMillis() - pref_download_file_expire;
 		try {
-			String where = ItemColumns.LAST_UPDATE + "<" + expiredTime
-					+ " and " + ItemColumns.STATUS + "="
-					+ ItemColumns.ITEM_STATUS_NO_PLAY + " and "
-					+ ItemColumns.KEEP + "=0";
+			String where =
+				ItemColumns.LAST_UPDATE + "<" + expiredTime + " and " +
+				ItemColumns.STATUS + ">"  + ItemColumns.ITEM_STATUS_MAX_READING_VIEW + " and " +
+				ItemColumns.STATUS + "<=" + ItemColumns.ITEM_STATUS_PLAY_PAUSE + " and " +
+				ItemColumns.KEEP + "=0";
 
 			Cursor cursor = getContentResolver().query(ItemColumns.URI,
 					ItemColumns.ALL_COLUMNS, where, null, null);
@@ -321,9 +306,24 @@ public class PodcastService extends Service {
 			e.printStackTrace();
 		}
 		
+		expiredTime = System.currentTimeMillis() - pref_played_file_expire;
 		try {
-			String where = ItemColumns.STATUS + "="
-					+ ItemColumns.ITEM_STATUS_DELETE;
+			String where =
+				ItemColumns.LAST_UPDATE + "<" + expiredTime + " and " +
+				ItemColumns.STATUS + ">" + ItemColumns.ITEM_STATUS_PLAY_PAUSE + " and " +
+				ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_PLAYLIST_VIEW + " and " +
+				ItemColumns.KEEP + "=0";
+
+			Cursor cursor = getContentResolver().query(ItemColumns.URI,
+					ItemColumns.ALL_COLUMNS, where, null, null);
+			deleteExpireFile(cursor);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		try {
+			String where = ItemColumns.STATUS + "=" + ItemColumns.ITEM_STATUS_DELETE;
 					//DELETE status takes priority over KEEP flag
 
 			Cursor cursor = getContentResolver().query(ItemColumns.URI,

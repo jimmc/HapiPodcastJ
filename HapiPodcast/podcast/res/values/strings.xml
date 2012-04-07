@@ -29,7 +29,7 @@
     <string name="menu_remove">Remove</string>
     <string name="menu_move_up">Move Up</string>
     <string name="menu_move_down">Move Down</string>
-    <string name="menu_mark_new">Reset to New</string>
+    <string name="menu_mark_new">Reset to Unplayed</string>
 	
     <string name="menu_play">Play</string>
     <string name="menu_played_by">Played by</string>
@@ -66,6 +66,8 @@
     <string name="more_channel">More Channels... </string>
     <string name="menu_list_channels">List Channels</string>
     <string name="menu_search_channels">Search Channels</string>
+
+    <string name="toast_added_to_playlist">Added to playlist</string>
     
     <string name="subscribe">Subscribe</string>	
     <string name="unsubscribe">Unsubscribe</string>	
@@ -78,13 +80,13 @@
     <string name="auto_download">Auto Download</string>	
     <string name="on">On</string>	
     <string name="off">Off</string>	
-	<string name="sdcard_unmout">SDCard no found.</string>	
-	<string name="audio_no_found">Audio File cannot found.</string>	
+	<string name="sdcard_unmout">SDCard not found.</string>	
+	<string name="audio_no_found">Audio File not found.</string>	
 	
-	<string name="no_connect">Network no found.</string>	
+	<string name="no_connect">Network not found.</string>	
 
 	
-    <string name="download_hint">Put it into the downloading queue.</string>	
+    <string name="download_hint">Placed in the download queue.</string>	
     <string name="auto_download_hint">The new items in the channel will be automatically downloaded.</string>	
     <string name="manual_download_hint">Auto Download disabled.</string>	
 
@@ -138,7 +140,7 @@
 	
     <string name="network_fail">network fail</string>
     <string name="feed_format_error">Feed format error or cannot identify format.</string>
-    <string name="no_new_items">No found any new items</string>
+    <string name="no_new_items">No new items found</string>
 	
     <string name="no_data_found">no data found</string>
     <string name="already_subscribed">The channel has been subscribed.</string>

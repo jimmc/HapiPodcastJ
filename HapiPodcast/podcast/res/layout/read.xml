@@ -48,12 +48,39 @@
 		        android:background="@drawable/darker_gray"
 		        android:text="Channel"
 		        android:textAppearance="?android:attr/textAppearanceMedium" />
-		
-		    <TextView
-		        android:id="@+id/full_title_view"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:textSize="18sp" />
+
+		    <LinearLayout
+		        android:id="@+id/linearLayout2"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content" >
+
+		        <LinearLayout
+		            android:id="@+id/linearLayout4"
+		            android:layout_width="wrap_content"
+		            android:layout_height="match_parent"
+		            android:orientation="vertical" >
+
+		            <ImageView
+		                android:id="@+id/status_icon"
+		                android:layout_width="24px"
+		                android:layout_height="24px"
+		                android:src="@drawable/status_unknown" android:layout_marginBottom="0px" android:layout_marginTop="8px" android:layout_marginLeft="0px" android:layout_marginRight="5px" android:layout_gravity="center_vertical"/>
+
+		            <ImageView
+		                android:id="@+id/keep_icon"
+		                android:layout_width="24px"
+		                android:layout_height="24px"
+		                android:src="@drawable/blank" android:layout_gravity="center_vertical" android:layout_marginBottom="5px" android:layout_marginLeft="0px" android:layout_marginRight="5px" android:layout_marginTop="6px"/>
+
+		        </LinearLayout>
+
+		        <TextView
+		            android:id="@+id/full_title_view"
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:textSize="18sp" />
+
+		    </LinearLayout>
 		
 		    <LinearLayout
 		        android:id="@+id/linearLayout1"
@@ -65,12 +92,19 @@
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
 		            android:layout_marginBottom="5px"
-		            android:layout_weight="1"
+		            android:layout_weight="0.8"
 		            android:background="@drawable/lighter_gray"
 		            android:gravity="left"
 		            android:paddingRight="10px"
 		            android:textColor="@drawable/black"
 		            android:textSize="12sp" />
+
+		        <TextView
+		            android:id="@+id/exp_view"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1"
+		            android:background="@drawable/lighter_gray" android:gravity="left" android:textColor="@drawable/black" android:textSize="12sp" android:layout_marginBottom="5px" android:paddingRight="10px"/>
 		
 		        <TextView
 		            android:id="@+id/duration_view"

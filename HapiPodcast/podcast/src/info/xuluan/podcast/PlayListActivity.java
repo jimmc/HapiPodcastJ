@@ -1,15 +1,10 @@
 package info.xuluan.podcast;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.HashMap;
-
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.utils.DialogMenu;
-import info.xuluan.podcast.utils.IconCursorAdapter;
-import info.xuluan.podcast.utils.SDCardMgr;
+
+import java.util.HashMap;
 
 import android.app.AlertDialog;
 import android.content.ContentUris;
@@ -20,7 +15,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class PlayListActivity extends PodcastBaseActivity {
 
@@ -164,16 +158,7 @@ public class PlayListActivity extends PodcastBaseActivity {
     			return;
     		}
     		case MENU_ITEM_PLAYED_BY: {
-    			Intent intent = new Intent(android.content.Intent.ACTION_VIEW); 
-    	        Uri data = Uri.parse("file://"+select_item.pathname); 
-				log.error(select_item.pathname);
- 	        
-    	        intent.setDataAndType(data,"audio/mp3"); 
-    	        try { 
-    	             startActivity(intent); 
-    	        } catch (Exception e) { 
-    	                  e.printStackTrace(); 
-    	        }     			
+    			select_item.playedBy(PlayListActivity.this);
     			return;
     		}
     		case MENU_ITEM_ADD_TO_PLAYLIST: {
@@ -181,39 +166,19 @@ public class PlayListActivity extends PodcastBaseActivity {
     			return;
     		}
     		case MENU_ITEM_EXPORT: {
-    			String filename = get_export_file_name(select_item.title, select_item.id);
-    			filename = SDCardMgr.getExportDir()+"/"+filename;
-				log.error(filename);   			
-      			 Toast.makeText(PlayListActivity.this, "Please waiting... ", 
-    					 Toast.LENGTH_LONG).show();  
-      			 
-    			boolean b  = copy_file(select_item.pathname,filename);
-    			if(b)
-    			 Toast.makeText(PlayListActivity.this, "Export audio file to : "+ filename, 
-    					 Toast.LENGTH_LONG).show();
-    			else
-       			 Toast.makeText(PlayListActivity.this, "Export failed ", 
-    					 Toast.LENGTH_LONG).show();    				
+    			select_item.export(PlayListActivity.this);
     			return;
     		}    		
     		case MENU_ITEM_KEEP: {
-    			if (select_item.keep <= 1) {
-    				select_item.keep = 1;
-    				select_item.update(PlayListActivity.this.getContentResolver());
-    			}
+    			select_item.markKeep(PlayListActivity.this.getContentResolver());
     			return;
     		}
     		case MENU_ITEM_UNKEEP: {
-    			if (select_item.keep > 0) {
-    				select_item.keep = 0;
-    				select_item.update(PlayListActivity.this.getContentResolver());
-    			}
+    			select_item.markUnkeep(PlayListActivity.this.getContentResolver());
     			return;
     		}
     		case MENU_ITEM_VIEW: {
-    			Uri uri = ContentUris
-    					.withAppendedId(getIntent().getData(), select_item.id);
-    			startActivity(new Intent(Intent.ACTION_EDIT, uri));
+    			FeedItem.view(PlayListActivity.this, select_item.id);
     			return;
     		}
     		case MENU_ITEM_SHARE: {
@@ -221,66 +186,13 @@ public class PlayListActivity extends PodcastBaseActivity {
     			return;
     		}
     		case MENU_ITEM_MARK_NEW: {
-    			if (select_item.status > ItemColumns.ITEM_STATUS_NO_PLAY &&
-    					select_item.status!=ItemColumns.ITEM_STATUS_PLAYING_NOW) {
-    				select_item.status = ItemColumns.ITEM_STATUS_NO_PLAY;
-    				select_item.failcount = 0;
-    				select_item.updateOffset(PlayListActivity.this.getContentResolver(),0);
-    			}
+    			select_item.markNew(PlayListActivity.this.getContentResolver());
     			return;
     		}
     		}
 		}        	
        }
 
-	public boolean copy_file(String src, String dst)
-	{
-        FileInputStream fileInputStream = null;
-        FileOutputStream fileOutputStream = null;
-        boolean b=true;
-        try {
-            File readFile = new File(src);
-
-            File writeFile = new File(dst);
-
-            fileInputStream = new FileInputStream(readFile);
-
-            fileOutputStream = new FileOutputStream(writeFile);
-
-            byte[] buffer = new byte[1024];
-            while (true) {
-                int bytesRead = fileInputStream.read(buffer);
-                if (bytesRead == -1) {
-                    break;
-                }
-                fileOutputStream.write(buffer, 0, bytesRead);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            b = false;
-        } finally {
-            try {
-                if (fileInputStream != null) {
-                    fileInputStream.close();
-                }
-            } catch (Exception ex) {}
-            try {
-                if (fileOutputStream != null) {
-                    fileOutputStream.close();
-                }
-            } catch (Exception ex) {}
-        }	
-        
-        return b;
-	}
-	
-	public String get_export_file_name(String title, long id)
-	{
-		title = title.replaceAll("[\\s\\\\:\\<\\>\\[\\]\\*\\|\\/\\?\\{\\}]+", "_");		
-
-		return title+"_"+id+".mp3";
-	}
-	
 	public void startInit() {
 		String where = ItemColumns.STATUS + ">"
 				+ ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW + " AND " 

@@ -111,6 +111,18 @@ public class AllItemActivity extends PodcastBaseActivity {
 				fields);
 	}
 
+	public static int mapToIcon(int status) {
+		Integer iconI = mIconMap.get(status);
+		if (iconI==null)
+			iconI = mIconMap.get(IconCursorAdapter.ICON_DEFAULT_ID);	//look for default value in map
+		int icon = (iconI!=null)?
+			iconI.intValue():
+			R.drawable.status_unknown;	//Use this icon when not in map and no map default.
+				//This allows going back to a previous version after data has been
+				//added in a new version with additional status codes.
+		return icon;
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
@@ -277,29 +289,11 @@ public class AllItemActivity extends PodcastBaseActivity {
         {
     		switch (mMenu.getSelect(select)) {
     		case MENU_ITEM_VIEW: {
-    			Uri uri = ContentUris.withAppendedId(ItemColumns.URI, item_id);
-    			FeedItem item = FeedItem.getById(getContentResolver(), item_id);
-    			if ((item != null)
-    					&& (item.status == ItemColumns.ITEM_STATUS_UNREAD)) {
-    				item.status = ItemColumns.ITEM_STATUS_READ;
-    				item.update(getContentResolver());
-    			}    			
-    			startActivity(new Intent(Intent.ACTION_EDIT, uri));   
+    			FeedItem.view(AllItemActivity.this, item_id);
     			return;
     		} 
     		case MENU_ITEM_VIEW_CHANNEL: {
-    			FeedItem item = FeedItem.getById(getContentResolver(), item_id);
-    			//Subscription sub = Subscription.getSubbyId(getContentResolver(), item.sub_id);
-    			Uri chUri = ContentUris.withAppendedId(SubscriptionColumns.URI, item.sub_id);
-    			if (ChannelActivity.channelExists(AllItemActivity.this,chUri))
-    				startActivity(new Intent(Intent.ACTION_EDIT, chUri));
-    			else {
-    				String subTitle = item.sub_title;
-    				if (subTitle==null || subTitle.equals(""))
-    					subTitle = "(no channel title)";
-    				String tstr = String.format("Channel not found: '%s'", subTitle);
-    				Toast.makeText(AllItemActivity.this, tstr, Toast.LENGTH_SHORT).show();
-    			}
+    			FeedItem.viewChannel(AllItemActivity.this, item_id);
     			return;
     		}  
 
@@ -315,20 +309,11 @@ public class AllItemActivity extends PodcastBaseActivity {
 				return;
 			}
 			case MENU_ITEM_START_PLAY: {
-	
-				FeedItem feeditem = FeedItem.getById(getContentResolver(), item_id);
-				if (feeditem == null)
-					return;
-		
-				feeditem.play(AllItemActivity.this);
+				FeedItem.play(AllItemActivity.this, item_id);
 				return;
 			}
 			case MENU_ITEM_ADD_TO_PLAYLIST: {
-				FeedItem feeditem = FeedItem.getById(getContentResolver(), item_id);
-				if (feeditem == null)
-					return;
-		
-				feeditem.addtoPlaylist(getContentResolver());
+				FeedItem.addToPlaylist(AllItemActivity.this, item_id);
 				return;
 			}
     		}

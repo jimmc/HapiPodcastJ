@@ -1,6 +1,11 @@
 package info.xuluan.podcast.provider;
 
+import info.xuluan.podcast.AllItemActivity;
+import info.xuluan.podcast.ChannelActivity;
+import info.xuluan.podcast.PlayListActivity;
 import info.xuluan.podcast.PlayerActivity;
+import info.xuluan.podcast.PodcastBaseActivity;
+import info.xuluan.podcast.utils.FileUtils;
 import info.xuluan.podcast.utils.Log;
 import info.xuluan.podcast.utils.SDCardMgr;
 
@@ -11,10 +16,12 @@ import java.util.Locale;
 
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.widget.Toast;
 
 public class FeedItem {
 	
@@ -73,6 +80,40 @@ public class FeedItem {
 	
 	static String default_format = "EEE, dd MMM yyyy HH:mm:ss Z";
 
+	public static void view(Activity act, long item_id) {
+		Uri uri = ContentUris.withAppendedId(ItemColumns.URI, item_id);
+		FeedItem item = FeedItem.getById(act.getContentResolver(), item_id);
+		if ((item != null)
+				&& (item.status == ItemColumns.ITEM_STATUS_UNREAD)) {
+			item.status = ItemColumns.ITEM_STATUS_READ;
+			item.update(act.getContentResolver());
+		}    			
+		act.startActivity(new Intent(Intent.ACTION_EDIT, uri));   
+	}
+	
+	public static void viewChannel(Activity act, long item_id) {
+		FeedItem item = FeedItem.getById(act.getContentResolver(), item_id);
+		item.viewChannel(act);
+	}
+
+	public static void play(Activity act, long item_id) {
+		FeedItem feeditem = FeedItem.getById(act.getContentResolver(), item_id);
+		if (feeditem == null)
+			return;
+		feeditem.play(act);
+	}
+	
+	//True if we found the item and added it to the playlist
+	public static boolean addToPlaylist(Activity act, long item_id) {
+		FeedItem feeditem = FeedItem.getById(act.getContentResolver(), item_id);
+		if (feeditem != null) {
+			feeditem.addtoPlaylist(act.getContentResolver());
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public static FeedItem getBySQL(ContentResolver context,String where,String order) 
 	{
 		FeedItem item = null;
@@ -94,7 +135,8 @@ public class FeedItem {
 		}		
 		return item;
 						
-	}	
+	}
+	
 	public static FeedItem getById(ContentResolver context, long id) {
 		Cursor cursor = null;
 		FeedItem item = null;
@@ -234,6 +276,27 @@ public class FeedItem {
 		update = -1;
 		update(context);		
 	}
+
+	public void markKeep(ContentResolver context) {
+		if (this.keep <= 1) {
+			this.keep = 1;
+			this.update(context);
+		}
+	}
+	public void markUnkeep(ContentResolver context) {
+		if (this.keep > 0) {
+			this.keep = 0;
+			this.update(context);
+		}
+	}
+	public void markNew(ContentResolver context) {
+		if (this.status > ItemColumns.ITEM_STATUS_NO_PLAY &&
+				this.status!=ItemColumns.ITEM_STATUS_PLAYING_NOW) {
+			this.status = ItemColumns.ITEM_STATUS_NO_PLAY;
+			this.failcount = 0;
+			this.updateOffset(context,0);
+		}
+	}
 	
 	public void update(ContentResolver context) {
 		log.debug("item update start");
@@ -323,6 +386,49 @@ public class FeedItem {
 		}
 	}
 
+	public void viewChannel(Activity act) {
+		//Subscription sub = Subscription.getSubbyId(getContentResolver(), item.sub_id);
+		Uri chUri = ContentUris.withAppendedId(SubscriptionColumns.URI, this.sub_id);
+		if (ChannelActivity.channelExists(act,chUri))
+			act.startActivity(new Intent(Intent.ACTION_EDIT, chUri));
+		else {
+			String subTitle = this.sub_title;
+			if (subTitle==null || subTitle.equals(""))
+				subTitle = "(no channel title)";
+			String tstr = String.format("Channel not found: '%s'", subTitle);
+			Toast.makeText(act, tstr, Toast.LENGTH_SHORT).show();
+		}
+	}
+
+	public void playedBy(Activity act) {
+		Intent intent = new Intent(android.content.Intent.ACTION_VIEW); 
+	    Uri data = Uri.parse("file://"+this.pathname); 
+		log.error(this.pathname);
+	 
+	    intent.setDataAndType(data,"audio/mp3"); 
+	    try { 
+	         act.startActivity(intent); 
+	    } catch (Exception e) { 
+	         e.printStackTrace();
+	    }
+	}
+
+	public void export(Activity act) {
+		String filename = FileUtils.get_export_file_name(this.title, this.id);
+		filename = SDCardMgr.getExportDir()+"/"+filename;
+		log.error(filename);   			
+			 Toast.makeText(act, "Please wait... ", 
+				 Toast.LENGTH_LONG).show();  
+			 
+		boolean b  = FileUtils.copy_file(this.pathname,filename);
+		if(b)
+		 Toast.makeText(act, "Exported audio file to : "+ filename, 
+				 Toast.LENGTH_LONG).show();
+		else
+			 Toast.makeText(act, "Export failed ", 
+				 Toast.LENGTH_LONG).show();    				
+	}
+	
 	public long getDate() {
 		//log.debug(" getDate() start");
 		
