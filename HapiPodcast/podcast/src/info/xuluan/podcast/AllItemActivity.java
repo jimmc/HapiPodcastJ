@@ -29,7 +29,7 @@ public class AllItemActivity extends PodcastBaseActivity {
 
 	private static final int MENU_REFRESH = Menu.FIRST + 1;
 	private static final int MENU_SORT = Menu.FIRST + 2;
-	private static final int MENU_DISPLAY = Menu.FIRST + 3;
+	private static final int MENU_SELECT = Menu.FIRST + 3;
 
 	private static final int MENU_ITEM_VIEW_CHANNEL = Menu.FIRST + 8;
 	private static final int MENU_ITEM_VIEW = Menu.FIRST + 9;
@@ -53,7 +53,17 @@ public class AllItemActivity extends PodcastBaseActivity {
 	
 	private long pref_order;
 	private long pref_where;
-
+	private long pref_select;
+	/*
+	private long pref_select_bits;	//bitmask of which status values to display
+		private static long pref_select_bits_new = 1<<0;	//new or viewed
+		private static long pref_select_bits_download = 1<<1; //being downloaded
+		private static long pref_select_bits_unplayed = 1<<2; //downloaded, not in playlist
+		private static long pref_select_bits_inplay = 1<<3;	//in playlist, play, pause
+		private static long pref_select_bits_done = 1<<4; //done being played
+		private static long pref_select_bits_all = -1;	//all bits set
+	 */
+	
 	static {
 
 		mIconMap = new HashMap<Integer, Integer>();
@@ -154,12 +164,13 @@ public class AllItemActivity extends PodcastBaseActivity {
 		menu.add(0, MENU_SORT, 1,
 				getResources().getString(R.string.menu_sort)).setIcon(
 				android.R.drawable.ic_menu_agenda);	
-		menu.add(0, MENU_DISPLAY, 2,
-				getResources().getString(R.string.menu_display)).setIcon(
+		menu.add(0, MENU_SELECT, 2,
+				getResources().getString(R.string.menu_select)).setIcon(
 				android.R.drawable.ic_menu_today);			
 		return true;
 	}
-	
+
+	/*
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
@@ -173,6 +184,7 @@ public class AllItemActivity extends PodcastBaseActivity {
         item.setTitle(auto);
         return true;
     }
+    */
     
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
@@ -204,6 +216,30 @@ public class AllItemActivity extends PodcastBaseActivity {
              })
             .show();
 			return true;
+		case MENU_SELECT:
+			 new AlertDialog.Builder(this)
+            .setTitle("Chose Select Mode")
+            .setSingleChoiceItems(R.array.select_select, (int) pref_select, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int select) {
+     			
+        			if(mCursor!=null)
+        				mCursor.close();
+        			
+        			pref_select = select;
+        			SharedPreferences prefsPrivate = getSharedPreferences(Pref.HAPI_PREFS_FILE_NAME, Context.MODE_PRIVATE);
+	   				Editor prefsPrivateEditor = prefsPrivate.edit();
+	   				prefsPrivateEditor.putLong("pref_select", pref_select);
+	   				prefsPrivateEditor.commit();
+
+        			mCursor = managedQuery(ItemColumns.URI, PROJECTION, getWhere(), null, getOrder());
+        			mAdapter.changeCursor(mCursor);
+        			//setListAdapter(mAdapter);         			
+        			dialog.dismiss();
+                }
+            })
+           .show();
+			return true;
+		/*
 		case MENU_DISPLAY:
  			if(mCursor!=null)
  				mCursor.close();
@@ -216,7 +252,8 @@ public class AllItemActivity extends PodcastBaseActivity {
 			
  			mCursor = managedQuery(ItemColumns.URI, PROJECTION,getWhere(), null, getOrder());
  			mAdapter.changeCursor(mCursor);
- 			return true;			
+ 			return true;
+		*/		
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -328,17 +365,6 @@ public class AllItemActivity extends PodcastBaseActivity {
 		mCursor = managedQuery(ItemColumns.URI, PROJECTION, getWhere(), null, getOrder());
 
 		mAdapter = AllItemActivity.listItemCursorAdapter(this, mCursor);
-/*		IconCursorAdapter.FieldHandler[] fields = {
-				IconCursorAdapter.defaultTextFieldHandler,
-				IconCursorAdapter.defaultTextFieldHandler,
-				IconCursorAdapter.defaultTextFieldHandler,
-				new IconCursorAdapter.IconFieldHandler(mIconMap)
-		};
-		mAdapter = new IconCursorAdapter(this, R.layout.list_item, mCursor,
-				new String[] { ItemColumns.TITLE, ItemColumns.SUB_TITLE,
-						ItemColumns.DURATION, ItemColumns.STATUS }, new int[] {
-						R.id.text1, R.id.text2, R.id.text3, R.id.icon }, fields);
-*/
 		setListAdapter(mAdapter);
 
 		super.startInit();
@@ -356,17 +382,28 @@ public class AllItemActivity extends PodcastBaseActivity {
 
 	public String getWhere() {
 		String where = ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_PLAYLIST_VIEW;
-			if(pref_where!=0){
-				where =  ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_READING_VIEW;
-			}
-			return where;
-}	
+		switch ((int)pref_select) {
+		case 1:		// New only
+			where =  ItemColumns.STATUS + "<" + ItemColumns.ITEM_STATUS_MAX_READING_VIEW;
+			break;
+		case 2:		// Unplayed only
+			where =  ItemColumns.STATUS + "=" + ItemColumns.ITEM_STATUS_NO_PLAY;
+			break;
+		case 3:		// Playable only
+			where = "(" + where + ") AND (" + 
+					ItemColumns.STATUS + ">" + ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW + ")";
+			break;
+		default:	// case 0 = All, no change to initial where clause
+			;	// treat any unknown values as "All"
+		}
+		return where;
+	}	
 	
 	public void getPref() {
 		SharedPreferences pref = getSharedPreferences(
 				Pref.HAPI_PREFS_FILE_NAME, Service.MODE_PRIVATE);
 		pref_order = pref.getLong("pref_order",2);
-
 		pref_where = pref.getLong("pref_where", 0);
+		pref_select = pref.getLong("pref_select", 0);
 	}
 }

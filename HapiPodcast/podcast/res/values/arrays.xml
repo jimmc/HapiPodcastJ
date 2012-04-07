@@ -83,11 +83,19 @@
         <item>24</item>  
         <item>48</item>  
 		<item>168</item>  
-    </string-array>			
+    </string-array>
+    			
     <string-array name="sort_select">
         <item>Sort by Channel</item>
         <item>Sort by Status</item>
         <item>Sort by Date</item>
+    </string-array>    
+	
+    <string-array name="select_select">
+        <item>All</item>
+        <item>New only</item>
+        <item>Unplayed only</item>
+        <item>Playable only</item>
     </string-array>    
 	
     <string-array name="backup_select">

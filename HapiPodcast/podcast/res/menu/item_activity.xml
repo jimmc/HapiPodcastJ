@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/view_channel"
+          android:icon="@android:drawable/ic_menu_view"
+          android:title="@string/menu_view_channel"
+          />
+    <item android:id="@+id/add_to_playlist"
+          android:icon="@android:drawable/ic_menu_agenda"
+          android:title="@string/menu_add_to_playlist"
+          />
+    <item android:id="@+id/played_by"
+          android:icon="@android:drawable/ic_menu_add"
+          android:title="@string/menu_played_by"
+          />
+    <item android:id="@+id/share"
+          android:icon="@android:drawable/ic_menu_share"
+          android:title="@string/menu_share"
+          />
+    <item android:id="@+id/export"
+          android:icon="@android:drawable/ic_menu_save"
+          android:title="@string/menu_export_audio_file"
+          />
+    <item android:id="@+id/keep"
+          android:icon="@android:drawable/ic_menu_add"
+          android:title="@string/menu_keep"
+          />
+    <item android:id="@+id/unkeep"
+          android:icon="@android:drawable/ic_menu_add"
+          android:title="@string/menu_unkeep"
+          />
+    <item android:id="@+id/mark_new"
+          android:icon="@android:drawable/ic_menu_add"
+          android:title="@string/menu_mark_new"
+          />
+    <item android:id="@+id/delete"
+          android:icon="@android:drawable/ic_menu_delete"
+          android:title="@string/menu_delete"
+          />
+</menu>
