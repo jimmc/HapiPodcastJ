@@ -30,7 +30,11 @@ public class FeedFetcher {
         if(ismp3File(buffer, size)){
             return true;
         }
+        //Not the standard signature, do a simpler check for frame sync
+        if (size>2 && buffer[0]==(byte)0xFF && (buffer[1]&0x00E0)==0x00E0)
+        	return true;
         
+        log.debug("audio file type '"+type+"' is not recognized");
         return false;
     }
     
@@ -92,10 +96,10 @@ public class FeedFetcher {
 
 	}
 
-	
-	
+
 	Response get(String url, long ifModifiedSince) throws IOException,
 			InterruptedException {
+		log.debug("Retrieving file "+url);
 		URL u = new URL(url);
 		InputStream input = null;
 		ByteArrayOutputStream output = null;
@@ -111,15 +115,14 @@ public class FeedFetcher {
 			hc.setRequestMethod("GET");
 			hc.setUseCaches(false);
 			hc.addRequestProperty("Accept", "*/*");
-			hc
-					.addRequestProperty("User-Agent",
-							mAgent);
+			hc.addRequestProperty("User-Agent", mAgent);
 			hc.addRequestProperty("Accept-Encoding", "gzip");
 			hc.setReadTimeout(TIMEOUT);
 			hc.setConnectTimeout(TIMEOUT);
 
 			hc.connect();
 			int code = hc.getResponseCode();
+			log.debug("Connection response code is "+code);
 			if (code == 304)
 				return null;
 			if (code != 200)
@@ -243,7 +246,7 @@ public class FeedFetcher {
 					&& nStartPos < nEndPos) {
                                 if(item.offset == 0) {
                                     if(!isAudioFile(b, nRead, item.type)){
-                                        log.debug(" using public wifi!!! ");
+                                        log.debug("giving up on non-audio file");
                                         break;
                                     }
                                 }
