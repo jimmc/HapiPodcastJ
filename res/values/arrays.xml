@@ -43,6 +43,7 @@
         <item>5 days</item>
         <item>1 week</item>
         <item>2 weeks</item>
+        <item>1 month</item>
     </string-array>
 
     <string-array name="entryvalues_item_expire">
@@ -51,6 +52,7 @@
         <item>5</item>  
         <item>7</item>  
         <item>14</item>
+        <item>30</item>
     </string-array>	
 	
     <string-array name="entries_downlaod_file_expire">
@@ -59,6 +61,7 @@
         <item>1 week</item>
         <item>2 weeks</item>
         <item>1 month</item>
+        <item>1 year</item>
     </string-array>
 
     <string-array name="entryvalues_downlaod_file_expire">
@@ -67,6 +70,7 @@
         <item>7</item>  
         <item>14</item>  
         <item>30</item>
+        <item>365</item>
     </string-array>		
 	
     <string-array name="entries_played_file_expire">
@@ -75,6 +79,7 @@
         <item>1 day</item>
         <item>2 days</item>
 		<item>1 week</item>
+		<item>1 month</item>
     </string-array>
 
     <string-array name="entryvalues_played_file_expire">
@@ -82,7 +87,8 @@
         <item>12</item>
         <item>24</item>  
         <item>48</item>  
-		<item>168</item>  
+		<item>168</item>
+		<item>480</item> 
     </string-array>
     			
     <string-array name="sort_select">

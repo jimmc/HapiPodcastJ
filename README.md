@@ -1,6 +1,8 @@
 ## HapiPodcastJ
 
-This is HapiPodcastJ, a fork of [Hapi Podcast] [play].
+This is HapiPodcastJ, a fork of [Hapi Podcast] [play],
+an Android app for playing podcasts.
+
 This git repository includes the full history that is available in the
 Hapi Podcast [svn repository] [svnrepo].
 
