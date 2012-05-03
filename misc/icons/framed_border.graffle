@@ -483,7 +483,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{99, 4}, {1, 84}}</string>
+			<string>{{99, 2}, {1, 86}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -698,7 +698,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2012-02-26 03:45:45 +0000</string>
+	<string>2012-05-03 03:00:10 +0000</string>
 	<key>Modifier</key>
 	<string>Jim McBeath</string>
 	<key>NotesVisible</key>
