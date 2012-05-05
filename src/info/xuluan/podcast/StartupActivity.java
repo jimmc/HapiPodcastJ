@@ -2,6 +2,7 @@ package info.xuluan.podcast;
 
 import info.xuluan.podcast.utils.Log;
 import android.os.Bundle;
+import android.os.Handler;
 
 public class StartupActivity extends HapiActivity {
 	
@@ -12,6 +13,18 @@ public class StartupActivity extends HapiActivity {
 
 		super.onCreate(savedInstanceState);
 		log.debug("In StartupActivity");
+		setContentView(R.layout.startup);
+
+		long delayMillis = 2000;
+	    Handler handler = new Handler(); 
+	    handler.postDelayed(new Runnable() { 
+	         public void run() { 
+	              delayedStart(); 
+	         } 
+	    }, delayMillis);
+	}
+	
+	private void delayedStart() {
 		tapHome();
 	}
 }

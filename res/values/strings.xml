@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Hapi Podcast</string>
+    <string name="app_name">Hapi Podcast J</string>
 	<string name="title_play_list">Episodes</string>
 	<string name="title_player">Player</string>	
 	<string name="title_download_list">Downloading List</string>
