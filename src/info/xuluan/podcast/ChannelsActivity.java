@@ -134,7 +134,8 @@ public class ChannelsActivity extends PodcastBaseActivity {
         			
         			if(mServiceBinder!=null)
         				mServiceBinder.start_update();        	
-					Toast.makeText(ChannelsActivity.this, "Start to update channel, please waiting a little",
+					Toast.makeText(ChannelsActivity.this,
+								"Updating channel, it might take a little while",
 							Toast.LENGTH_LONG).show();					
         		}
     		}     				
