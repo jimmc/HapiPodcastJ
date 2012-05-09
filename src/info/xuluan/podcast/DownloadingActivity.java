@@ -34,7 +34,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 
 	private static final int MENU_RESTART = Menu.FIRST + 1;
 
-	private static final int MENU_ITEM_VIEW = Menu.FIRST + 9;	
+	private static final int MENU_ITEM_DETAILS = Menu.FIRST + 9;	
 	private static final int MENU_ITEM_REMOVE = Menu.FIRST + 10;
 	private static final int MENU_ITEM_PAUSE = Menu.FIRST + 11;
 	private static final int MENU_ITEM_RESUME = Menu.FIRST + 12;
@@ -202,8 +202,8 @@ public class DownloadingActivity extends PodcastBaseActivity {
 					getResources().getString(R.string.menu_resume));							
 		}		
 		
-		dialog_menu.addMenu(MENU_ITEM_VIEW, 
-				getResources().getString(R.string.menu_view));
+		dialog_menu.addMenu(MENU_ITEM_DETAILS, 
+				getResources().getString(R.string.menu_details));
 	
 		dialog_menu.addMenu(MENU_ITEM_REMOVE, 
 				getResources().getString(R.string.menu_cancel));
@@ -228,7 +228,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
         public void onClick(DialogInterface dialog, int select) {
         	
     		switch (mMenu.getSelect(select)) {
-    		case MENU_ITEM_VIEW: {
+    		case MENU_ITEM_DETAILS: {
     			Uri uri = ContentUris.withAppendedId(ItemColumns.URI, item_id);
     			startActivity(new Intent(Intent.ACTION_EDIT, uri));   
     			return;

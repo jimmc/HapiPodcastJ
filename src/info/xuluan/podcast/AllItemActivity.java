@@ -32,7 +32,7 @@ public class AllItemActivity extends PodcastBaseActivity {
 	private static final int MENU_SELECT = Menu.FIRST + 3;
 
 	private static final int MENU_ITEM_VIEW_CHANNEL = Menu.FIRST + 8;
-	private static final int MENU_ITEM_VIEW = Menu.FIRST + 9;
+	private static final int MENU_ITEM_DETAILS = Menu.FIRST + 9;
 	private static final int MENU_ITEM_START_DOWNLOAD = Menu.FIRST + 10;
 	private static final int MENU_ITEM_START_PLAY = Menu.FIRST + 11;
 	private static final int MENU_ITEM_ADD_TO_PLAYLIST = Menu.FIRST + 12;
@@ -292,8 +292,8 @@ public class AllItemActivity extends PodcastBaseActivity {
 		
 		dialog_menu.setHeader(feed_item.title);
 		
-		dialog_menu.addMenu(MENU_ITEM_VIEW, 
-				getResources().getString(R.string.menu_view));
+		dialog_menu.addMenu(MENU_ITEM_DETAILS, 
+				getResources().getString(R.string.menu_details));
 		dialog_menu.addMenu(MENU_ITEM_VIEW_CHANNEL, 
 				getResources().getString(R.string.menu_view_channel));
 		
@@ -325,7 +325,7 @@ public class AllItemActivity extends PodcastBaseActivity {
         public void onClick(DialogInterface dialog, int select) 
         {
     		switch (mMenu.getSelect(select)) {
-    		case MENU_ITEM_VIEW: {
+    		case MENU_ITEM_DETAILS: {
     			FeedItem.view(AllItemActivity.this, item_id);
     			return;
     		} 

@@ -45,7 +45,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 
 	public static final int MENU_ITEM_PLAY = Menu.FIRST + 10;
 	public static final int MENU_ITEM_KEEP = Menu.FIRST + 11;
-	public static final int MENU_ITEM_VIEW = Menu.FIRST + 12;
+	public static final int MENU_ITEM_DETAILS = Menu.FIRST + 12;
 	public static final int MENU_ITEM_DELETE = Menu.FIRST + 13;
 	public static final int MENU_ITEM_SHARE = Menu.FIRST + 14;
 	public static final int MENU_ITEM_PLAYED_BY = Menu.FIRST + 15;
@@ -117,8 +117,8 @@ public class PlayListActivity extends PodcastBaseActivity {
 		dialog_menu.addMenu(MENU_ITEM_SHARE,
 				getResources().getString(R.string.menu_share));	
 		
-		dialog_menu.addMenu(MENU_ITEM_VIEW,
-				getResources().getString(R.string.menu_view));
+		dialog_menu.addMenu(MENU_ITEM_DETAILS,
+				getResources().getString(R.string.menu_details));
 		
 		dialog_menu.addMenu(MENU_ITEM_DELETE,
 				getResources().getString(R.string.menu_delete));
@@ -177,7 +177,7 @@ public class PlayListActivity extends PodcastBaseActivity {
     			select_item.markUnkeep(PlayListActivity.this.getContentResolver());
     			return;
     		}
-    		case MENU_ITEM_VIEW: {
+    		case MENU_ITEM_DETAILS: {
     			FeedItem.view(PlayListActivity.this, select_item.id);
     			return;
     		}

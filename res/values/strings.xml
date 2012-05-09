@@ -36,7 +36,9 @@
     <string name="menu_add_to_playlist">Add To Playlist</string>
     <string name="menu_export_audio_file">Export audio file</string>
     <string name="menu_backup_channels">Backup Channels</string>
-	
+
+    <string name="menu_details">Details</string>
+    <string name="menu_episodes">Episodes</string>	
     <string name="menu_view">View</string>
     <string name="menu_view_channel">View Channel</string>
     <string name="menu_keep">Keep</string>

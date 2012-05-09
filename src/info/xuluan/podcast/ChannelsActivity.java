@@ -23,7 +23,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 	//private final int MENU_ADD = Menu.FIRST + 2;
 
 	
-	private final int MENU_ITEM_VIEW = Menu.FIRST + 9;
+	private final int MENU_ITEM_EPISODES = Menu.FIRST + 9;
 	private final int MENU_ITEM_DELETE = Menu.FIRST + 10;
 	private final int MENU_ITEM_AUTO = Menu.FIRST + 11;
 	private final int MENU_ITEM_REFRESH = Menu.FIRST + 12;
@@ -88,8 +88,8 @@ public class ChannelsActivity extends PodcastBaseActivity {
 		
 		dialog_menu.setHeader(subs.title);
 		
-		dialog_menu.addMenu(MENU_ITEM_VIEW, 
-				getResources().getString(R.string.menu_view));
+		dialog_menu.addMenu(MENU_ITEM_EPISODES, 
+				getResources().getString(R.string.menu_episodes));
 
 		String auto;
 		if(subs.auto_download==0){
@@ -139,7 +139,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 							Toast.LENGTH_LONG).show();					
         		}
     		}     				
-    		case MENU_ITEM_VIEW: {
+    		case MENU_ITEM_EPISODES: {
     			Uri uri = ContentUris.withAppendedId(SubscriptionColumns.URI, subs_id);
     			startActivity(new Intent(Intent.ACTION_EDIT, uri));
     			return;

@@ -56,7 +56,7 @@ public class PlayerActivity  extends HapiListActivity
 	private static final int MENU_REMOVE_ALL = Menu.FIRST + 5;
 	
 	private static final int MENU_PLAY = Menu.FIRST + 6;
-	private static final int MENU_READ = Menu.FIRST + 7;	
+	private static final int MENU_DETAILS = Menu.FIRST + 7;	
 	private static final int MENU_REMOVE = Menu.FIRST + 8;	
 
 	private static final int MENU_MOVE_UP = Menu.FIRST + 9;	
@@ -562,8 +562,8 @@ public class PlayerActivity  extends HapiListActivity
 		dialog_menu.addMenu(MENU_MOVE_DOWN, 
 				getResources().getString(R.string.menu_move_down));
 		
-		dialog_menu.addMenu(MENU_READ, 
-				getResources().getString(R.string.menu_view));		
+		dialog_menu.addMenu(MENU_DETAILS, 
+				getResources().getString(R.string.menu_details));		
 
 		dialog_menu.addMenu(MENU_REMOVE, 
 				getResources().getString(R.string.menu_remove));				
@@ -613,7 +613,7 @@ public class PlayerActivity  extends HapiListActivity
 		    	}
 				return ;
 			}			
-			case MENU_READ: {
+			case MENU_DETAILS: {
 				Uri uri = ContentUris.withAppendedId(ItemColumns.URI, feeditem.id);
 				startActivity(new Intent(Intent.ACTION_EDIT, uri));
 				return ;

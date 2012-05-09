@@ -10,7 +10,7 @@ import android.widget.Button;
 public class StartupActivity extends HapiActivity {
 	
 	private final Log log = Log.getLog(getClass());
-	long delayMillis = 2000;
+	long delayMillis = 1500;
     Handler handler = new Handler();
     Runnable r;
 	

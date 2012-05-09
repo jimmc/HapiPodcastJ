@@ -27,7 +27,7 @@ public class ChannelActivity extends PodcastBaseActivity {
 	private static final int MENU_AUTO_DOWNLOAD = Menu.FIRST + 2;
 
 	
-	private static final int MENU_ITEM_VIEW = Menu.FIRST + 9;
+	private static final int MENU_ITEM_DETAILS = Menu.FIRST + 9;
 	private static final int MENU_ITEM_START_DOWNLOAD = Menu.FIRST + 10;
 	private static final int MENU_ITEM_START_PLAY = Menu.FIRST + 11;
 	private static final int MENU_ITEM_ADD_TO_PLAYLIST = Menu.FIRST + 12;
@@ -204,8 +204,8 @@ public class ChannelActivity extends PodcastBaseActivity {
 		
 		dialog_menu.setHeader(feed_item.title);
 		
-		dialog_menu.addMenu(MENU_ITEM_VIEW, 
-				getResources().getString(R.string.menu_view));
+		dialog_menu.addMenu(MENU_ITEM_DETAILS, 
+				getResources().getString(R.string.menu_details));
 		
 		if(feed_item.status<ItemColumns.ITEM_STATUS_MAX_READING_VIEW){
 			dialog_menu.addMenu(MENU_ITEM_START_DOWNLOAD, 
@@ -235,7 +235,7 @@ public class ChannelActivity extends PodcastBaseActivity {
         public void onClick(DialogInterface dialog, int select) 
         {
     		switch (mMenu.getSelect(select)) {
-    		case MENU_ITEM_VIEW: {
+    		case MENU_ITEM_DETAILS: {
     			Uri uri = ContentUris.withAppendedId(ItemColumns.URI, item_id);
     			FeedItem item = FeedItem.getById(getContentResolver(), item_id);
     			if ((item != null)
