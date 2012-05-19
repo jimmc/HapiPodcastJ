@@ -1,9 +1,11 @@
 package info.xuluan.podcast.provider;
 
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 
@@ -26,6 +28,17 @@ public class Subscription {
 	public long fail_count;
 	public long auto_download;
 
+	public static void view(Activity act, long channel_id) {
+		Uri uri = ContentUris.withAppendedId(SubscriptionColumns.URI, channel_id);
+		//Subscription channel = Subscription.getById(act.getContentResolver(), channel_id);
+		act.startActivity(new Intent(Intent.ACTION_VIEW, uri));
+	}
+
+	public static void viewEpisodes(Activity act, long channel_id) {
+		Uri uri = ContentUris.withAppendedId(SubscriptionColumns.URI, channel_id);
+		act.startActivity(new Intent(Intent.ACTION_EDIT, uri));
+	}
+
 	public static Subscription getBySQL(ContentResolver context,String where,String order) 
 	{
 		Subscription sub = null;
@@ -43,6 +56,7 @@ public class Subscription {
 		}		
 		return sub;			
 	}
+	
 	public static Subscription getByUrl(ContentResolver context, String url) {
 		Cursor cursor = null;
 		try {
@@ -75,7 +89,7 @@ public class Subscription {
 		return sub;
 	}
 
-	public static Subscription getSubbyId(ContentResolver context, long id) {
+	public static Subscription getById(ContentResolver context, long id) {
 		Cursor cursor = null;
 		Subscription sub = null;
 
@@ -142,6 +156,7 @@ public class Subscription {
 		cv.put(SubscriptionColumns.LINK, link);
 		cv.put(SubscriptionColumns.LAST_UPDATED, 0L);
 		cv.put(SubscriptionColumns.COMMENT, comment);
+		cv.put(SubscriptionColumns.DESCRIPTION, description);
 		Uri uri = context.insert(SubscriptionColumns.URI, cv);
 		if (uri == null) {
 			return ADD_FAIL_UNSUCCESS;
@@ -200,6 +215,10 @@ public class Subscription {
 				.getColumnIndex(SubscriptionColumns.TITLE));
 		sub.url = cursor.getString(cursor
 				.getColumnIndex(SubscriptionColumns.URL));		
+		sub.comment = cursor.getString(cursor
+				.getColumnIndex(SubscriptionColumns.COMMENT));		
+		sub.description = cursor.getString(cursor
+				.getColumnIndex(SubscriptionColumns.DESCRIPTION));		
 		sub.fail_count = cursor.getLong(cursor
 				.getColumnIndex(SubscriptionColumns.FAIL_COUNT));
 		sub.lastItemUpdated = cursor.getLong(cursor

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+
+>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingBottom="5px"
+        android:paddingTop="5px" >
+    </LinearLayout>
+
+	<ScrollView 
+		android:id="@+id/readscrollview" 
+		android:orientation="vertical" 
+		android:layout_width="fill_parent" 
+		android:layout_height="fill_parent">
+	
+		<LinearLayout
+		    android:id="@+id/linearLayout3"
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical" >
+
+			<Button
+			    android:id="@+id/ButtonEpisodes"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_weight="1"
+			    android:gravity="center"
+			    android:text="@string/menu_episodes" />
+		
+		    <TextView
+		        android:id="@+id/full_title_view"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:background="@drawable/darker_gray"
+		        android:text="Channel"
+		        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+		    <TextView
+		        android:id="@+id/url_view"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:text="url"/>
+
+		    <LinearLayout
+		        android:id="@+id/linearLayout2"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_weight="1" >
+
+		        <TextView
+		            android:id="@+id/last_updated_view"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginBottom="5px"
+		            android:layout_weight="1"
+		            android:background="@drawable/lighter_gray"
+		            android:gravity="left"
+		            android:paddingRight="10px"
+		            android:textColor="@drawable/black"
+		            android:textSize="12sp" />
+
+		        <TextView
+		            android:id="@+id/last_item_updated_view"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginBottom="5px"
+		            android:layout_weight="1"
+		            android:background="@drawable/lighter_gray"
+		            android:gravity="right"
+		            android:paddingRight="10px"
+		            android:textColor="@drawable/black"
+		            android:textSize="12sp"/>
+
+		    </LinearLayout>
+		
+		    <LinearLayout
+		        android:id="@+id/linearLayout1"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content" >
+
+		        <TextView
+		            android:id="@+id/fail_count_view"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_weight="1"
+		            android:background="@drawable/lighter_gray" android:gravity="left" android:textColor="@drawable/black" android:textSize="12sp" android:layout_marginBottom="5px" android:paddingRight="10px" android:text="fail count"/>
+		
+		        <TextView
+		            android:id="@+id/auto_download_view"
+		            android:layout_width="match_parent"
+		            android:layout_height="wrap_content"
+		            android:layout_marginBottom="5px"
+		            android:layout_weight="1"
+		            android:background="@drawable/lighter_gray"
+		            android:gravity="right"
+		            android:paddingRight="10px"
+		            android:textColor="@drawable/black"
+		            android:textSize="12sp" android:text="auto download"/>
+		    </LinearLayout>
+
+		    <TextView
+		        android:id="@+id/description"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:paddingLeft="6dip"
+		        android:paddingRight="6dip"
+		        android:textSize="18sp" />
+
+		    <TextView
+		        android:id="@+id/comment"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:paddingLeft="6dip"
+		        android:paddingRight="6dip"
+		        android:textSize="18sp" />
+		</LinearLayout>
+	</ScrollView>
+
+</LinearLayout>

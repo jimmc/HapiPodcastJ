@@ -1,6 +1,7 @@
 package info.xuluan.podcast;
 
 
+import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.utils.DialogMenu;
@@ -23,6 +24,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 	//private final int MENU_ADD = Menu.FIRST + 2;
 
 	
+	private final int MENU_ITEM_DETAILS = Menu.FIRST + 8;
 	private final int MENU_ITEM_EPISODES = Menu.FIRST + 9;
 	private final int MENU_ITEM_DELETE = Menu.FIRST + 10;
 	private final int MENU_ITEM_AUTO = Menu.FIRST + 11;
@@ -79,7 +81,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 
 	public DialogMenu createDialogMenus(long id) {
 
-		Subscription subs = Subscription.getSubbyId(getContentResolver(), 
+		Subscription subs = Subscription.getById(getContentResolver(), 
 				id);
 		if (subs == null)
 			return null;		
@@ -88,6 +90,8 @@ public class ChannelsActivity extends PodcastBaseActivity {
 		
 		dialog_menu.setHeader(subs.title);
 		
+		dialog_menu.addMenu(MENU_ITEM_DETAILS, 
+				getResources().getString(R.string.menu_details));
 		dialog_menu.addMenu(MENU_ITEM_EPISODES, 
 				getResources().getString(R.string.menu_episodes));
 
@@ -122,7 +126,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
         {
     		switch (mMenu.getSelect(select)) {
     		case MENU_ITEM_REFRESH: {
-        		Subscription subs = Subscription.getSubbyId(getContentResolver(),
+        		Subscription subs = Subscription.getById(getContentResolver(),
         				subs_id);
         		if (subs != null) {
         			subs.lastUpdated = 0;
@@ -139,9 +143,12 @@ public class ChannelsActivity extends PodcastBaseActivity {
 							Toast.LENGTH_LONG).show();					
         		}
     		}     				
+    		case MENU_ITEM_DETAILS: {
+    			Subscription.view(ChannelsActivity.this, subs_id);
+    			return;
+    		} 
     		case MENU_ITEM_EPISODES: {
-    			Uri uri = ContentUris.withAppendedId(SubscriptionColumns.URI, subs_id);
-    			startActivity(new Intent(Intent.ACTION_EDIT, uri));
+    			Subscription.viewEpisodes(ChannelsActivity.this, subs_id);
     			return;
     		}  
 	
@@ -151,7 +158,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
                 .setTitle(R.string.unsubscribe_channel)
                 .setPositiveButton(R.string.menu_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                		Subscription subs = Subscription.getSubbyId(getContentResolver(),
+                		Subscription subs = Subscription.getById(getContentResolver(),
                 				subs_id);
                 		if (subs != null)
                 			subs.delete(getContentResolver());
@@ -167,7 +174,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
     			return;
     		}
     		case MENU_ITEM_AUTO: {
-    			Subscription subs = Subscription.getSubbyId(getContentResolver(),
+    			Subscription subs = Subscription.getById(getContentResolver(),
     					subs_id);
     			if (subs == null)
     				return;			

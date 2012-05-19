@@ -58,6 +58,7 @@
     <string name="menu_select">Select Mode</string>
     <string name="menu_sort">Sort Mode</string>
     <string name="menu_repeat">Repeat Mode</string>
+    <string name="menu_unsubscribe">Unsubscribe</string>
 
 	<string name="menu_load_all">Load All</string>	
 	<string name="menu_load_by_channel">Load by Channel</string>	
