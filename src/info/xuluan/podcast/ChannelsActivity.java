@@ -1,6 +1,7 @@
 package info.xuluan.podcast;
 
 
+import info.xuluan.podcastj.R;
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;

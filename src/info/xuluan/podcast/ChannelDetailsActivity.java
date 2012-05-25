@@ -1,5 +1,6 @@
 package info.xuluan.podcast;
 
+import info.xuluan.podcastj.R;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.utils.Log;

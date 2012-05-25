@@ -1,5 +1,6 @@
 package info.xuluan.podcast;
 
+import info.xuluan.podcastj.R;
 import info.xuluan.podcast.parser.FeedParser;
 import info.xuluan.podcast.parser.OPMLParserHandler;
 import info.xuluan.podcast.provider.Subscription;

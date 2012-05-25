@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import info.xuluan.podcast.R;
+import info.xuluan.podcastj.R;
 
 import java.util.HashMap;
 

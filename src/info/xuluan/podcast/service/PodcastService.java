@@ -1,7 +1,7 @@
 package info.xuluan.podcast.service;
 
+import info.xuluan.podcastj.R;
 import info.xuluan.podcast.Pref;
-import info.xuluan.podcast.R;
 import info.xuluan.podcast.fetcher.FeedFetcher;
 import info.xuluan.podcast.parser.FeedHandler;
 

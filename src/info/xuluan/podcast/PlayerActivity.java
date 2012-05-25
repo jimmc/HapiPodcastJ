@@ -1,5 +1,6 @@
 package info.xuluan.podcast;
 
+import info.xuluan.podcastj.R;
 import java.text.DecimalFormat;
 import java.util.HashMap;
 

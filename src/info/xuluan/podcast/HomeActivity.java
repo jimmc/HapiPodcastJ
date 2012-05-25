@@ -1,5 +1,6 @@
 package info.xuluan.podcast;
 
+import info.xuluan.podcastj.R;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;

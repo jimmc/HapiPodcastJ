@@ -4,9 +4,9 @@ package info.xuluan.podcast.service;
 import java.io.File;
 import java.io.IOException;
 
+import info.xuluan.podcastj.R;
 import info.xuluan.podcast.PlayerActivity;
 import info.xuluan.podcast.Pref;
-import info.xuluan.podcast.R;
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.utils.Log;

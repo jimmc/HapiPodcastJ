@@ -17,7 +17,7 @@
 package info.xuluan.podcast.tests;
 
 import android.content.Intent;
-import info.xuluan.podcast.R;
+import info.xuluan.podcastj.R;
 import info.xuluan.podcast.parser.FeedParserListener;
 import info.xuluan.podcast.service.PodcastService;
 

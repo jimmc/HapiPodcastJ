@@ -16,7 +16,7 @@
 
 package info.xuluan.podcast.actionbar;
 
-import info.xuluan.podcast.R;
+import info.xuluan.podcastj.R;
 
 import android.app.Activity;
 import android.content.Context;

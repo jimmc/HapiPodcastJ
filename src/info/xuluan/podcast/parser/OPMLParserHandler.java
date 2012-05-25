@@ -1,6 +1,6 @@
 package info.xuluan.podcast.parser;
 
-import info.xuluan.podcast.R;
+import info.xuluan.podcastj.R;
 import info.xuluan.podcast.SearchActivity;
 import info.xuluan.podcast.parser.SearchItem;
 import info.xuluan.podcast.provider.Subscription;

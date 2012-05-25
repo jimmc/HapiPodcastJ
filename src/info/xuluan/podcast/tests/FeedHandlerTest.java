@@ -17,7 +17,7 @@
 package info.xuluan.podcast.tests;
 
 import android.test.mock.MockContentResolver;
-import info.xuluan.podcast.R;
+import info.xuluan.podcastj.R;
 import info.xuluan.podcast.parser.FeedHandler;
 import info.xuluan.podcast.parser.FeedParserHandler;
 import info.xuluan.podcast.parser.FeedParserListener;

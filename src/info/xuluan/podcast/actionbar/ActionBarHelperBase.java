@@ -16,7 +16,7 @@
 
 package info.xuluan.podcast.actionbar;
 
-import info.xuluan.podcast.R;
+import info.xuluan.podcastj.R;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;

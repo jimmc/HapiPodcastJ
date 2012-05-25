@@ -1,6 +1,6 @@
 package info.xuluan.podcast.parser;
 
-import info.xuluan.podcast.R;
+import info.xuluan.podcastj.R;
 import info.xuluan.podcast.fetcher.FeedFetcher;
 import info.xuluan.podcast.fetcher.Response;
 import info.xuluan.podcast.provider.FeedItem;

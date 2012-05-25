@@ -1,5 +1,6 @@
 package info.xuluan.podcast;
 
+import info.xuluan.podcastj.R;
 import info.xuluan.podcast.service.PlayerService;
 import info.xuluan.podcast.service.PodcastService;
 
@@ -16,7 +17,6 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.Toast;
-
 
 public class MainActivity extends HapiListActivity{
 	
