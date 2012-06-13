@@ -151,7 +151,7 @@ public class AllItemActivity extends PodcastBaseActivity {
 		
 		getPref();
 
-		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_all_button);
+		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_library_button);
 
 		startInit();
 

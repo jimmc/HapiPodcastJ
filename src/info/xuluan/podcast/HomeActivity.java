@@ -46,7 +46,9 @@ public class HomeActivity extends HapiActivity {
 		cfh.addIntentButton(R.drawable.channel_add_big_pic,
 				R.string.channel_bar_button_add, AddChannelActivity.class);
 		cfh.addIntentButton(R.drawable.channel_big_pic,
-				R.string.channel_bar_button_manage, ChannelsActivity.class);
+				R.string.channel_bar_button_manage,
+				R.string.channel_bar_button_manage_l,
+				ChannelsActivity.class);
 		cfh.addIntentButton(R.drawable.backup_big_pic,
 				R.string.channel_bar_button_backup, BackupChannelsActivity.class);
 		if (isLandscape)
@@ -54,12 +56,12 @@ public class HomeActivity extends HapiActivity {
 
 		LabeledFrameHelper efh = new LabeledFrameHelper(this,"Episodes",orientation);
 		ll.addView(efh.frame());
-		efh.addIntentButton(R.drawable.episode_big_pic,
-				R.string.episode_bar_button_all, AllItemActivity.class);
+		efh.addIntentButton(R.drawable.playlist_big_pic,
+				R.string.episode_bar_button_library, AllItemActivity.class);
 		efh.addIntentButton(R.drawable.download_big_pic,
 				R.string.episode_bar_button_download, DownloadingActivity.class);
-		efh.addIntentButton(R.drawable.playlist_big_pic,
-				R.string.episode_bar_button_manage, PlayListActivity.class);
+		efh.addIntentButton(R.drawable.episode_big_pic,
+				R.string.episode_bar_button_channel, ChannelActivity.class);
 		efh.addIntentButton(R.drawable.player3_big_pic,
 				R.string.episode_bar_button_play, PlayerActivity.class);
 		if (isLandscape)
@@ -123,10 +125,10 @@ class LabeledFrameHelper {
 		return frameLayout;
 	}
 	
-	void addIntentButton(int iconId, int labelId, Class<? extends Activity> intentClass) {
-		addIntentButton(iconId, activity.getResources().getString(labelId), intentClass);
+	void addIntentButton(int iconId, int labelId, final Class<? extends Activity> intentClass) {
+		addIntentButton(iconId, labelId, labelId, intentClass);
 	}
-	void addIntentButton(int iconId, String label, final Class<? extends Activity> intentClass) {
+	void addIntentButton(int iconId, int labelIdP, int labelIdL, final Class<? extends Activity> intentClass) {
 		if ((buttonCount % 2)==0) {
 			//Two buttons in each row, add a new row after every second button
 			linBut2 = new LinearLayout(activity);
@@ -140,13 +142,15 @@ class LabeledFrameHelper {
 						LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
 		layoutParams.weight = 1;	//make all buttons the same width
 		Button b = new Button(activity);
-		if (isLandscape)
+		if (isLandscape) {
 			b.setCompoundDrawablesWithIntrinsicBounds(0, iconId, 0, 0);
-		else
+			b.setText(labelIdL);
+		} else {
 			b.setCompoundDrawablesWithIntrinsicBounds(iconId, 0, 0, 0);
+			b.setText(labelIdP);
+		}
 		b.setBackgroundResource(R.drawable.home_button);
 		b.setTextColor(Color.WHITE);
-		b.setText(label);
 		b.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {            
                 activity.startActivity(new Intent(activity, intentClass));

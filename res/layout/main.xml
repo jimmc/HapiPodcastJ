@@ -10,10 +10,10 @@
         android:layout_height="wrap_content" android:paddingBottom="0dip" android:paddingTop="3dip" android:layout_marginBottom="0dip" android:layout_weight="0">
 
         <Button
-            android:id="@+id/episode_bar_all_button"
+            android:id="@+id/episode_bar_library_button"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/episode_bar_button_all" android:background="#FFFFFFFF" android:layout_gravity="bottom" android:height="30dip" android:layout_width="fill_parent"/>
+            android:text="@string/episode_bar_button_library" android:background="#FFFFFFFF" android:layout_gravity="bottom" android:height="30dip" android:layout_width="fill_parent"/>
 
         <Button
             android:id="@+id/episode_bar_download_button"
@@ -22,10 +22,10 @@
             android:text="@string/episode_bar_button_download" android:layout_gravity="bottom" android:background="#FFC0C0C0" android:height="30dip" android:layout_marginLeft="2dip" android:layout_width="fill_parent"/>
 
         <Button
-            android:id="@+id/episode_bar_manage_button"
+            android:id="@+id/episode_bar_channel_button"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/episode_bar_button_manage" android:layout_gravity="bottom" android:background="#FFC0C0C0" android:height="30dip" android:layout_marginLeft="2dip" android:layout_width="fill_parent"/>
+            android:text="@string/episode_bar_button_channel" android:layout_gravity="bottom" android:background="#FFC0C0C0" android:height="30dip" android:layout_marginLeft="2dip" android:layout_width="fill_parent"/>
 
         <Button
             android:id="@+id/episode_bar_play_button"

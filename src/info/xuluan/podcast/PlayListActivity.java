@@ -84,7 +84,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 		mPrevIntent = new Intent(this, DownloadingActivity.class);
 		mNextIntent = new Intent(this, SearchActivity.class);
 		
-		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_manage_button);
+		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_channel_button);
 
 		startInit();
 	}

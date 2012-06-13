@@ -4,7 +4,7 @@
 	<string name="title_play_list">Episodes</string>
 	<string name="title_player">Player</string>	
 	<string name="title_download_list">Downloading List</string>
-	<string name="title_read_list">All Items</string>
+	<string name="title_library">Library</string>
     <string name="title_channels">Channels</string>
     <string name="title_episodes">Episodes</string>
     <string name="title_subs">Channels</string>
@@ -17,12 +17,13 @@
 
     <string name="channel_bar_button_add">Add</string>
     <string name="channel_bar_button_backup">Backup</string>
-    <string name="channel_bar_button_manage">Manage</string>
+    <string name="channel_bar_button_manage">Subscrips</string>
+    <string name="channel_bar_button_manage_l">Subscriptions</string>
     <string name="channel_bar_button_search">Search</string>
         
-    <string name="episode_bar_button_all">All</string>
+    <string name="episode_bar_button_channel">Channel</string>
     <string name="episode_bar_button_download">Download</string>
-    <string name="episode_bar_button_manage">Manage</string>
+    <string name="episode_bar_button_library">Library</string>
     <string name="episode_bar_button_play">Play</string>
         
     <string name="menu_delete">Delete</string>

@@ -12,8 +12,10 @@ import java.util.HashMap;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -84,20 +86,7 @@ public class ChannelActivity extends PodcastBaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.channel);
 
-		Intent intent = getIntent();
-
-		Uri uri = intent.getData();
-		
-		Cursor cursor = getContentResolver().query(uri,
-				SubscriptionColumns.ALL_COLUMNS, null, null, null);
-		if (!cursor.moveToFirst()) {
-			return;
-		}
-		
-		mChannel = Subscription.getByCursor(cursor);
-
-		cursor.close();
-		
+		mChannel = getCurrentSubscription();		
 		if(mChannel==null){
 			finish();
 			return;
@@ -105,14 +94,46 @@ public class ChannelActivity extends PodcastBaseActivity {
 		setTitle(mChannel.title);
 
 		getListView().setOnCreateContextMenuListener(this);
-
 		
 		mPrevIntent = null;
 		mNextIntent = null;
+		
+		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_channel_button);
+
 		startInit();
 
 	}
 
+	private Subscription getCurrentSubscription() {
+		Intent intent = getIntent();
+
+		Uri uri = intent.getData();
+
+		SharedPreferences prefsPrivate = getSharedPreferences(Pref.HAPI_PREFS_FILE_NAME, Context.MODE_PRIVATE);
+		if (uri==null) {
+			String lastChannel = prefsPrivate.getString("lastChannelUri", null);
+			if (lastChannel!=null && !lastChannel.equals(""))
+				uri = Uri.parse(lastChannel);
+		} else {
+			prefsPrivate.edit().putString("lastChannelUri",uri.toString()).commit();
+		}
+		if (uri==null) {
+			return null;
+		}
+		
+		Cursor cursor = getContentResolver().query(uri,
+				SubscriptionColumns.ALL_COLUMNS, null, null, null);
+		if (!cursor.moveToFirst()) {
+			cursor.close();
+			return null;
+		}
+		
+		Subscription channel = Subscription.getByCursor(cursor);
+
+		cursor.close();
+		return channel;
+	}
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_UNSUBSCRIBE, 0,

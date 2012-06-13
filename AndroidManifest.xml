@@ -21,22 +21,22 @@
     <application android:icon="@drawable/icon" android:label="@string/app_name" android:debuggable="false">
         <uses-library android:name="android.test.runner" />
 	
-        <activity android:name=".StartupActivity" android:label="@string/app_name">
+        <activity android:name="info.xuluan.podcast.StartupActivity" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>    
-        <activity android:name=".MainActivity" android:label="@string/app_name">
+        <activity android:name="info.xuluan.podcast.MainActivity" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <!-- <category android:name="android.intent.category.LAUNCHER" />  -->
             </intent-filter>
         </activity>    
-        <activity android:name=".AllItemActivity"
+        <activity android:name="info.xuluan.podcast.AllItemActivity"
                   android:label="@string/app_name">
         </activity>
-        <activity android:name=".ItemActivity" android:label="@string/app_name">
+        <activity android:name="info.xuluan.podcast.ItemActivity" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.EDIT" />
@@ -46,12 +46,12 @@
            </intent-filter>        
         
         </activity>
-        <activity android:name=".PlayerActivity" android:label="@string/app_name">
+        <activity android:name="info.xuluan.podcast.PlayerActivity" android:label="@string/app_name">
         </activity>
         
-        <activity android:name=".SearchActivity" android:label="@string/app_name"></activity>
+        <activity android:name="info.xuluan.podcast.SearchActivity" android:label="@string/app_name"></activity>
         
-        <activity android:name=".ChannelActivity" android:label="@string/app_name">
+        <activity android:name="info.xuluan.podcast.ChannelActivity" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.EDIT" />
@@ -60,7 +60,7 @@
            </intent-filter>        
         </activity>
         
-        <activity android:name=".ChannelDetailsActivity" android:label="@string/app_name">
+        <activity android:name="info.xuluan.podcast.ChannelDetailsActivity" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <data android:mimeType="vnd.android.cursor.item/vnd.xuluan.podcast.subscription" />
@@ -68,16 +68,16 @@
             </intent-filter>        
         </activity>
         
-        <activity android:name=".ChannelsActivity" android:label="@string/app_name"></activity>
-        <activity android:name=".AddChannelActivity" android:label="@string/title_channels"></activity>
-        <activity android:name=".BackupChannelsActivity" android:label="@string/title_channels"></activity>
-        <activity android:name=".Pref" android:label="Settings"></activity>		
-        <activity android:name=".HomeActivity" android:label="@string/app_name"></activity>		
-        <activity android:name=".DownloadingActivity" android:label="Downloading"></activity>		
-        <activity android:name=".PlayListActivity" android:label="Playlist"></activity>				
-        <service android:enabled="true" android:name=".service.PodcastService"></service>
-        <service android:enabled="true" android:name=".service.PlayerService"></service>        
-        <provider android:name=".provider.PodcastProvider" android:authorities="info.xuluan.podcast.provider.podcastprovider"></provider>
+        <activity android:name="info.xuluan.podcast.ChannelsActivity" android:label="@string/app_name"></activity>
+        <activity android:name="info.xuluan.podcast.AddChannelActivity" android:label="@string/title_channels"></activity>
+        <activity android:name="info.xuluan.podcast.BackupChannelsActivity" android:label="@string/title_channels"></activity>
+        <activity android:name="info.xuluan.podcast.Pref" android:label="Settings"></activity>		
+        <activity android:name="info.xuluan.podcast.HomeActivity" android:label="@string/app_name"></activity>		
+        <activity android:name="info.xuluan.podcast.DownloadingActivity" android:label="Downloading"></activity>		
+        <activity android:name="info.xuluan.podcast.PlayListActivity" android:label="Playlist"></activity>				
+        <service android:enabled="true" android:name="info.xuluan.podcast.service.PodcastService"></service>
+        <service android:enabled="true" android:name="info.xuluan.podcast.service.PlayerService"></service>        
+        <provider android:name="info.xuluan.podcast.provider.PodcastProvider" android:authorities="info.xuluan.podcast.provider.podcastprovider"></provider>
     </application>
 	
     <instrumentation android:name="android.test.InstrumentationTestRunner"

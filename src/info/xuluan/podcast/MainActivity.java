@@ -42,14 +42,15 @@ public class MainActivity extends HapiListActivity{
 	    addItem(myData, getResources().getString(R.string.title_subs), R.drawable.channel_big_pic , 
 	    		new Intent(this, ChannelsActivity.class),"");	    
  
-	    addItem(myData, getResources().getString(R.string.title_read_list), R.drawable.episode_big_pic , 
+	    addItem(myData, getResources().getString(R.string.title_episodes), R.drawable.playlist_big_pic , 
 	    		new Intent(this, AllItemActivity.class),"");		   
 	    
 	    addItem(myData, getResources().getString(R.string.title_download_list), R.drawable.download_big_pic , 
 	    		new Intent(this, DownloadingActivity.class),"");
 	    
-	    addItem(myData, getResources().getString(R.string.title_play_list), R.drawable.playlist_big_pic , 
-	    		new Intent(this, PlayListActivity.class),"");	    
+	    /* addItem(myData, getResources().getString(R.string.title_play_list), R.drawable.playlist_big_pic , 
+	    		new Intent(this, PlayListActivity.class),""); */
+	    
 	    addItem(myData, getResources().getString(R.string.title_player), R.drawable.player3_big_pic , 
 	    		new Intent(this, PlayerActivity.class),"");		    
 
