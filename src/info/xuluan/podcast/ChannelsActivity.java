@@ -143,6 +143,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 								"Updating channel, it might take a little while",
 							Toast.LENGTH_LONG).show();					
         		}
+        		return;
     		}     				
     		case MENU_ITEM_DETAILS: {
     			Subscription.view(ChannelsActivity.this, subs_id);
