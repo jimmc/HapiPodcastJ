@@ -29,7 +29,8 @@ import android.os.IBinder;
 
 public class Pref extends HapiPreferenceActivity {
 
-	public static final String HAPI_PREFS_FILE_NAME = "info.xuluan.podcast_preferences";
+	public static final String HAPI_PREFS_FILE_NAME = "info.xuluan.podcastj_preferences";
+		//Default filename is our package name (see manifest) with _preferences appended
 	private PodcastService serviceBinder = null;
 	ComponentName service = null;
 
