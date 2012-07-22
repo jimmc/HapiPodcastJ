@@ -53,7 +53,8 @@
     <string name="menu_refresh">Refresh</string>
     <string name="menu_clear">Clear</string>
     <string name="menu_update">Update</string>
-    <string name="menu_manual_update">Manual Update</string>	
+    <string name="menu_manual_update">Manual Update</string>
+    <string name="menu_reload_old_episodes">Reload Old Episodes</string>
     <string name="menu_add">Add</string>
     <string name="menu_display">Display</string>
     <string name="menu_select">Select Mode</string>

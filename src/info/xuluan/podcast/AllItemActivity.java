@@ -300,7 +300,9 @@ public class AllItemActivity extends PodcastBaseActivity {
 		
 		if(feed_item.status<ItemColumns.ITEM_STATUS_MAX_READING_VIEW){
 			dialog_menu.addMenu(MENU_ITEM_START_DOWNLOAD, 
-					getResources().getString(R.string.menu_download));			
+					getResources().getString(R.string.menu_download));
+		} else if (feed_item.status>=ItemColumns.ITEM_STATUS_DELETED) {
+			//TODO: add command to reset to new status
 		}else if(feed_item.status>ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW){
 			dialog_menu.addMenu(MENU_ITEM_START_PLAY, 
 					getResources().getString(R.string.menu_play));
@@ -393,6 +395,9 @@ public class AllItemActivity extends PodcastBaseActivity {
 		case 3:		// Playable only
 			where = "(" + where + ") AND (" + 
 					ItemColumns.STATUS + ">" + ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW + ")";
+			break;
+		case 4:		// All Plus Deleted
+			where = "1 = 1";
 			break;
 		default:	// case 0 = All, no change to initial where clause
 			;	// treat any unknown values as "All"

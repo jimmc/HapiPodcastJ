@@ -102,6 +102,7 @@
         <item>New only</item>
         <item>Unplayed only</item>
         <item>Playable only</item>
+        <!-- <item>All Plus Deleted</item> -->
     </string-array>    
 	
     <string-array name="backup_select">

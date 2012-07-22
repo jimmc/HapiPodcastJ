@@ -91,6 +91,7 @@ public class FeedHandler  {
 		int add_num = 0;
 
 		for (FeedItem item : feedItems) {
+			//Ignore items that are older than the most recently added batch
 			long d = item.getDate();
 			if (d <= subscription.lastItemUpdated) {
 				continue;

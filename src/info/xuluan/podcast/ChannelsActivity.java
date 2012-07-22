@@ -30,6 +30,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 	private final int MENU_ITEM_DELETE = Menu.FIRST + 10;
 	private final int MENU_ITEM_AUTO = Menu.FIRST + 11;
 	private final int MENU_ITEM_REFRESH = Menu.FIRST + 12;
+	private final int MENU_ITEM_RELOAD_OLD = Menu.FIRST + 13;
 	
 
 	private static final String[] PROJECTION = new String[] {
@@ -107,6 +108,9 @@ public class ChannelsActivity extends PodcastBaseActivity {
 		dialog_menu.addMenu(MENU_ITEM_REFRESH, 
 				getResources().getString(R.string.menu_manual_update));
 		
+		dialog_menu.addMenu(MENU_ITEM_RELOAD_OLD, 
+				getResources().getString(R.string.menu_reload_old_episodes));
+		
 		dialog_menu.addMenu(MENU_ITEM_DELETE, 
 				getResources().getString(R.string.unsubscribe));
 		
@@ -122,30 +126,41 @@ public class ChannelsActivity extends PodcastBaseActivity {
 			mMenu = menu;
 			subs_id = id;
 		}
+
+		private void updateChannel(boolean reloadOld)
+		{
+    		Subscription subs = Subscription.getById(getContentResolver(),
+    				subs_id);
+    		if (subs != null) {
+    			subs.lastUpdated = 0;
+    			if (reloadOld)
+    				subs.lastItemUpdated = 0;
+    			subs.update(getContentResolver());
+    			ContentValues cv = new ContentValues();
+    			cv.put(SubscriptionColumns.LAST_UPDATED, 0);
+    			getContentResolver().update(SubscriptionColumns.URI, cv,
+    					SubscriptionColumns._ID + "=" + subs.id, null);        			
+    			
+    			if(mServiceBinder!=null)
+    				mServiceBinder.start_update();        	
+				Toast.makeText(ChannelsActivity.this,
+							"Updating channel, it might take a little while",
+						Toast.LENGTH_LONG).show();
+    		}
+		}
 		
         public void onClick(DialogInterface dialog, int select) 
         {
     		switch (mMenu.getSelect(select)) {
-    		case MENU_ITEM_REFRESH: {
-        		Subscription subs = Subscription.getById(getContentResolver(),
-        				subs_id);
-        		if (subs != null) {
-        			subs.lastUpdated = 0;
-        			subs.update(getContentResolver());
-        			ContentValues cv = new ContentValues();
-        			cv.put(SubscriptionColumns.LAST_UPDATED, 0);
-        			getContentResolver().update(SubscriptionColumns.URI, cv,
-        					SubscriptionColumns._ID + "=" + subs.id, null);        			
-        			
-        			if(mServiceBinder!=null)
-        				mServiceBinder.start_update();        	
-					Toast.makeText(ChannelsActivity.this,
-								"Updating channel, it might take a little while",
-							Toast.LENGTH_LONG).show();					
-        		}
-        		return;
-    		}     				
-    		case MENU_ITEM_DETAILS: {
+    		case MENU_ITEM_REFRESH:
+    			updateChannel(false);
+    			return;
+
+    		case MENU_ITEM_RELOAD_OLD:
+    			updateChannel(true);
+    			return;
+
+     		case MENU_ITEM_DETAILS: {
     			Subscription.view(ChannelsActivity.this, subs_id);
     			return;
     		} 

@@ -226,9 +226,12 @@ public class ItemActivity extends HapiActivity {
 	private void setMenuItemsVisibility(Menu menu) {
 		boolean isDownloaded =
 				(mItem.status > ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW);
-    	menu.findItem(R.id.add_to_playlist).setVisible(isDownloaded);
-    	menu.findItem(R.id.played_by).setVisible(isDownloaded);
-    	menu.findItem(R.id.export).setVisible(isDownloaded);
+		boolean isDeleted =
+				(mItem.status < ItemColumns.ITEM_STATUS_DELETE);
+		boolean contentAvailable = isDownloaded && !isDeleted;
+    	menu.findItem(R.id.add_to_playlist).setVisible(contentAvailable);
+    	menu.findItem(R.id.played_by).setVisible(contentAvailable);
+    	menu.findItem(R.id.export).setVisible(contentAvailable);
     	menu.findItem(R.id.mark_new).setVisible(isDownloaded);
     	menu.findItem(R.id.keep).setVisible(mItem.keep==0);
     	menu.findItem(R.id.unkeep).setVisible(mItem.keep!=0);   
