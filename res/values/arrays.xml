@@ -157,6 +157,9 @@
         <item>20</item>
         <item>30</item>
         <item>50</item>
+        <item>100</item>
+        <item>250</item>
+        <item>500</item>
     </string-array>
 
     <string-array name="entryvalues_pref_max_new_items">
@@ -165,5 +168,8 @@
         <item>20</item>  
         <item>30</item>  
 		<item>50</item>  
-    </string-array>	  	
+        <item>100</item>
+        <item>250</item>
+        <item>500</item>
+	</string-array>	  	
 </resources>
