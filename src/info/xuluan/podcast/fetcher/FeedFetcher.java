@@ -15,7 +15,7 @@ import java.util.zip.GZIPInputStream;
 
 public class FeedFetcher {
 
-	private static final int maxSize = 100 * 1024;
+	private static final int maxSize = 1000 * 1024;
 	private static final int TIMEOUT = 10 * 1000;
 	private boolean canceled = false;
 	private String mAgent;
