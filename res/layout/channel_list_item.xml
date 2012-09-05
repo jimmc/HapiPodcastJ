@@ -4,8 +4,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	android:orientation="horizontal" 
 	android:layout_width="fill_parent"
-	android:paddingTop="10px"
-	android:paddingBottom="10px"
+	android:paddingTop="10dp"
+	android:paddingBottom="10dp"
 	android:layout_height="wrap_content">
 
 	
@@ -14,10 +14,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"	
- 		android:layout_marginRight="5px"   
- 		android:layout_marginLeft="5px"        	
+ 		android:layout_marginRight="5dp"   
+ 		android:layout_marginLeft="0dp"        	
         android:layout_gravity="center_vertical"
-        android:layout_width="24px"
+        android:layout_width="24dp"
         android:layout_height="fill_parent"/>	
 			
     <ImageView android:id="@+id/keep_icon" 
@@ -25,16 +25,16 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentBottom="true"	
- 		android:layout_marginRight="5px"   
- 		android:layout_marginLeft="5px"        	
+ 		android:layout_marginRight="5dp"   
+ 		android:layout_marginLeft="0dp"        	
         android:layout_gravity="center_vertical"
-        android:layout_width="24px"
+        android:layout_width="24dp"
         android:layout_height="fill_parent"/>	
 			
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-	 		android:layout_marginRight="20px"					
+	 		android:layout_marginRight="20dp"					
 		android:orientation="vertical">
 	
 			

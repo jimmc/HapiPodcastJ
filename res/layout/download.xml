@@ -49,7 +49,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 		android:background="@drawable/darker_gray"
-		android:layout_marginBottom="2px">
+		android:layout_marginBottom="2dp">
 
 			
 			<TextView  android:id="@+id/title"
@@ -76,13 +76,13 @@
 			android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
 			android:max="100"
- 		android:layout_marginRight="20px"   
- 		android:layout_marginLeft="20px"  
-		android:layout_marginBottom="10px"		
+ 		android:layout_marginRight="20dp"   
+ 		android:layout_marginLeft="20dp"  
+		android:layout_marginBottom="10dp"		
 		/>
 		<TextView  android:id="@+id/dtexta"
 		android:layout_width="fill_parent"
-		android:layout_height="1px"
+		android:layout_height="1dp"
 		android:background="@drawable/white" />		
    	</LinearLayout>
     

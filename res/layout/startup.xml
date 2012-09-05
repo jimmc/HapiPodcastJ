@@ -8,13 +8,18 @@
         android:id="@+id/iconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableTop="@drawable/icon" android:background="@drawable/blank" android:layout_gravity="center_horizontal" android:layout_marginTop="150px"/>
+        android:drawableTop="@drawable/icon"
+        android:background="@drawable/blank"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="150dp"/>
 
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Hapi Podcast J"
-        android:textAppearance="?android:attr/textAppearanceLarge" android:layout_gravity="center_horizontal" android:layout_marginTop="100px"/>
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="100dp"/>
 
 </LinearLayout>

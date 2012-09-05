@@ -5,15 +5,15 @@
     android:layout_height="fill_parent"
 
 >
-
+<!--
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingBottom="5px"
-        android:paddingTop="5px" >
+        android:paddingBottom="5dp"
+        android:paddingTop="5pdp" >
     </LinearLayout>
-
+-->
 	<ScrollView 
 		android:id="@+id/readscrollview" 
 		android:orientation="vertical" 
@@ -58,11 +58,11 @@
 		            android:id="@+id/last_updated_view"
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
-		            android:layout_marginBottom="5px"
+		            android:layout_marginBottom="5dp"
 		            android:layout_weight="1"
 		            android:background="@drawable/lighter_gray"
 		            android:gravity="left"
-		            android:paddingRight="10px"
+		            android:paddingRight="10dp"
 		            android:textColor="@drawable/black"
 		            android:textSize="12sp" />
 
@@ -70,11 +70,11 @@
 		            android:id="@+id/last_item_updated_view"
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
-		            android:layout_marginBottom="5px"
+		            android:layout_marginBottom="5dp"
 		            android:layout_weight="1"
 		            android:background="@drawable/lighter_gray"
 		            android:gravity="right"
-		            android:paddingRight="10px"
+		            android:paddingRight="10dp"
 		            android:textColor="@drawable/black"
 		            android:textSize="12sp"/>
 
@@ -90,19 +90,26 @@
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
 		            android:layout_weight="1"
-		            android:background="@drawable/lighter_gray" android:gravity="left" android:textColor="@drawable/black" android:textSize="12sp" android:layout_marginBottom="5px" android:paddingRight="10px" android:text="fail count"/>
+		            android:background="@drawable/lighter_gray"
+		            android:gravity="left"
+		            android:textColor="@drawable/black"
+		            android:textSize="12sp"
+		            android:layout_marginBottom="5dp"
+		            android:paddingRight="10dp"
+		            android:text="fail count"/>
 		
 		        <TextView
 		            android:id="@+id/auto_download_view"
 		            android:layout_width="match_parent"
 		            android:layout_height="wrap_content"
-		            android:layout_marginBottom="5px"
+		            android:layout_marginBottom="5dp"
 		            android:layout_weight="1"
 		            android:background="@drawable/lighter_gray"
 		            android:gravity="right"
-		            android:paddingRight="10px"
+		            android:paddingRight="10dp"
 		            android:textColor="@drawable/black"
-		            android:textSize="12sp" android:text="auto download"/>
+		            android:textSize="12sp"
+		            android:text="auto download"/>
 		    </LinearLayout>
 
 		    <TextView
