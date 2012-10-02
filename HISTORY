@@ -1,24 +1,36 @@
+Hapi Podcast J  v1.1.1.102  2012-10-02
+
+  Bug Fixes
+
+  * The app no longer crashes when tapping an item in the Channel screen
+    before using the Subscription screen to select a channel.
+
+----------
+
 Hapi Podcast J  v1.1.0.101  2012-09-05
 
 Changes (as compared to v1.0.12.36 of Hapi Podcast):
 
-UI Changes
-* New home screen.
-* Channel activities are grouped, with tabs.
-* Episode activities are grouped, with tabs.
-* New state icons for episodes.
-* State icons are consistent among all screens that show episode state.
+  UI Changes
 
-Enhancements
-* New commands in Episode popup menu: "Add To Playlist" and "View Channel".
-* Player now has a Rewind ("instant replay") button.
-* "Keep" is now a separate flag that can be applied to an episode in any state.
-* Expiration time choices up to 1 year are available.
-* More state icons provide better information about the state of each episode.
-* Title bar includes icon to return to home screen.
-* The Episode details screen includes more details, and a full menu.
-* New Channel details screen.
-* You can now ask for up to 500 old episodes.
+  * New home screen.
+  * Channel activities are grouped, with tabs.
+  * Episode activities are grouped, with tabs.
+  * New state icons for episodes.
+  * State icons are consistent among all screens that show episode state.
 
-Bug Fixes
-* More mp3 files are recognized.
+  Enhancements
+
+  * New commands in Episode popup menu: "Add To Playlist" and "View Channel".
+  * Player now has a Rewind ("instant replay") button.
+  * "Keep" is now a separate flag that can be applied to an episode in any state.
+  * Expiration time choices up to 1 year are available.
+  * More state icons provide better information about the state of each episode.
+  * Title bar includes icon to return to home screen.
+  * The Episode details screen includes more details, and a full menu.
+  * New Channel details screen.
+  * You can now ask for up to 500 old episodes.
+
+  Bug Fixes
+
+  * More mp3 files are recognized.

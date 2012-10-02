@@ -104,7 +104,7 @@ public class ChannelActivity extends PodcastBaseActivity {
 
 	}
 
-	private Subscription getCurrentSubscription() {
+	private Uri getCurrentUri() {
 		Intent intent = getIntent();
 
 		Uri uri = intent.getData();
@@ -117,6 +117,11 @@ public class ChannelActivity extends PodcastBaseActivity {
 		} else {
 			prefsPrivate.edit().putString("lastChannelUri",uri.toString()).commit();
 		}
+		return uri;
+	}
+	
+	private Subscription getCurrentSubscription() {
+		Uri uri = getCurrentUri();
 		if (uri==null) {
 			return null;
 		}
@@ -195,7 +200,11 @@ public class ChannelActivity extends PodcastBaseActivity {
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 
-		Uri uri = ContentUris.withAppendedId(getIntent().getData(), id);
+		Uri baseUri = getCurrentUri();
+		if (baseUri==null) {
+			return;
+		}
+		Uri uri = ContentUris.withAppendedId(baseUri, id);
 		String action = getIntent().getAction();
 		if (Intent.ACTION_PICK.equals(action)
 				|| Intent.ACTION_GET_CONTENT.equals(action)) {
