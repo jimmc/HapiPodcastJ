@@ -1,3 +1,19 @@
+Hapi Podcast J  v1.1.1.102+  2012-10-02+
+
+  Enhancements
+
+  * Improvements to the Preferences screen:
+    + Current values are displayed.
+    + Text has been improved.
+    + Items have been rearranged and placed into groups.
+
+  Bug Fixes
+
+  * The "1 month" setting for Played-File-Expire was incorrectly set to
+    20 days. This has been changed to 30 days.
+
+----------
+
 Hapi Podcast J  v1.1.1.102  2012-10-02
 
   Bug Fixes
