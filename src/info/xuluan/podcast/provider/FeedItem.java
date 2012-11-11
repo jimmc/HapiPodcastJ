@@ -601,7 +601,8 @@ public class FeedItem {
 			offset = 0;
 
 		} else {
-			status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
+			if (status != ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE)
+				status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
 			failcount++;
 			if (failcount > MAX_DOWNLOAD_FAIL) {
 				status = ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE;

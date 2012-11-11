@@ -1,37 +1,34 @@
 package info.xuluan.podcast;
 
-import info.xuluan.podcastj.R;
 import info.xuluan.podcast.provider.FeedItem;
 import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.utils.DialogMenu;
 import info.xuluan.podcast.utils.IconCursorAdapter;
 import info.xuluan.podcast.utils.StrUtils;
+import info.xuluan.podcastj.R;
+
+import java.io.File;
+import java.util.HashMap;
+
+import android.app.AlertDialog;
+import android.content.ContentUris;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-
-import android.app.AlertDialog;
-import android.content.ContentUris;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.util.HashMap;
-
 public class DownloadingActivity extends PodcastBaseActivity {
-
-
 
 	private static final int MENU_RESTART = Menu.FIRST + 1;
 
@@ -70,7 +67,6 @@ public class DownloadingActivity extends PodcastBaseActivity {
     }    
     
 	
-
 	private static final String[] PROJECTION = new String[] {
 			ItemColumns._ID, // 0
 			ItemColumns.TITLE, // 1
@@ -118,9 +114,21 @@ public class DownloadingActivity extends PodcastBaseActivity {
 		mNextIntent = new Intent(this, PlayListActivity.class);	
 		
 		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_download_button);
-
+		findViewById(R.id.dl_group).setOnClickListener(new CurrentClickListener());
 		startInit();		
 
+	}
+	
+	class CurrentClickListener implements OnClickListener {
+		public void onClick(View v) {
+			FeedItem item = mServiceBinder.getDownloadingItem();
+			if (item==null)
+				Toast.makeText(DownloadingActivity.this, "No current download", Toast.LENGTH_SHORT).show();
+			else {
+				//Toast.makeText(DownloadingActivity.this, "Touch!", Toast.LENGTH_SHORT).show();
+				showListItemMenu(item.id);
+			}
+		}
 	}
 
 	@Override
@@ -147,8 +155,6 @@ public class DownloadingActivity extends PodcastBaseActivity {
 		menu.add(0, MENU_RESTART, 0,
 				getResources().getString(R.string.menu_refresh)).setIcon(
 				android.R.drawable.ic_menu_rotate);
-
-
 		return true;
 	}
 
@@ -159,7 +165,6 @@ public class DownloadingActivity extends PodcastBaseActivity {
 			mServiceBinder.start_download();
 			return true;
 		}
-
 		return super.onOptionsItemSelected(item);
 	}
 
@@ -172,18 +177,19 @@ public class DownloadingActivity extends PodcastBaseActivity {
 				|| Intent.ACTION_GET_CONTENT.equals(action)) {
 			setResult(RESULT_OK, new Intent().setData(uri));
 		} else {
-			DialogMenu dialog_menu = createDialogMenus(id);
-			if( dialog_menu==null)
-				return;
-			
-			
-			 new AlertDialog.Builder(this)
-             .setTitle(dialog_menu.getHeader())
-             .setItems(dialog_menu.getItems(), new DLClickListener(dialog_menu,id)).show();		
-			
+			showListItemMenu(id);
 		}
 	}
 
+	private void showListItemMenu(long id) {
+		DialogMenu dialog_menu = createDialogMenus(id);
+		if( dialog_menu==null)
+			return;			
+		new AlertDialog.Builder(this)
+           .setTitle(dialog_menu.getHeader())
+           .setItems(dialog_menu.getItems(), new DLClickListener(dialog_menu,id)).show();					
+	}
+	
 	public DialogMenu createDialogMenus(long id) {
 
 		FeedItem feed_item = FeedItem.getById(getContentResolver(), id);
@@ -195,7 +201,8 @@ public class DownloadingActivity extends PodcastBaseActivity {
 		
 		dialog_menu.setHeader(feed_item.title);
 		
-		if (feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE) {
+		if (feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE ||
+				feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOADING_NOW) {
 			dialog_menu.addMenu(MENU_ITEM_PAUSE, 
 					getResources().getString(R.string.menu_pause));			
 		} else if (feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE) {
@@ -208,9 +215,6 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	
 		dialog_menu.addMenu(MENU_ITEM_REMOVE, 
 				getResources().getString(R.string.menu_cancel));
-
-
-
 
 		return dialog_menu;
 	}
@@ -242,11 +246,18 @@ public class DownloadingActivity extends PodcastBaseActivity {
     					.getById(getContentResolver(), item_id);
     			if (feed_item == null)
     				return;
-    			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE
-    					&& feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE) {
+    			Boolean okToRemove = feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE ||
+    					feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE ||
+    					feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOADING_NOW;
+    			if (!okToRemove) {
     				Toast.makeText(DownloadingActivity.this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
     				return;
     			} else {
+    				if (feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOADING_NOW) {
+    					mServiceBinder.stop_download();
+    					updateDownloadInfo(null);
+    					feed_item = FeedItem.getById(getContentResolver(), item_id);
+    				}
     				feed_item.status = ItemColumns.ITEM_STATUS_READ;
     				feed_item.update(getContentResolver());
     			}
@@ -255,6 +266,8 @@ public class DownloadingActivity extends PodcastBaseActivity {
     				File file = new File(feed_item.pathname);
 
     				boolean deleted = file.delete();
+    				feed_item.offset = 0;
+    				feed_item.update(getContentResolver());
 
     			} catch (Exception e) {
     				log.warn("del file failed : " + feed_item.pathname + "  " + e);
@@ -269,10 +282,17 @@ public class DownloadingActivity extends PodcastBaseActivity {
     					.getById(getContentResolver(), item_id);
     			if (feed_item == null)
     				return;
-    			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE) {
+    			Boolean okToPause = feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE ||
+    					feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOADING_NOW;
+    			if (!okToPause) {
     				Toast.makeText(DownloadingActivity.this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
     				return;
     			} else {
+    				if (feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOADING_NOW) {
+    					mServiceBinder.stop_download();
+    					updateDownloadInfo(null);
+    					feed_item = FeedItem.getById(getContentResolver(), item_id);
+    				}
     				feed_item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE;
     				feed_item.update(getContentResolver());
     			}
@@ -293,6 +313,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
     				feed_item.update(getContentResolver());
     			}
     			mServiceBinder.start_download();
+    			updateDownloadInfo(mServiceBinder.getDownloadingItem());
 
     			return ;
     		}
@@ -302,22 +323,25 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	}	
 
 
-
 	private void updateDownloadInfo(FeedItem item) {
-		
 		TextView title = (TextView) DownloadingActivity.this
 				.findViewById(R.id.title);
 		TextView dl_status = (TextView) DownloadingActivity.this
 				.findViewById(R.id.dl_status);
+		TextView dl_op = (TextView) DownloadingActivity.this
+				.findViewById(R.id.dl_op);
 		ProgressBar progress = (ProgressBar) findViewById(R.id.progress);
-		
+
+		String downloadingStatus = mServiceBinder.getDownloadingStatus();
 		if(item==null){
 			title.setText("");
-			dl_status.setText("0% ( 0 KB / 0 KB )");
+			dl_op.setText(downloadingStatus);
+			dl_status.setText(""/*"0% ( 0 KB / 0 KB )"*/);
 			progress.setProgress(0);			
 		}else{
 
 			title.setText(item.title);
+			dl_op.setText(downloadingStatus);
 			if (item.length > 0) {
 				String str = StrUtils.formatDownloadString( item.offset , item.length);
 				dl_status.setText(str);
@@ -329,10 +353,8 @@ public class DownloadingActivity extends PodcastBaseActivity {
 				progress.setProgress(0);
 			}
 		}
-
 	}
 	
-
     
 	@Override
 	public void startInit() {

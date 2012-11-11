@@ -51,8 +51,8 @@ public class PodcastService extends Service {
 	public long pref_played_file_expire = 0;
 	public int pref_max_valid_size = 0;
 	
-
-	private FeedItem mDownloadingItem = null;
+	private volatile FeedFetcher mFetcher = null;
+	private volatile FeedItem mDownloadingItem = null;
 	private static final LockHandler mDownloadLock = new LockHandler();
 
 	private static final LockHandler mUpdateLock = new LockHandler();
@@ -129,7 +129,7 @@ public class PodcastService extends Service {
 			String where = SubscriptionColumns.LAST_UPDATED + "<"
 					+ (now - pref_update);
 			String order = SubscriptionColumns.LAST_UPDATED + " ASC,"
-			+ SubscriptionColumns.FAIL_COUNT +" ASC";
+					+ SubscriptionColumns.FAIL_COUNT +" ASC";
 			Subscription sub = Subscription.getBySQL(getContentResolver(),where,order);
 
 			return sub;
@@ -143,11 +143,20 @@ public class PodcastService extends Service {
 				+ ItemColumns.STATUS + "<"
 				+ ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW;
 		
-		String order =ItemColumns.STATUS + " DESC , " + ItemColumns.LAST_UPDATE
-		+ " ASC";
+		String order = ItemColumns.STATUS + " DESC , " + 
+				ItemColumns.LAST_UPDATE + " ASC";
 		return FeedItem.getBySQL(getContentResolver(),where,order);
 	}
 
+	public String getDownloadingStatus() {
+		FeedFetcher ff = mFetcher;
+		if (ff!=null)
+			return ff.getDownloadingStatus();
+		else if (mDownloadLock.getStatus())
+			return "Canceled";
+		else
+			return "";
+	}
 	
 	public FeedItem getDownloadingItem() {
 		return mDownloadingItem;
@@ -193,6 +202,14 @@ public class PodcastService extends Service {
 		 do_download(true);
 		
 	}
+
+	public void stop_download() {
+		log.debug("PodcastService.stop_download");
+		FeedFetcher ff = mFetcher;
+		if (ff!=null) {
+			ff.cancel();
+		}
+	}
 	
 	private void do_download(boolean show){
 		if (SDCardMgr.getSDCardStatusAndCreate()==false){
@@ -224,30 +241,27 @@ public class PodcastService extends Service {
 							break;
 						}
 
-
-
 						try {
+							log.debug("Begin download of "+mDownloadingItem.title);
 							mDownloadingItem.startDownload(getContentResolver());
-							FeedFetcher fetcher = new FeedFetcher();
-
-							fetcher.download(mDownloadingItem);
+							mFetcher = new FeedFetcher();
+							mFetcher.download(mDownloadingItem);
+							mFetcher = null;
 
 						} catch (Exception e) {
+							log.debug("Caught exception in PodcastService.do_download:");
 							e.printStackTrace();
 						}
-						
-						log.debug(mDownloadingItem.title + "  " + mDownloadingItem.length + "  "
+						log.debug("End download of "+mDownloadingItem.title + "  " + mDownloadingItem.length + "  "
 								+ mDownloadingItem.offset);
-
-
 						mDownloadingItem.endDownload(getContentResolver());
-
 					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
 				} finally {
 					mDownloadingItem = null;
+					log.debug("mDownloadItem cleared");
 					mDownloadLock.release();
 				}
 

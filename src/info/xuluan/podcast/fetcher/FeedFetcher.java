@@ -5,11 +5,13 @@ import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.utils.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Properties;
 import java.util.zip.GZIPInputStream;
 
@@ -17,7 +19,10 @@ public class FeedFetcher {
 
 	private static final int maxSize = 1000 * 1024;
 	private static final int TIMEOUT = 10 * 1000;
-	private boolean canceled = false;
+	private volatile boolean canceled = false;
+	private volatile Thread downloadThread = null;
+	private volatile HttpURLConnection m_httpConnection = null;
+	private volatile String downloadingStatus = "";
 	private String mAgent;
 	protected final Log log = Log.getLog(getClass());
 
@@ -79,7 +84,7 @@ public class FeedFetcher {
 	}
 
 	public Response fetch(String feedUrl, long ifModifiedSince) {
-		setCanceled(false);
+		canceled = false;
 		Response response = null;
 		try {
 			response = get(feedUrl, ifModifiedSince);
@@ -88,7 +93,7 @@ public class FeedFetcher {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		if (!isCanceled()) {
+		if (!canceled) {
 
 		}
 
@@ -170,26 +175,28 @@ public class FeedFetcher {
 	}
 
 	/**
-	 * Get if operation is marked as canceled.
-	 */
-	public synchronized boolean isCanceled() {
-		return this.canceled;
-	}
-
-	/**
-	 * Set operation canceled.
+	 * Stop downloading.
 	 */
 	public synchronized void cancel() {
-		setCanceled(true);
-	}
-
-	synchronized void setCanceled(boolean canceled) {
-		this.canceled = canceled;
+		log.debug("FeedFetcher.cancel");
+		canceled = true;
+		//give the thread a bit of time to finish, as long as it's not blocked
+		try { Thread.sleep(250); } catch (InterruptedException ex) {}
+		Thread th = downloadThread;
+		if (th != null) {
+			log.debug("sending interrupt to download thread");
+			th.interrupt();	//in case it is hung on blocked I/O
+			m_httpConnection.disconnect();
+		}
+		log.debug("FeedFetcher.cancel done");
 	}
 	
+	public String getDownloadingStatus() {
+		return downloadingStatus;
+	}
 	
-
 	public int download(FeedItem item) {
+		canceled = false;
 		String pathname = item.pathname;
 
 		int nStartPos = item.offset;
@@ -198,11 +205,20 @@ public class FeedFetcher {
 		InputStream input = null;
 		HttpURLConnection httpConnection = null;
 		try {
+			downloadThread = Thread.currentThread();
 			URL url = new URL(item.resource);
 			log.debug("url = " + url);
+
+			//If we have an offset already, make sure the file actually exists
+			//(we could also check the file size if we want to take the next step).
+			if (item.offset>0 && !((new File(pathname).exists())))
+				item.offset = 0;
 			oSavedFile = new RandomAccessFile(pathname, "rw");
 
-			httpConnection = (HttpURLConnection) url.openConnection();
+			downloadingStatus = "Connecting";
+			//httpConnection = (HttpURLConnection) url.openConnection();
+			httpConnection = openUrl(url);
+			m_httpConnection = httpConnection;
 			httpConnection.setReadTimeout(TIMEOUT);
 			httpConnection.setConnectTimeout(TIMEOUT);
 			httpConnection
@@ -214,7 +230,12 @@ public class FeedFetcher {
 				oSavedFile.seek(item.offset);
 			}
 
-			int responseCode = httpConnection.getResponseCode();
+			downloadingStatus = "Requesting";
+			log.debug("FeedFetcher.download A");
+			//int responseCode = httpConnection.getResponseCode();
+			int responseCode = getResponseCode(httpConnection);
+			downloadingStatus = "";
+			log.debug("FeedFetcher.download B");
 			log.debug("Error Code : " + responseCode);
 			if (responseCode >= 500) {
 				item.offset = 0;
@@ -242,7 +263,9 @@ public class FeedFetcher {
 			byte[] b = new byte[buff_size];
 			int nRead = 0;
 
-			while ((nRead = input.read(b, 0, buff_size)) > 0
+			downloadingStatus = "Downloading";
+			while (!canceled &&
+					(nRead = input.read(b, 0, buff_size)) > 0
 					&& nStartPos < nEndPos) {
                                 if(item.offset == 0) {
                                     if(!isAudioFile(b, nRead, item.type)){
@@ -256,9 +279,17 @@ public class FeedFetcher {
 			}
 			if (nStartPos >= nEndPos)
 				item.downloadSuccess();
+			else if (canceled)
+				item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE;
+		} catch (InterruptedException ex) {
+			log.debug("Download thread interrupted");
 		} catch (Exception e) {
+			log.debug("Caught exception in FeedFetcher.download:");
 			e.printStackTrace();
 		} finally {
+			downloadingStatus = "";
+			log.debug("FeedFetcher.download C");
+			downloadThread = null;
 
 			try {
 				if (httpConnection != null)
@@ -277,11 +308,71 @@ public class FeedFetcher {
 					oSavedFile.close();
 			} catch (Exception e) {
 			}
-
 		}
 
 		return 0;
 
 	}
 
+	//Make the connection call in another thread so our thread can be interrupted
+	private HttpURLConnection openUrl(URL url) throws InterruptedException {
+		UrlConnectionOpener opener = new UrlConnectionOpener(url);
+		opener.start();
+		opener.join();
+		return opener.getConn();
+	}
+
+	//new UrlConnectionOpener(url).open();
+	private class UrlConnectionOpener extends Thread {		
+		URL url;
+		URLConnection conn;
+		UrlConnectionOpener(URL url) {
+			this.url = url;
+		}
+		@Override
+		public void run() {
+			try {
+				conn = url.openConnection();
+			} catch (Exception ex) {
+				log.debug("Exception in UrlConnectionOpener thread:");
+				ex.printStackTrace();
+			}
+		}
+		public HttpURLConnection getConn() {
+			return (HttpURLConnection)conn;
+		}
+	}
+
+	//Make the connection call in another thread so our thread can be interrupted
+	private int getResponseCode(HttpURLConnection conn) throws InterruptedException {
+		ResponseCodeGetter rcg = new ResponseCodeGetter(conn);
+		log.debug("getResponseCode A");
+		log.debug("Current thread is "+Thread.currentThread());
+		rcg.start();
+		log.debug("getResponseCode B");
+		rcg.join();
+		log.debug("getResponseCode C");
+		return rcg.getResponseCode();
+	}
+
+	//new UrlConnectionOpener(url).open();
+	private class ResponseCodeGetter extends Thread {		
+		HttpURLConnection conn;
+		int responseCode;
+		ResponseCodeGetter(HttpURLConnection conn) {
+			this.conn = conn;
+		}
+		@Override
+		public void run() {
+			try {
+				responseCode = conn.getResponseCode();
+			} catch (Exception ex) {
+				log.debug("Exception in ResponseCodeGetter thread:");
+				ex.printStackTrace();
+			}
+		}
+		public int getResponseCode() {
+			return responseCode;
+		}
+	}
 }

@@ -2,10 +2,14 @@ Hapi Podcast J  v1.1.1.102+  2012-10-02+
 
   Enhancements
 
-  * Improvements to the Preferences screen:
+  * Download:
+    + Tapping on the currently downloading episode now brings up the same
+      menu as the items in the downloading queue, allowing you to cancel,
+      pause or get details about the episode being dowloaded.
+  * Settings:
     + Current values are displayed.
-    + Text has been improved.
     + Items have been rearranged and placed into groups.
+    + Text has been improved.
 
   Bug Fixes
 
