@@ -1,4 +1,4 @@
-Hapi Podcast J  v1.1.1.102+  2012-10-02+
+Hapi Podcast J  v1.2.0.103  2012-11-16
 
   Enhancements
 
@@ -7,7 +7,7 @@ Hapi Podcast J  v1.1.1.102+  2012-10-02+
       menu as the items in the downloading queue, allowing you to cancel,
       pause or get details about the episode being dowloaded.
   * Settings:
-    + Current values are displayed.
+    + Current values are displayed in the Settings screen.
     + Items have been rearranged and placed into groups.
     + Text has been improved.
 
