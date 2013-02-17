@@ -82,7 +82,8 @@ public class FeedHandler  {
 		}
 		sub.update(cr);
 	}
-	
+
+	/** Returns the number of episodes added to the channel. */
 	public int updateFeed(Subscription subscription, FeedParserListener listener) {
 		FeedItem[] feedItems = listener.getSortItems();
 		log.debug("fetchFeed getSortItemsSize = "

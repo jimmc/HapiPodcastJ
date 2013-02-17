@@ -121,13 +121,16 @@ public class PodcastService extends Service {
 
 	}
 
+	//Find a subscription to update: one that has not been updated recently
+	//and is not suspended.
 	private Subscription findSubscription() {
 
 			Long now = Long.valueOf(System.currentTimeMillis());
 			log.debug("pref_update = " + pref_update);
 
-			String where = SubscriptionColumns.LAST_UPDATED + "<"
-					+ (now - pref_update);
+			String where = "(" + SubscriptionColumns.LAST_UPDATED + "<"
+					+ (now - pref_update) + ") AND "+
+					"(" + SubscriptionColumns.SUSPENDED + "<= 0)";
 			String order = SubscriptionColumns.LAST_UPDATED + " ASC,"
 					+ SubscriptionColumns.FAIL_COUNT +" ASC";
 			Subscription sub = Subscription.getBySQL(getContentResolver(),where,order);
@@ -177,7 +180,7 @@ public class PodcastService extends Service {
 					int add_num;
 					Subscription sub = findSubscription();
 					while (sub != null) {
-					if (updateConnectStatus() == NO_CONNECT)
+						if (updateConnectStatus() == NO_CONNECT)
 							break;
 						FeedHandler handler = new FeedHandler(getContentResolver(),pref_max_valid_size);
 						add_num = handler.update(sub);

@@ -72,6 +72,8 @@
     <string name="more_channel">More Channels... </string>
     <string name="menu_list_channels">List Channels</string>
     <string name="menu_search_channels">Search Channels</string>
+    <string name="menu_suspend">Suspend</string>
+    <string name="menu_unsuspend">Unsuspend</string>
 
     <string name="toast_added_to_playlist">Added to playlist</string>
     
@@ -94,7 +96,9 @@
 	
     <string name="download_hint">Placed in the download queue.</string>	
     <string name="auto_download_hint">The new items in the channel will be automatically downloaded.</string>	
-    <string name="manual_download_hint">Auto Download disabled.</string>	
+    <string name="manual_download_hint">Auto Download disabled.</string>
+    <string name="suspend_hint">Subscription suspended</string>
+    <string name="unsuspend_hint">Subscription unsuspended</string>
 
     <string name="unsubscribe_channel">Do you want to unsubscribe the channel?</string>	
 

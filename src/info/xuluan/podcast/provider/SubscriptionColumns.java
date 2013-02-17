@@ -35,13 +35,14 @@ public class SubscriptionColumns implements BaseColumns {
 	public static final String SERVER_ID = "server_id";
 	public static final String SYNC = "sync";	
 	public static final String AUTO_DOWNLOAD = "auto_download";	
-	public static final String PLAYLIST_ID = "playlist_id";		
+	public static final String PLAYLIST_ID = "playlist_id";
+	public static final String SUSPENDED = "suspended";
 	
 
 	public static final String[] ALL_COLUMNS = { _ID, URL, LINK, TITLE,
 			DESCRIPTION, LAST_UPDATED, LAST_ITEM_UPDATED, FAIL_COUNT, STATUS,
 			COMMENT, RATING, USERNAME, PASSWORD, SERVER_ID, SYNC, AUTO_DOWNLOAD,
-			PLAYLIST_ID};
+			PLAYLIST_ID, SUSPENDED};
 
 	public static final String DEFAULT_SORT_ORDER = _ID + " ASC";
 	public static final String sql_create_table = "CREATE TABLE " 
@@ -62,9 +63,14 @@ public class SubscriptionColumns implements BaseColumns {
 		+ SERVER_ID + " INTEGER , " 
 		+ SYNC + " INTEGER , " 		
 		+ AUTO_DOWNLOAD + " INTEGER , "
-		+ PLAYLIST_ID + " INTEGER " 				
+		+ PLAYLIST_ID + " INTEGER , "
+		+ SUSPENDED + " INTEGER NOT NULL DEFAULT 0 "
 		
 		+ ");";
+
+	//Upgrading database from 13 to 14
+	public static final String sql_upgrade_subscriptions_add_suspended_column = "ALTER TABLE "
+			+ TABLE_NAME + " ADD COLUMN " + SUSPENDED + " INTEGER NOT NULL DEFAULT 0;";
 
 	public static final String sql_index_subs_url = "CREATE UNIQUE INDEX IDX_"
 			+ TABLE_NAME + "_" + URL + " ON " + TABLE_NAME + " (" + URL + ");";
@@ -198,7 +204,10 @@ public class SubscriptionColumns implements BaseColumns {
 		}		
 		if (values.containsKey(PLAYLIST_ID) == false) {
 			values.put(PLAYLIST_ID, -1);
-		}			
+		}
+		if (values.containsKey(SUSPENDED) == false) {
+			values.put(SUSPENDED, 0);
+		}
 		return values;
 	}
 }

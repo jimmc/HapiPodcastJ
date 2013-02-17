@@ -27,6 +27,7 @@ public class Subscription {
 	public long lastItemUpdated;
 	public long fail_count;
 	public long auto_download;
+	public long suspended;
 
 	public static void view(Activity act, long channel_id) {
 		Uri uri = ContentUris.withAppendedId(SubscriptionColumns.URI, channel_id);
@@ -125,7 +126,8 @@ public class Subscription {
 		lastUpdated = -1;
 		fail_count = -1;
 		lastItemUpdated = -1;
-		auto_download = -1;	
+		auto_download = -1;
+		suspended = -1;
 	}
 	
 	public Subscription() {
@@ -198,6 +200,9 @@ public class Subscription {
 			if (auto_download >= 0)
 				cv.put(SubscriptionColumns.AUTO_DOWNLOAD, auto_download);
 			
+			if (suspended >= 0)
+				cv.put(SubscriptionColumns.SUSPENDED, suspended);
+			
 			return context.update(SubscriptionColumns.URI, cv,
 					SubscriptionColumns._ID + "=" + id, null);
 
@@ -225,6 +230,8 @@ public class Subscription {
 				.getColumnIndex(SubscriptionColumns.LAST_ITEM_UPDATED));
 		sub.auto_download = cursor.getLong(cursor
 				.getColumnIndex(SubscriptionColumns.AUTO_DOWNLOAD));
+		sub.suspended = cursor.getLong(cursor
+				.getColumnIndex(SubscriptionColumns.SUSPENDED));
 	}
 
 }

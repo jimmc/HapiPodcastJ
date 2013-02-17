@@ -9,7 +9,10 @@ public class PodcastOpenHelper extends SQLiteOpenHelper {
 
 	private final Log log = Log.getLog(getClass());
 
-	private final static int DBVERSION = 13;
+	//Version 12: inherited from original HapiPodcast
+	//Version 13: add KEEP column to items table
+	//Version 14: add SUSPENDED column to subscriptions table
+	private final static int DBVERSION = 14;
 	
 	public PodcastOpenHelper(Context context) {
 		super(context, "podcast.db", null, DBVERSION);
@@ -36,8 +39,19 @@ public class PodcastOpenHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		if (oldVersion==12 && newVersion==13) {
-			log.debug("Upgrading database from version 12 to 13");
+		if (oldVersion>=newVersion)
+			return;
+		
+		if (oldVersion < 12) {
+			log.debug("Database is version "+oldVersion+", drop and recreate");
+			db.execSQL("DROP TABLE " + ItemColumns.TABLE_NAME);
+			db.execSQL("DROP TABLE " + SubscriptionColumns.TABLE_NAME);
+			onCreate(db);
+			return;
+		}
+		
+		log.debug("Upgrading database from version "+oldVersion+" to "+newVersion);			
+		if (oldVersion<=12) {
 			//Add the KEEP column to the items table,
 			//use that rather than the old KEEP status
 			log.debug("executing sql: "+ItemColumns.sql_upgrade_table_add_keep_column);
@@ -48,11 +62,10 @@ public class PodcastOpenHelper extends SQLiteOpenHelper {
 			db.execSQL(ItemColumns.sql_change_keep_status_to_played);
 			log.debug("Done upgrading database");
 		}
-		else if (oldVersion != newVersion) {
-			// drop db
-			db.execSQL("DROP TABLE " + ItemColumns.TABLE_NAME);
-			db.execSQL("DROP TABLE " + SubscriptionColumns.TABLE_NAME);
-			onCreate(db);
+		if (oldVersion<=13) {
+			//Add the SUSPENDED column to the subscriptions table
+			log.debug("executing sql: "+SubscriptionColumns.sql_upgrade_subscriptions_add_suspended_column);
+			db.execSQL(SubscriptionColumns.sql_upgrade_subscriptions_add_suspended_column);
 		}
 	}
 

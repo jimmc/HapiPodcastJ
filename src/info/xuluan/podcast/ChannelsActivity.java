@@ -31,6 +31,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 	private final int MENU_ITEM_AUTO = Menu.FIRST + 11;
 	private final int MENU_ITEM_REFRESH = Menu.FIRST + 12;
 	private final int MENU_ITEM_RELOAD_OLD = Menu.FIRST + 13;
+	private final int MENU_ITEM_SUSPEND = Menu.FIRST + 14;
 	
 
 	private static final String[] PROJECTION = new String[] {
@@ -114,6 +115,14 @@ public class ChannelsActivity extends PodcastBaseActivity {
 		dialog_menu.addMenu(MENU_ITEM_DELETE, 
 				getResources().getString(R.string.unsubscribe));
 		
+		String susp;
+		if(subs.suspended==0){
+			susp = getResources().getString(R.string.menu_suspend);
+		}else{
+			susp = getResources().getString(R.string.menu_unsuspend);
+		}       
+		dialog_menu.addMenu(MENU_ITEM_SUSPEND, susp);
+
 		return dialog_menu;
 	}	
 
@@ -201,6 +210,22 @@ public class ChannelsActivity extends PodcastBaseActivity {
 							Toast.LENGTH_LONG).show();	    				
     			}else{
     				Toast.makeText(ChannelsActivity.this, R.string.manual_download_hint,
+							Toast.LENGTH_LONG).show();    				
+    				
+    			}
+    			subs.update(getContentResolver());	
+    			return ;
+    		}
+    		case MENU_ITEM_SUSPEND: {
+    			Subscription subs = Subscription.getById(getContentResolver(), subs_id);
+    			if (subs == null)
+    				return;			
+    			subs.suspended = 1 - subs.suspended;
+    			if(subs.suspended==1){
+					Toast.makeText(ChannelsActivity.this, R.string.suspend_hint,
+							Toast.LENGTH_LONG).show();	    				
+    			}else{
+    				Toast.makeText(ChannelsActivity.this, R.string.unsuspend_hint,
 							Toast.LENGTH_LONG).show();    				
     				
     			}
