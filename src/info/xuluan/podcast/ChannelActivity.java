@@ -23,11 +23,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class ChannelActivity extends PodcastBaseActivity {
 
 	private static final int MENU_UNSUBSCRIBE = Menu.FIRST + 1;
-	private static final int MENU_AUTO_DOWNLOAD = Menu.FIRST + 2;
+	private static final int MENU_SUSPEND = Menu.FIRST + 2;
+	private static final int MENU_AUTO_DOWNLOAD = Menu.FIRST + 3;
 
 	
 	private static final int MENU_ITEM_DETAILS = Menu.FIRST + 9;
@@ -145,7 +147,8 @@ public class ChannelActivity extends PodcastBaseActivity {
 				getResources().getString(R.string.unsubscribe)).setIcon(
 				android.R.drawable.ic_menu_close_clear_cancel);
 		
-
+		menu.add(0, MENU_SUSPEND, 0, "Suspend").setIcon(
+				android.R.drawable.ic_menu_revert);
 		
 		menu.add(0, MENU_AUTO_DOWNLOAD, 0,"Auto Download").setIcon(
 				android.R.drawable.ic_menu_set_as);
@@ -157,6 +160,7 @@ public class ChannelActivity extends PodcastBaseActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
+        
         MenuItem item = menu.findItem(MENU_AUTO_DOWNLOAD);
 		String auto;
 		if(mChannel.auto_download==0){
@@ -165,6 +169,16 @@ public class ChannelActivity extends PodcastBaseActivity {
 			auto = getResources().getString(R.string.menu_manual_download);
 		}        
         item.setTitle(auto);
+        
+        MenuItem suspendItem = menu.findItem(MENU_SUSPEND);
+		String susp;
+		if(mChannel.suspended==0){
+			susp = getResources().getString(R.string.menu_suspend);
+		}else{
+			susp = getResources().getString(R.string.menu_unsuspend);
+		}        
+		suspendItem.setTitle(susp);
+        
         return true;
     }
     
@@ -188,10 +202,23 @@ public class ChannelActivity extends PodcastBaseActivity {
                 })
                 .show();
 			return true;
+			
 		case MENU_AUTO_DOWNLOAD:
 			mChannel.auto_download = 1-mChannel.auto_download;
 			mChannel.update(getContentResolver());	
 			return true;			
+
+		case MENU_SUSPEND:
+			mChannel.suspended = 1 - mChannel.suspended;
+			if(mChannel.suspended==1){
+				Toast.makeText(ChannelActivity.this, R.string.suspend_hint,
+						Toast.LENGTH_LONG).show();	    				
+			}else{
+				Toast.makeText(ChannelActivity.this, R.string.unsuspend_hint,
+						Toast.LENGTH_LONG).show();    				
+				
+			}
+			mChannel.update(getContentResolver());	
 
 		}
 		return super.onOptionsItemSelected(item);
