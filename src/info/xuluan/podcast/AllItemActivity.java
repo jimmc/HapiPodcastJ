@@ -123,9 +123,13 @@ public class AllItemActivity extends PodcastBaseActivity {
 	}
 
 	public static int mapToIcon(int status) {
-		Integer iconI = mIconMap.get(status);
+		return mapToIcon(status,mIconMap);
+	}
+	
+	public static int mapToIcon(int key, HashMap<Integer,Integer> iconMap) {
+		Integer iconI = iconMap.get(key);
 		if (iconI==null)
-			iconI = mIconMap.get(IconCursorAdapter.ICON_DEFAULT_ID);	//look for default value in map
+			iconI = iconMap.get(IconCursorAdapter.ICON_DEFAULT_ID);	//look for default value in map
 		int icon = (iconI!=null)?
 			iconI.intValue():
 			R.drawable.status_unknown;	//Use this icon when not in map and no map default.

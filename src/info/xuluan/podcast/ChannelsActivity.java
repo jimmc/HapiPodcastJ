@@ -1,16 +1,22 @@
 package info.xuluan.podcast;
 
 
+import java.util.HashMap;
+
 import info.xuluan.podcastj.R;
 import info.xuluan.podcast.provider.FeedItem;
+import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.utils.DialogMenu;
+import info.xuluan.podcast.utils.IconCursorAdapter;
 import android.app.AlertDialog;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
@@ -35,8 +41,27 @@ public class ChannelsActivity extends PodcastBaseActivity {
 	private static final String[] PROJECTION = new String[] {
 			SubscriptionColumns._ID, // 0
 			SubscriptionColumns.TITLE, // 1
+			SubscriptionColumns.SUSPENDED
 	};
+	
+	private static final HashMap<Integer, Integer> mSuspendIconMap = new HashMap<Integer, Integer>();
 
+	static {
+		mSuspendIconMap.put(1, R.drawable.suspended);		
+		mSuspendIconMap.put(0, R.drawable.blank);	
+	}
+	
+	private static IconCursorAdapter channelsChannelCursorAdapter(Context context, Cursor cursor) {
+		IconCursorAdapter.FieldHandler[] fields = {
+				IconCursorAdapter.defaultTextFieldHandler,
+				new IconCursorAdapter.IconFieldHandler(mSuspendIconMap)
+		};
+		return new IconCursorAdapter(context, R.layout.channels_channel, cursor,
+				new String[] { SubscriptionColumns.TITLE, SubscriptionColumns.SUSPENDED },
+				new int[] { R.id.text1, R.id.suspend_icon },
+				fields);
+	}
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -226,14 +251,8 @@ public class ChannelsActivity extends PodcastBaseActivity {
 	@Override
 	public void startInit() {
 
-		mCursor = managedQuery(SubscriptionColumns.URI, PROJECTION, null, null,
-				null);
-
-		// Used to map notes entries from the database to views
-		mAdapter = new SimpleCursorAdapter(this,
-				android.R.layout.simple_list_item_1, mCursor,
-				new String[] { SubscriptionColumns.TITLE },
-				new int[] { android.R.id.text1 });
+		mCursor = managedQuery(SubscriptionColumns.URI, PROJECTION, null, null, null);
+		mAdapter = channelsChannelCursorAdapter(this, mCursor);
 		setListAdapter(mAdapter);
 
 		super.startInit();

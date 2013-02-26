@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class ChannelDetailsActivity extends HapiActivity {
@@ -68,11 +69,32 @@ public class ChannelDetailsActivity extends HapiActivity {
 		});
 	}
 
+	@Override
+	public void onResume() {
+		super.onResume();
+		mChannel = getChannel();
+		if (mChannel==null){
+			finish();
+			return;
+		}
+		
+		setStatusIcon();
+	}
+
 	private void setViewContent(int viewId, String content) {
 		TextView v = (TextView) findViewById(viewId);
 		v.setText(content);
 	}
 
+	private void setStatusIcon() {
+		ImageView statusIconView = (ImageView) findViewById(R.id.suspended_icon);
+		if (mChannel.suspended!=0) {
+			statusIconView.setImageResource(R.drawable.suspended);
+		} else {
+			statusIconView.setImageResource(R.drawable.blank);
+		}
+	}
+	
 	private Subscription getChannel() {
 		Intent intent = getIntent();
 
@@ -99,6 +121,7 @@ public class ChannelDetailsActivity extends HapiActivity {
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		mChannel = getChannel();
         //setMenuItemsVisibility(menu);
+		setStatusIcon();
         return true;
 	}
 
@@ -112,6 +135,7 @@ public class ChannelDetailsActivity extends HapiActivity {
 			return true;
   		*/
 		}
+		setStatusIcon();
 		return super.onOptionsItemSelected(item);
 	}
 }
