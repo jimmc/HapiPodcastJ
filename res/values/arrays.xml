@@ -176,5 +176,12 @@
         <item>100</item>
         <item>250</item>
         <item>500</item>
-	</string-array>	  	
+	</string-array>
+	
+    <string-array name="debug_commands">
+        <item>Debug 0</item>
+        <item>Debug 1</item>
+        <item>Debug 2</item>
+    </string-array>    
+    	
 </resources>

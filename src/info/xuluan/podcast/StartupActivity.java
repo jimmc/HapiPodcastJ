@@ -29,10 +29,17 @@ public class StartupActivity extends HapiActivity {
 	    };
 	    handler.postDelayed(r, delayMillis);
 
-	    Button b = (Button)findViewById(R.id.iconButton);
-		b.setOnClickListener(new OnClickListener() {
+	    Button iconButton = (Button)findViewById(R.id.iconButton);
+		iconButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {            
                 delayedStart();
+            }
+        });
+
+	    Button debugButton = (Button)findViewById(R.id.debugButton);
+		debugButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {            
+                HomeActivity.toggleShowDebugMenu();
             }
         });
 

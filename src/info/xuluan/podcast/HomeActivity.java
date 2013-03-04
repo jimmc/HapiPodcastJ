@@ -1,10 +1,14 @@
 package info.xuluan.podcast;
 
+import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcastj.R;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,10 +22,20 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class HomeActivity extends HapiActivity {
 	
+	private static boolean showDebugMenu = false;
 	private static final int MENU_SETTINGS = Menu.FIRST + 1;
+	private static final int MENU_DEBUG = Menu.FIRST + 2;
+
+	public static void setShowDebugMenu(boolean show) {
+		showDebugMenu = show;
+	}
+	public static void toggleShowDebugMenu() {
+		setShowDebugMenu(!showDebugMenu);
+	}
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +86,10 @@ public class HomeActivity extends HapiActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		menu.add(0, MENU_SETTINGS, 0,
 				getResources().getString(R.string.title_pref)).setIcon(
-				android.R.drawable.ic_menu_preferences);	
+				android.R.drawable.ic_menu_preferences);
+		if (showDebugMenu) {
+			menu.add(0, MENU_DEBUG, 1, "Debug");
+		}
 		return true;
 	}
 
@@ -81,6 +98,18 @@ public class HomeActivity extends HapiActivity {
 		switch (item.getItemId()) {
 		case MENU_SETTINGS:
 			startActivity(new Intent(this, Pref.class));
+			return true;
+		case MENU_DEBUG:
+			 new AlertDialog.Builder(this)
+             .setTitle("Debug Commands")
+             .setItems(R.array.debug_commands,
+            		 new DialogInterface.OnClickListener() {
+                 public void onClick(DialogInterface dialog, int select) {
+         			dialog.dismiss();
+         	    	Toast.makeText(HomeActivity.this, "Selected: "+select, Toast.LENGTH_SHORT).show();
+                 }
+             })
+            .show();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);

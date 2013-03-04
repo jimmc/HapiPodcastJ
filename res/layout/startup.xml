@@ -5,13 +5,20 @@
     android:orientation="vertical" >
 
     <Button
+        android:id="@+id/debugButton"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center"
+        android:background="@drawable/blank" />
+
+    <Button
         android:id="@+id/iconButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableTop="@drawable/icon"
-        android:background="@drawable/blank"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="150dp"/>
+        android:layout_marginTop="100dp"
+        android:background="@drawable/blank"
+        android:drawableTop="@drawable/icon" />
 
     <TextView
         android:id="@+id/textView1"
