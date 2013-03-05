@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Toast;
 
 public class StartupActivity extends HapiActivity {
 	
@@ -40,6 +41,9 @@ public class StartupActivity extends HapiActivity {
 		debugButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {            
                 HomeActivity.toggleShowDebugMenu();
+                String msg = HomeActivity.isShowDebugMenu()?
+                		"Debug menu enabled":"Debug menu disabled";
+		    	Toast.makeText(StartupActivity.this, msg, Toast.LENGTH_SHORT).show();
             }
         });
 

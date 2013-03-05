@@ -30,6 +30,9 @@ public class HomeActivity extends HapiActivity {
 	private static final int MENU_SETTINGS = Menu.FIRST + 1;
 	private static final int MENU_DEBUG = Menu.FIRST + 2;
 
+	public static boolean isShowDebugMenu() {
+		return showDebugMenu;
+	}
 	public static void setShowDebugMenu(boolean show) {
 		showDebugMenu = show;
 	}
@@ -93,6 +96,21 @@ public class HomeActivity extends HapiActivity {
 		return true;
 	}
 
+	private DialogInterface.OnClickListener debugClickListener =
+   		 new DialogInterface.OnClickListener() {
+        public void onClick(DialogInterface dialog, int select) {
+			dialog.dismiss();
+			switch (select) {
+			case 0:
+		    	Toast.makeText(HomeActivity.this, "Debug 0 tapped", Toast.LENGTH_SHORT).show();
+		    	break;
+			default:
+		    	Toast.makeText(HomeActivity.this, "Selected: "+select, Toast.LENGTH_SHORT).show();
+		    	break;
+			}
+        }
+    };
+			
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -100,16 +118,10 @@ public class HomeActivity extends HapiActivity {
 			startActivity(new Intent(this, Pref.class));
 			return true;
 		case MENU_DEBUG:
-			 new AlertDialog.Builder(this)
-             .setTitle("Debug Commands")
-             .setItems(R.array.debug_commands,
-            		 new DialogInterface.OnClickListener() {
-                 public void onClick(DialogInterface dialog, int select) {
-         			dialog.dismiss();
-         	    	Toast.makeText(HomeActivity.this, "Selected: "+select, Toast.LENGTH_SHORT).show();
-                 }
-             })
-            .show();
+			new AlertDialog.Builder(this)
+				.setTitle("Debug Commands")
+				.setItems(R.array.debug_commands,debugClickListener)
+				.show();
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
