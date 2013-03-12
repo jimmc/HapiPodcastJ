@@ -1,3 +1,18 @@
+Hapi Podcast J  v1.x.x.104  2013-*
+
+Enhancements
+
+* Suspend channel: the menu in the Channel Episodes screen now allows you
+  to suspend a channel. This prevents the channel from updating anything,
+  essentially like unsubscribing but without removing it from the list
+  of subscriptions. Suspended channels are marked with an icon.
+* For development purposes, a hidden Debug menu item has been added to the
+  menu on the home screen. This menu is activated by tapping top-center on
+  the Startup screen (the one with the Hapi Podcast J icon on it, which you
+  can get to by using the back button from the Home screen on startup).
+
+----------
+
 Hapi Podcast J  v1.2.0.103  2012-11-16
 
 Enhancements

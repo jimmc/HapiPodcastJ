@@ -45,28 +45,31 @@ public class SubscriptionColumns implements BaseColumns {
 			PLAYLIST_ID, SUSPENDED};
 
 	public static final String DEFAULT_SORT_ORDER = _ID + " ASC";
-	public static final String sql_create_table = "CREATE TABLE " 
-		+ TABLE_NAME + " (" 
-		+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " 
-		+ URL + " VARCHAR(1024), " 
-		+ LINK + " VARCHAR(256), " 
-		+ TITLE	+ " VARCHAR(128), " 
-		+ DESCRIPTION + " TEXT, "
-		+ LAST_UPDATED + " INTEGER, " 
-		+ LAST_ITEM_UPDATED + " INTEGER, "
-		+ FAIL_COUNT + " INTEGER, " 
-		+ STATUS + " INTEGER, " 
-		+ COMMENT + " TEXT, " 
-		+ RATING + " INTEGER, " 
-		+ USERNAME	+ " VARCHAR(32) , " 
-		+ PASSWORD + " VARCHAR(32) , " 
-		+ SERVER_ID + " INTEGER , " 
-		+ SYNC + " INTEGER , " 		
-		+ AUTO_DOWNLOAD + " INTEGER , "
-		+ PLAYLIST_ID + " INTEGER , "
-		+ SUSPENDED + " INTEGER NOT NULL DEFAULT 0 "
-		
-		+ ");";
+	
+	public static String sql_create_table(int version) {
+		String sql = "CREATE TABLE "
+						+ TABLE_NAME + " (" 
+						+ _ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " 
+						+ URL + " VARCHAR(1024), " 
+						+ LINK + " VARCHAR(256), " 
+						+ TITLE	+ " VARCHAR(128), " 
+						+ DESCRIPTION + " TEXT, "
+						+ LAST_UPDATED + " INTEGER, " 
+						+ LAST_ITEM_UPDATED + " INTEGER, "
+						+ FAIL_COUNT + " INTEGER, " 
+						+ STATUS + " INTEGER, " 
+						+ COMMENT + " TEXT, " 
+						+ RATING + " INTEGER, " 
+						+ USERNAME	+ " VARCHAR(32) , " 
+						+ PASSWORD + " VARCHAR(32) , " 
+						+ SERVER_ID + " INTEGER , " 
+						+ SYNC + " INTEGER , " 		
+						+ AUTO_DOWNLOAD + " INTEGER , "
+						+ PLAYLIST_ID + " INTEGER "
+						+ (version>=14?(", "+SUSPENDED + " INTEGER NOT NULL DEFAULT 0 "):"")
+						+ ");";
+		return sql;
+	}
 
 	//Upgrading database from 13 to 14
 	public static final String sql_upgrade_subscriptions_add_suspended_column = "ALTER TABLE "

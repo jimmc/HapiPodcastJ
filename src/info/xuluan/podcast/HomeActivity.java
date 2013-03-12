@@ -1,6 +1,7 @@
 package info.xuluan.podcast;
 
 import info.xuluan.podcast.provider.ItemColumns;
+import info.xuluan.podcast.provider.PodcastOpenHelper;
 import info.xuluan.podcastj.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -10,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -97,12 +99,13 @@ public class HomeActivity extends HapiActivity {
 	}
 
 	private DialogInterface.OnClickListener debugClickListener =
-   		 new DialogInterface.OnClickListener() {
+   		    new DialogInterface.OnClickListener() {
         public void onClick(DialogInterface dialog, int select) {
 			dialog.dismiss();
 			switch (select) {
-			case 0:
-		    	Toast.makeText(HomeActivity.this, "Debug 0 tapped", Toast.LENGTH_SHORT).show();
+			case 0:	//DB downgrade(13)
+				dbDowngrade(13);
+		    	Toast.makeText(HomeActivity.this, "DB downgraded to version 13", Toast.LENGTH_SHORT).show();
 		    	break;
 			default:
 		    	Toast.makeText(HomeActivity.this, "Selected: "+select, Toast.LENGTH_SHORT).show();
@@ -135,6 +138,12 @@ public class HomeActivity extends HapiActivity {
 		ed.putInt("homeActivity",0);
         ed.commit();
     	startActivity(new Intent(this,MainActivity.class));
+    }
+    
+    private void dbDowngrade(int version) {
+		PodcastOpenHelper mHelper = new PodcastOpenHelper(this,version);
+		/*SQLiteDatabase db =*/ mHelper.getWritableDatabase();
+		//by this point, we should have already called the downgrade method in PodcastOpenHelper
     }
 }
 
