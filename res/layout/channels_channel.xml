@@ -11,9 +11,6 @@
 	
     <ImageView android:id="@+id/suspend_icon" 
         android:src="@drawable/waiting"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"	
  		android:layout_marginRight="5dp"   
  		android:layout_marginLeft="0dp"        	
         android:layout_gravity="center_vertical"

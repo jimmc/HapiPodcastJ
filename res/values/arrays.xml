@@ -109,11 +109,6 @@
         <!-- <item>All Plus Deleted</item> -->
     </string-array>    
 	
-    <string-array name="backup_select">
-        <item>Import from OPML</item>
-        <item>Export to OPML</item>
-    </string-array>   
-
     <string-array name="repeat_select">
         <item>No Repeat</item>
         <item>Repeat All</item>

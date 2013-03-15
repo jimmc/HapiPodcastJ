@@ -4,7 +4,8 @@
         android:versionName="1.2.0.103"
         android:versionCode="103">
       
-	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4" />
+	<uses-sdk android:minSdkVersion="3" android:targetSdkVersion="4"
+	    android:allowBackup="true" />
       
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -18,8 +19,10 @@
 		android:normalScreens="true" android:smallScreens="true"
 		android:anyDensity="true" />
 	
-    <application android:icon="@drawable/icon"
-        	android:label="@string/app_name">
+    <application
+        	android:icon="@drawable/icon"
+        	android:label="@string/app_name"
+        	android:allowBackup="true" >
         <uses-library android:name="android.test.runner" />
 	
         <activity android:name="info.xuluan.podcast.StartupActivity" android:label="@string/app_name">

@@ -3,6 +3,7 @@ package info.xuluan.podcast.provider;
 import info.xuluan.podcast.utils.Log;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import android.content.ContentProvider;
 import android.content.ContentUris;
@@ -17,7 +18,7 @@ import android.text.TextUtils;
 public class PodcastProvider extends ContentProvider {
 
 	public static final String AUTHORITY = PodcastProvider.class.getName()
-			.toLowerCase();
+			.toLowerCase(Locale.getDefault());
 
 	private static final int TYPE_ALL_SUBSCRIPTIONS = 0;
 	private static final int TYPE_SINGLE_SUBSCRIPTION = 1;

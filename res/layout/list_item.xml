@@ -16,9 +16,6 @@
 	
 	    <ImageView android:id="@+id/icon" 
 	        android:src="@drawable/waiting"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentTop="true"
-	        android:layout_alignParentBottom="true"	
 	 		android:layout_marginRight="5dp"   
 	 		android:layout_marginLeft="0dp"        	
 	 		android:layout_marginTop="0dp"        	
@@ -29,9 +26,6 @@
 	 
 	    <ImageView android:id="@+id/keep_icon" 
 	        android:src="@drawable/blank"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignParentTop="true"
-	        android:layout_alignParentBottom="true"	
 	 		android:layout_marginRight="0dp"   
 	 		android:layout_marginLeft="0dp"        	
 	 		android:layout_marginTop="2dp"        	

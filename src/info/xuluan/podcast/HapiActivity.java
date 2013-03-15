@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
-public class HapiActivity extends Activity {
+public abstract class HapiActivity extends Activity {
 	final ActionBarHelper mActionBarHelper = ActionBarHelper.createInstance(this);
 	
     /**

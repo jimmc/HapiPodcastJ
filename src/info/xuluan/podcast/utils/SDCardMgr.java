@@ -5,7 +5,8 @@ import android.os.Environment;
 
 public class SDCardMgr {
 
-	public static String SDCARD_DIR = "/sdcard"; 
+	public static String SDCARD_DIR =
+			Environment.getExternalStorageDirectory().getPath(); //e.g. /sdcard
 	public static final String APP_DIR = "/xuluan.podcast";
 	public static final String DOWNLOAD_DIR = "/download";
 	public static final String EXPORT_DIR = "/export";

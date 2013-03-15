@@ -15,6 +15,7 @@
 	<string name="button_opml_import">Import from OPML</string>
     <string name="button_opml_export">Export to OPML</string>	
 
+    <string name="channel">Channel</string>
     <string name="channel_bar_button_add">Add</string>
     <string name="channel_bar_button_backup">Backup</string>
     <string name="channel_bar_button_manage">Subscrips</string>
@@ -101,7 +102,8 @@
     <string name="unsuspend_hint">Subscription unsuspended</string>
 
     <string name="unsubscribe_channel">Do you want to unsubscribe the channel?</string>	
-
+	<string name="url">url</string>
+	
     <string name="pref_group_download">DOWNLOAD</string>
     <string name="pref_group_expire">EXPIRE</string>
     <string name="pref_group_play">PLAY</string>

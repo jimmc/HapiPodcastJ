@@ -2,18 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-
->
-<!--
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingBottom="5dp"
-        android:paddingTop="5pdp" >
-    </LinearLayout>
--->
+    android:layout_height="fill_parent" >
+    
 	<ScrollView 
 		android:id="@+id/readscrollview" 
 		android:orientation="vertical" 
@@ -39,7 +29,7 @@
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        android:background="@drawable/darker_gray"
-		        android:text="Channel"
+		        android:text="@string/channel"
 		        android:textAppearance="?android:attr/textAppearanceMedium" />
 
 		    <LinearLayout
@@ -61,7 +51,7 @@
 		            android:id="@+id/url_view"
 		            android:layout_width="fill_parent"
 		            android:layout_height="wrap_content"
-		            android:text="url" />
+		            android:text="@string/url" />
 
 		    </LinearLayout>
 
