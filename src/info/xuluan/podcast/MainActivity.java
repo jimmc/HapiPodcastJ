@@ -48,9 +48,6 @@ public class MainActivity extends HapiListActivity{
 	    addItem(myData, getResources().getString(R.string.title_download_list), R.drawable.download_big_pic , 
 	    		new Intent(this, DownloadActivity.class),"");
 	    
-	    /* addItem(myData, getResources().getString(R.string.title_play_list), R.drawable.playlist_big_pic , 
-	    		new Intent(this, PlayListActivity.class),""); */
-	    
 	    addItem(myData, getResources().getString(R.string.title_player), R.drawable.player3_big_pic , 
 	    		new Intent(this, PlayerActivity.class),"");		    
 

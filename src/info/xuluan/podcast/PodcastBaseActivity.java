@@ -56,7 +56,7 @@ public class PodcastBaseActivity extends HapiListActivity {
                 	finish();
 
                 }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                	if(mPrevIntent!=null)
+                	if(mNextIntent!=null)
                 		startActivity(mNextIntent);
                 	finish();
                 }

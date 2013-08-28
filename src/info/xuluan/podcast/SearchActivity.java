@@ -79,7 +79,7 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 		mEditText = (EditText) findViewById(R.id.keywords);
 		mEditText.addTextChangedListener(this);
 		
-		mPrevIntent = new Intent(this, PlayListActivity.class);
+		//mPrevIntent = new Intent(this, NoActivity.class);	//TODO
 		mNextIntent = new Intent(this, ChannelsActivity.class);
 		
 		startInit();

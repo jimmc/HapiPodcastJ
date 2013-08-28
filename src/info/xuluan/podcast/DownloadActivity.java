@@ -111,7 +111,7 @@ public class DownloadActivity extends PodcastBaseActivity {
 		Intent intent = getIntent();
 		intent.setData(ItemColumns.URI);
 		mPrevIntent = new Intent(this, EpisodesActivity.class);
-		mNextIntent = new Intent(this, PlayListActivity.class);	
+		//mNextIntent = new Intent(this, NoActivity.class);	//TODO
 		
 		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_download_button);
 		findViewById(R.id.dl_group).setOnClickListener(new CurrentClickListener());
