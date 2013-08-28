@@ -54,18 +54,7 @@ public class ChannelActivity extends PodcastBaseActivity {
 	static {
 
 		mIconMap = new HashMap<Integer, Integer>();
-		AllItemActivity.initFullIconMap(mIconMap);
-/*
-		mIconMap.put(ItemColumns.ITEM_STATUS_UNREAD, R.drawable.new_item);
-		mIconMap.put(ItemColumns.ITEM_STATUS_READ, R.drawable.open_item);
-		mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE, R.drawable.download);
-		mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE, R.drawable.download);
-		mIconMap.put(ItemColumns.ITEM_STATUS_DOWNLOADING_NOW, R.drawable.download);
-		
-		mIconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.music);
-		mIconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.music);
-		mIconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.music);		
-*/
+		EpisodeIcons.initFullIconMap(mIconMap);
 	}
 
 	public static boolean channelExists(Activity act, Uri uri) {
@@ -86,7 +75,7 @@ public class ChannelActivity extends PodcastBaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.channel);
+		setContentView(R.layout.channel_activity);
 
 		mChannel = getCurrentSubscription();		
 		if(mChannel==null){
@@ -345,7 +334,7 @@ public class ChannelActivity extends PodcastBaseActivity {
 
 		mCursor = managedQuery(ItemColumns.URI, PROJECTION, where, null, null);
 
-		mAdapter = AllItemActivity.channelListItemCursorAdapter(this, mCursor);
+		mAdapter = EpisodeIcons.channelListItemCursorAdapter(this, mCursor);
 /*		mAdapter = new IconCursorAdapter(this, R.layout.channel_list_item, mCursor,
 				new String[] { ItemColumns.TITLE,ItemColumns.STATUS }, new int[] {
 						R.id.text1}, mIconMap);

@@ -48,7 +48,7 @@ public class BackupChannelsActivity extends HapiActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.backup_channels);
+		setContentView(R.layout.backup_channels_activity);
 		
 		Button importButton = (Button) findViewById(R.id.importButton);
 		importButton.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +70,7 @@ public class BackupChannelsActivity extends HapiActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.backup_channels, menu);
+	    inflater.inflate(R.menu.backup_channels_activity, menu);
 	    return true;
 	}
 

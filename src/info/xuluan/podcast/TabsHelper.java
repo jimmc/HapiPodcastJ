@@ -24,9 +24,9 @@ public class TabsHelper {
 	};
 
 	static ButtonAndActivity[] episodeButtonActivities = {
-		new ButtonAndActivity(R.id.episode_bar_library_button,AllItemActivity.class),
+		new ButtonAndActivity(R.id.episode_bar_library_button,EpisodesActivity.class),
 		new ButtonAndActivity(R.id.episode_bar_channel_button,ChannelActivity.class),
-		new ButtonAndActivity(R.id.episode_bar_download_button,DownloadingActivity.class),
+		new ButtonAndActivity(R.id.episode_bar_download_button,DownloadActivity.class),
 		new ButtonAndActivity(R.id.episode_bar_play_button,PlayerActivity.class),
 	};
 

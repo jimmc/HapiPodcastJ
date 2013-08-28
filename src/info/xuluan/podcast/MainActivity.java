@@ -24,12 +24,12 @@ public class MainActivity extends HapiListActivity{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-		setContentView(R.layout.select);
+		setContentView(R.layout.main_activity);
 		startService(new Intent(this, PodcastService.class));
 		startService(new Intent(this, PlayerService.class));
 
         setListAdapter(new SimpleAdapter(this, getData(),
-        		R.layout.select_item, new String[] { "title" ,"icon"},
+        		R.layout.main_item, new String[] { "title" ,"icon"},
                 new int[] { R.id.text1, R.id.icon, }));
     }
     
@@ -43,10 +43,10 @@ public class MainActivity extends HapiListActivity{
 	    		new Intent(this, ChannelsActivity.class),"");	    
  
 	    addItem(myData, getResources().getString(R.string.title_episodes), R.drawable.playlist_big_pic , 
-	    		new Intent(this, AllItemActivity.class),"");		   
+	    		new Intent(this, EpisodesActivity.class),"");		   
 	    
 	    addItem(myData, getResources().getString(R.string.title_download_list), R.drawable.download_big_pic , 
-	    		new Intent(this, DownloadingActivity.class),"");
+	    		new Intent(this, DownloadActivity.class),"");
 	    
 	    /* addItem(myData, getResources().getString(R.string.title_play_list), R.drawable.playlist_big_pic , 
 	    		new Intent(this, PlayListActivity.class),""); */

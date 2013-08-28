@@ -23,12 +23,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 	static {
 
 		mIconMap = new HashMap<Integer, Integer>();
-		AllItemActivity.initFullIconMap(mIconMap);
-/*
-		mIconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.no_play);
-		mIconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.played);
-		mIconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.keep);
-*/		
+		EpisodeIcons.initFullIconMap(mIconMap);
 	}
 
 	private static final String[] PROJECTION = new String[] {
@@ -74,14 +69,14 @@ public class PlayListActivity extends PodcastBaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.episodes);
+		setContentView(R.layout.playlist);
 		setTitle(getResources().getString(R.string.title_episodes));
 
 		getListView().setOnCreateContextMenuListener(this);
 		Intent intent = getIntent();
 		intent.setData(ItemColumns.URI);
 		
-		mPrevIntent = new Intent(this, DownloadingActivity.class);
+		mPrevIntent = new Intent(this, DownloadActivity.class);
 		mNextIntent = new Intent(this, SearchActivity.class);
 		
 		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_channel_button);
@@ -205,18 +200,7 @@ public class PlayListActivity extends PodcastBaseActivity {
 		mCursor = managedQuery(ItemColumns.URI, PROJECTION, where, null, order);
 
 		// Used to map notes entries from the database to views
-		mAdapter = AllItemActivity.listItemCursorAdapter(this, mCursor);
-/*		IconCursorAdapter.FieldHandler[] fields = {
-				IconCursorAdapter.defaultTextFieldHandler,
-				IconCursorAdapter.defaultTextFieldHandler,
-				IconCursorAdapter.defaultTextFieldHandler,
-				new IconCursorAdapter.IconFieldHandler(mIconMap)
-		};
-		mAdapter = new IconCursorAdapter(this, R.layout.list_item, mCursor,
-				new String[] { ItemColumns.TITLE, ItemColumns.SUB_TITLE,
-						ItemColumns.DURATION, ItemColumns.STATUS }, new int[] {
-						R.id.text1, R.id.text2, R.id.text3, R.id.icon }, fields);
-*/
+		mAdapter = EpisodeIcons.listItemCursorAdapter(this, mCursor);
 		setListAdapter(mAdapter);
 
 		super.startInit();

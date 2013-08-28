@@ -1,10 +1,7 @@
 package info.xuluan.podcast.provider;
 
-import info.xuluan.podcast.AllItemActivity;
 import info.xuluan.podcast.ChannelActivity;
-import info.xuluan.podcast.PlayListActivity;
 import info.xuluan.podcast.PlayerActivity;
-import info.xuluan.podcast.PodcastBaseActivity;
 import info.xuluan.podcast.utils.FileUtils;
 import info.xuluan.podcast.utils.Log;
 import info.xuluan.podcast.utils.SDCardMgr;

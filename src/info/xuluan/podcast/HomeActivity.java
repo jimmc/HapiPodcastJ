@@ -76,9 +76,9 @@ public class HomeActivity extends HapiActivity {
 		LabeledFrameHelper efh = new LabeledFrameHelper(this,"Episodes",orientation);
 		ll.addView(efh.frame());
 		efh.addIntentButton(R.drawable.playlist_big_pic,
-				R.string.episode_bar_button_library, AllItemActivity.class);
+				R.string.episode_bar_button_library, EpisodesActivity.class);
 		efh.addIntentButton(R.drawable.download_big_pic,
-				R.string.episode_bar_button_download, DownloadingActivity.class);
+				R.string.episode_bar_button_download, DownloadActivity.class);
 		efh.addIntentButton(R.drawable.episode_big_pic,
 				R.string.episode_bar_button_channel, ChannelActivity.class);
 		efh.addIntentButton(R.drawable.player3_big_pic,

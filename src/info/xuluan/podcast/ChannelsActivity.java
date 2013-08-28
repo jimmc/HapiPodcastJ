@@ -65,7 +65,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.subs);
+		setContentView(R.layout.channels_activity);
 		setTitle(getResources().getString(R.string.title_channels));
 
 		getListView().setOnCreateContextMenuListener(this);
@@ -74,7 +74,7 @@ public class ChannelsActivity extends PodcastBaseActivity {
 		intent.setData(SubscriptionColumns.URI);
 
 		mPrevIntent = new Intent(this, SearchActivity.class);
-		mNextIntent = new Intent(this, AllItemActivity.class);	
+		mNextIntent = new Intent(this, EpisodesActivity.class);	
 		
 		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_manage_button);
 

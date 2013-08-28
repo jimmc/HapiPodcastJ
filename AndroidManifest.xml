@@ -37,7 +37,7 @@
                 <!-- <category android:name="android.intent.category.LAUNCHER" />  -->
             </intent-filter>
         </activity>    
-        <activity android:name="info.xuluan.podcast.AllItemActivity"
+        <activity android:name="info.xuluan.podcast.EpisodesActivity"
                   android:label="@string/app_name">
         </activity>
         <activity android:name="info.xuluan.podcast.ItemActivity" android:label="@string/app_name">
@@ -77,7 +77,7 @@
         <activity android:name="info.xuluan.podcast.BackupChannelsActivity" android:label="@string/title_channels"></activity>
         <activity android:name="info.xuluan.podcast.Pref" android:label="Settings"></activity>		
         <activity android:name="info.xuluan.podcast.HomeActivity" android:label="@string/app_name"></activity>		
-        <activity android:name="info.xuluan.podcast.DownloadingActivity" android:label="Downloading"></activity>		
+        <activity android:name="info.xuluan.podcast.DownloadActivity" android:label="Downloading"></activity>		
         <activity android:name="info.xuluan.podcast.PlayListActivity" android:label="Playlist"></activity>				
         <service android:enabled="true" android:name="info.xuluan.podcast.service.PodcastService"></service>
         <service android:enabled="true" android:name="info.xuluan.podcast.service.PlayerService"></service>        

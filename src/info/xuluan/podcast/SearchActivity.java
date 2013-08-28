@@ -68,7 +68,7 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 	public void onCreate(Bundle savedInstanceState) {
 
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.addchannel);
+		setContentView(R.layout.search_activity);
 		setTitle(getResources().getString(R.string.title_channels));
 
 		mAdapter = new ArrayAdapter<String>(this,

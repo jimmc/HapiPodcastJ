@@ -21,7 +21,7 @@ public class StartupActivity extends HapiActivity {
 
 		super.onCreate(savedInstanceState);
 		log.debug("In StartupActivity");
-		setContentView(R.layout.startup);
+		setContentView(R.layout.startup_activity);
 
 	    r = new Runnable() { 
 	         public void run() { 

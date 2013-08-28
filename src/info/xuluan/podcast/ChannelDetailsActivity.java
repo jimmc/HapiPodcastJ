@@ -36,7 +36,7 @@ public class ChannelDetailsActivity extends HapiActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.channel_details);
+		setContentView(R.layout.channel_details_activity);
 
 		mChannel = getChannel();
 		if (mChannel==null){

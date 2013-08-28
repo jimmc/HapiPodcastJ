@@ -30,7 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class ItemActivity extends HapiActivity {
+public class EpisodeDetailsActivity extends HapiActivity {
 
 	private FeedItem mItem;
 	private Button play_btn;
@@ -86,7 +86,7 @@ public class ItemActivity extends HapiActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.read);
+		setContentView(R.layout.episode_details_activity);
 
 		loadPrefs();
 		mItem = getFeedItem();
@@ -133,13 +133,13 @@ public class ItemActivity extends HapiActivity {
 		
 		play_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				mItem.play(ItemActivity.this);
+				mItem.play(EpisodeDetailsActivity.this);
 			}
 		});
 		
 		download_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-				Toast.makeText(ItemActivity.this, getResources().getString(R.string.download_hint),
+				Toast.makeText(EpisodeDetailsActivity.this, getResources().getString(R.string.download_hint),
 						Toast.LENGTH_SHORT).show();
 				
 				ContentValues cv = new ContentValues();
@@ -181,7 +181,7 @@ public class ItemActivity extends HapiActivity {
 	}
 	
 	private void setStatusIcons() {
-		int icon = AllItemActivity.mapToIcon(mItem.status);
+		int icon = EpisodeIcons.mapToIcon(mItem.status);
 		ImageView iconView = (ImageView) findViewById(R.id.status_icon);
 		iconView.setImageResource(icon);
 		
@@ -211,7 +211,7 @@ public class ItemActivity extends HapiActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.item_activity, menu);
+        inflater.inflate(R.menu.episode_details_activity, menu);
         return true;
 	}
 	@Override
@@ -246,7 +246,7 @@ public class ItemActivity extends HapiActivity {
 			return true;
 		case R.id.add_to_playlist:
 			mItem.addtoPlaylist(getContentResolver());
-			Toast.makeText(ItemActivity.this,
+			Toast.makeText(EpisodeDetailsActivity.this,
 					getResources().getString(R.string.toast_added_to_playlist),
 					Toast.LENGTH_SHORT).show();
 			setStatusIcons();

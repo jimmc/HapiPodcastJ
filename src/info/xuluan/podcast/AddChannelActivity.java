@@ -35,7 +35,7 @@ public class AddChannelActivity extends HapiActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.add_a_channel);
+		setContentView(R.layout.add_channel_activity);
 		
 		mUrlText = (EditText) findViewById(R.id.urlText);		
 		resetUrlField();
@@ -60,7 +60,7 @@ public class AddChannelActivity extends HapiActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.menu.add_a_channel, menu);
+	    inflater.inflate(R.menu.add_channel_activity, menu);
 	    return true;
 	}
 

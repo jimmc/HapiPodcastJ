@@ -105,12 +105,7 @@ public class PlayerActivity  extends HapiListActivity
 	
 	static {
 		mIconMap = new HashMap<Integer, Integer>();
-		AllItemActivity.initFullIconMap(mIconMap);
-/*
-		mIconMap.put(ItemColumns.ITEM_STATUS_NO_PLAY, R.drawable.music);
-		mIconMap.put(ItemColumns.ITEM_STATUS_KEEP, R.drawable.music);
-		mIconMap.put(ItemColumns.ITEM_STATUS_PLAYED, R.drawable.music);		
-*/
+		EpisodeIcons.initFullIconMap(mIconMap);
 		}	
 	
 
@@ -379,7 +374,7 @@ public class PlayerActivity  extends HapiListActivity
     public void onCreate(Bundle icicle) {
         super.onCreate(icicle);
 		startService(new Intent(this, PlayerService.class));
-        setContentView(R.layout.audio_player);
+        setContentView(R.layout.player_activity);
 		setTitle(getResources().getString(R.string.title_episodes));
 		getListView().setOnCreateContextMenuListener(this);
         
@@ -439,7 +434,7 @@ public class PlayerActivity  extends HapiListActivity
 
 		mCursor = managedQuery(ItemColumns.URI, PROJECTION, where, null, order);
 
-		mAdapter = AllItemActivity.channelListItemCursorAdapter(this, mCursor);
+		mAdapter = EpisodeIcons.channelListItemCursorAdapter(this, mCursor);
 /*		mAdapter = new IconCursorAdapter(this, R.layout.channel_list_item, mCursor,
 				new String[] { ItemColumns.TITLE,ItemColumns.STATUS }, new int[] {
 						R.id.text1}, mIconMap);

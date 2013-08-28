@@ -28,7 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class DownloadingActivity extends PodcastBaseActivity {
+public class DownloadActivity extends PodcastBaseActivity {
 
 	private static final int MENU_RESTART = Menu.FIRST + 1;
 
@@ -41,7 +41,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	private static HashMap<Integer, Integer> mIconMap;
     static {
     	mIconMap = new HashMap<Integer, Integer>();
-    	AllItemActivity.initFullIconMap(mIconMap);
+    	EpisodeIcons.initFullIconMap(mIconMap);
     }
     private final Handler mHandler = new Handler() {
         @Override
@@ -103,14 +103,14 @@ public class DownloadingActivity extends PodcastBaseActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.download);
+		setContentView(R.layout.download_activity);
 		setTitle(getResources().getString(R.string.title_episodes));
 
 		getListView().setOnCreateContextMenuListener(this);
 
 		Intent intent = getIntent();
 		intent.setData(ItemColumns.URI);
-		mPrevIntent = new Intent(this, AllItemActivity.class);
+		mPrevIntent = new Intent(this, EpisodesActivity.class);
 		mNextIntent = new Intent(this, PlayListActivity.class);	
 		
 		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_download_button);
@@ -123,9 +123,9 @@ public class DownloadingActivity extends PodcastBaseActivity {
 		public void onClick(View v) {
 			FeedItem item = mServiceBinder.getDownloadingItem();
 			if (item==null)
-				Toast.makeText(DownloadingActivity.this, "No current download", Toast.LENGTH_SHORT).show();
+				Toast.makeText(DownloadActivity.this, "No current download", Toast.LENGTH_SHORT).show();
 			else {
-				//Toast.makeText(DownloadingActivity.this, "Touch!", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(DownloadActivity.this, "Touch!", Toast.LENGTH_SHORT).show();
 				showListItemMenu(item.id);
 			}
 		}
@@ -250,7 +250,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
     					feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE ||
     					feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOADING_NOW;
     			if (!okToRemove) {
-    				Toast.makeText(DownloadingActivity.this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
+    				Toast.makeText(DownloadActivity.this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
     				return;
     			} else {
     				if (feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOADING_NOW) {
@@ -285,7 +285,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
     			Boolean okToPause = feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE ||
     					feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOADING_NOW;
     			if (!okToPause) {
-    				Toast.makeText(DownloadingActivity.this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
+    				Toast.makeText(DownloadActivity.this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
     				return;
     			} else {
     				if (feed_item.status == ItemColumns.ITEM_STATUS_DOWNLOADING_NOW) {
@@ -306,7 +306,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
     			if (feed_item == null)
     				return;
     			if (feed_item.status != ItemColumns.ITEM_STATUS_DOWNLOAD_PAUSE) {
-    				Toast.makeText(DownloadingActivity.this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
+    				Toast.makeText(DownloadActivity.this, getResources().getString(R.string.fail), Toast.LENGTH_SHORT).show();
     				return ;
     			} else {
     				feed_item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
@@ -324,11 +324,11 @@ public class DownloadingActivity extends PodcastBaseActivity {
 
 
 	private void updateDownloadInfo(FeedItem item) {
-		TextView title = (TextView) DownloadingActivity.this
+		TextView title = (TextView) DownloadActivity.this
 				.findViewById(R.id.title);
-		TextView dl_status = (TextView) DownloadingActivity.this
+		TextView dl_status = (TextView) DownloadActivity.this
 				.findViewById(R.id.dl_status);
-		TextView dl_op = (TextView) DownloadingActivity.this
+		TextView dl_op = (TextView) DownloadActivity.this
 				.findViewById(R.id.dl_op);
 		ProgressBar progress = (ProgressBar) findViewById(R.id.progress);
 
@@ -377,7 +377,7 @@ public class DownloadingActivity extends PodcastBaseActivity {
 				new OffsetFieldHandler(),
 				new LengthFieldHandler(),
 				new IconCursorAdapter.IconFieldHandler(mIconMap),
-				new IconCursorAdapter.IconFieldHandler(AllItemActivity.mKeepIconMap)
+				new IconCursorAdapter.IconFieldHandler(EpisodeIcons.mKeepIconMap)
 				};
 		mAdapter = new IconCursorAdapter(this, R.layout.download_item, mCursor,
 				fromColNames, toColIds, fieldHandlers);
