@@ -30,7 +30,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-public class BackupChannelsActivity extends HapiActivity {
+public class BackupChannelsActivity extends HapiActivity implements PodcastTab, Flingable {
 
 	public static String OPML_FILE = "hapi_podcast.opml"; 
 	
@@ -65,6 +65,7 @@ public class BackupChannelsActivity extends HapiActivity {
 		});
 		
 		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_backup_button);
+        findViewById(R.id.topView).setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
 	}
 	
 	@Override
@@ -269,5 +270,12 @@ public class BackupChannelsActivity extends HapiActivity {
     	}
     	
     }
+    
+	//PodcastTab interface
+	public int iconResource() { return R.drawable.backup_big_pic; }
+	public int tabLabelResource(boolean isLandscape) { return R.string.channel_bar_button_backup; }
 
+	//Flingable interface
+	public Intent nextIntent() { return HomeActivity.nextIntent(this); }
+	public Intent prevIntent() { return HomeActivity.prevIntent(this); }
 }

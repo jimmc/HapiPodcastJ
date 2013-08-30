@@ -25,7 +25,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class ChannelActivity extends PodcastBaseActivity {
+public class ChannelActivity extends PodcastBaseActivity implements PodcastTab {
 
 	private static final int MENU_UNSUBSCRIBE = Menu.FIRST + 1;
 	private static final int MENU_SUSPEND = Menu.FIRST + 2;
@@ -85,9 +85,6 @@ public class ChannelActivity extends PodcastBaseActivity {
 		setTitle(mChannel.title);
 
 		getListView().setOnCreateContextMenuListener(this);
-		
-		mPrevIntent = null;
-		mNextIntent = null;
 		
 		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_channel_button);
 
@@ -344,4 +341,8 @@ public class ChannelActivity extends PodcastBaseActivity {
 		super.startInit();
 
 	}
+	
+	//PodcastTab interface
+	public int iconResource() { return R.drawable.episode_big_pic; }
+	public int tabLabelResource(boolean isLandscape) { return R.string.episode_bar_button_channel; }
 }

@@ -44,7 +44,7 @@ import info.xuluan.podcast.utils.Log;
 import info.xuluan.podcast.utils.StrUtils;
 
 
-public class PlayerActivity  extends HapiListActivity 
+public class PlayerActivity  extends HapiListActivity implements PodcastTab, Flingable
 {
 	protected  static PlayerService mServiceBinder = null;
 	protected final Log log = Log.getLog(getClass());
@@ -441,6 +441,7 @@ public class PlayerActivity  extends HapiListActivity
 */
 		setListAdapter(mAdapter);
 
+        getListView().setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
 	}   
 	
 	@Override
@@ -741,10 +742,6 @@ public class PlayerActivity  extends HapiListActivity
 			}
 		}.start();			
 		
-	
-
-	
-		
     }
     
     private void removeAll() {
@@ -796,4 +793,11 @@ public class PlayerActivity  extends HapiListActivity
 
 	}    
 
+	//PodcastTab interface
+	public int iconResource() { return R.drawable.player3_big_pic; }
+	public int tabLabelResource(boolean isLandscape) { return R.string.episode_bar_button_play; }
+
+	//Flingable interface
+	public Intent nextIntent() { return HomeActivity.nextIntent(this); }
+	public Intent prevIntent() { return HomeActivity.prevIntent(this); }
 }

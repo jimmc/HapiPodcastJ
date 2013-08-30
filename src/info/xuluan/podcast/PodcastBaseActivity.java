@@ -2,27 +2,16 @@ package info.xuluan.podcast;
 
 import info.xuluan.podcast.service.PodcastService;
 import info.xuluan.podcast.utils.Log;
-
-import android.app.ListActivity;
-import android.database.Cursor;
-import android.os.Bundle;
-import android.os.IBinder;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.GestureDetector.SimpleOnGestureListener;
+import android.database.Cursor;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.widget.SimpleCursorAdapter;
 
-public class PodcastBaseActivity extends HapiListActivity {
-
-    private static final int SWIPE_MIN_DISTANCE = 120;
-    private static final int SWIPE_MAX_OFF_PATH = 250;
-	private static final int SWIPE_THRESHOLD_VELOCITY = 200;
-	
+public class PodcastBaseActivity extends HapiListActivity implements Flingable {
 	public static final int COLUMN_INDEX_TITLE = 1;
 	
 
@@ -35,38 +24,7 @@ public class PodcastBaseActivity extends HapiListActivity {
 	protected static ComponentName mService = null;
 	
 	protected boolean mInit = false;
-	protected Intent mPrevIntent = null;
 	
-	protected Intent mNextIntent = null;
-	
-	protected GestureDetector gestureDetector;
-	protected View.OnTouchListener gestureListener;	
-	
-    class MyGestureDetector extends SimpleOnGestureListener {
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        	//log.debug("onFling");
-            try {
-                if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
-                    return false;
-                // right to left swipe
-                if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                	if(mPrevIntent!=null)
-                		startActivity(mPrevIntent);
-                	finish();
-
-                }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
-                	if(mNextIntent!=null)
-                		startActivity(mNextIntent);
-                	finish();
-                }
-            } catch (Exception e) {
-                // nothing
-            }
-            return false;
-        }
-    }	
-
 	protected static ServiceConnection serviceConnection = new ServiceConnection() {
 		public void onServiceConnected(ComponentName className, IBinder service) {
 			mServiceBinder = ((PodcastService.PodcastBinder) service)
@@ -82,11 +40,7 @@ public class PodcastBaseActivity extends HapiListActivity {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-
 		super.onCreate(savedInstanceState);
-		
-	
-
 	}
 
 	@Override
@@ -142,18 +96,11 @@ public class PodcastBaseActivity extends HapiListActivity {
 
 		Intent bindIntent = new Intent(this, PodcastService.class);
 		bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-		
-		
-        gestureDetector = new GestureDetector(new MyGestureDetector());
-        gestureListener = new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                if (gestureDetector.onTouchEvent(event)) {
-                    return true;
-                }
-                return false;
-            }
-        };
-        
-        getListView().setOnTouchListener(gestureListener);	
+				
+        getListView().setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
 	}
+
+	//Flingable interface
+	public Intent nextIntent() { return HomeActivity.nextIntent(this); }
+	public Intent prevIntent() { return HomeActivity.prevIntent(this); }
 }

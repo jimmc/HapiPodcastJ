@@ -27,7 +27,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
-public class ChannelsActivity extends PodcastBaseActivity {
+public class ChannelsActivity extends PodcastBaseActivity implements PodcastTab {
 	//private final int MENU_ADD = Menu.FIRST + 2;
 
 	
@@ -73,9 +73,6 @@ public class ChannelsActivity extends PodcastBaseActivity {
 		Intent intent = getIntent();
 		intent.setData(SubscriptionColumns.URI);
 
-		mPrevIntent = new Intent(this, SearchActivity.class);
-		mNextIntent = new Intent(this, EpisodesActivity.class);	
-		
 		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_manage_button);
 
 		startInit();
@@ -257,4 +254,13 @@ public class ChannelsActivity extends PodcastBaseActivity {
 
 		super.startInit();
 	}
+	
+	//PodcastTab interface
+	public int iconResource() { return R.drawable.channel_big_pic; }
+	public int tabLabelResource(boolean isLandscape) { 
+		if (isLandscape)
+			return R.string.channel_bar_button_manage_l;
+		else
+			return R.string.channel_bar_button_manage;
+		}
 }

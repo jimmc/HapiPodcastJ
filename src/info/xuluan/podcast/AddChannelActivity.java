@@ -26,7 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class AddChannelActivity extends HapiActivity {
+public class AddChannelActivity extends HapiActivity implements PodcastTab, Flingable {
 
 	private EditText mUrlText;
 	private ProgressDialog progress = null;
@@ -54,7 +54,8 @@ public class AddChannelActivity extends HapiActivity {
 			}
 		});
 		
-		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_add_button);		
+		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_add_button);
+        findViewById(R.id.topView).setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
 	}
 
 	@Override
@@ -79,7 +80,7 @@ public class AddChannelActivity extends HapiActivity {
 */		}
 		return super.onOptionsItemSelected(item);
 	}
-	
+
 	private void resetUrlField() {
 		mUrlText.setText("http://");
 	}
@@ -178,4 +179,11 @@ public class AddChannelActivity extends HapiActivity {
 				"pref_max_new_items", "10"));
 	}    	
 
+	//PodcastTab interface
+	public int iconResource() { return R.drawable.channel_add_big_pic; }
+	public int tabLabelResource(boolean isLandscape) { return R.string.channel_bar_button_add; }
+
+	//Flingable interface
+	public Intent nextIntent() { return HomeActivity.nextIntent(this); }
+	public Intent prevIntent() { return HomeActivity.prevIntent(this); }
 }

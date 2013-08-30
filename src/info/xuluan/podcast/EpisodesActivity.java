@@ -26,7 +26,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class EpisodesActivity extends PodcastBaseActivity {
+public class EpisodesActivity extends PodcastBaseActivity implements PodcastTab {
 
 	private static final int MENU_REFRESH = Menu.FIRST + 1;
 	private static final int MENU_SORT = Menu.FIRST + 2;
@@ -73,9 +73,6 @@ public class EpisodesActivity extends PodcastBaseActivity {
 		getListView().setOnCreateContextMenuListener(this);
 		Intent intent = getIntent();
 		intent.setData(ItemColumns.URI);
-		
-		mPrevIntent = new Intent(this, ChannelsActivity.class);
-		mNextIntent = new Intent(this, DownloadActivity.class);
 		
 		getPref();
 
@@ -340,4 +337,8 @@ public class EpisodesActivity extends PodcastBaseActivity {
 		pref_where = pref.getLong("pref_where", 0);
 		pref_select = pref.getLong("pref_select", 0);
 	}
+	
+	//PodcastTab interface
+	public int iconResource() { return R.drawable.playlist_big_pic; }
+	public int tabLabelResource(boolean isLandscape) { return R.string.episode_bar_button_library; }
 }

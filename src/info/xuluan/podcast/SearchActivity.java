@@ -52,7 +52,7 @@ import info.xuluan.podcast.parser.SearchItem;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.utils.Log;
 
-public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
+public class SearchActivity extends PodcastBaseActivity implements TextWatcher, PodcastTab {
 
 	private final Log log = Log.getLog(getClass());
 	private ProgressDialog progress = null;
@@ -78,9 +78,6 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 		getListView().setOnCreateContextMenuListener(this);
 		mEditText = (EditText) findViewById(R.id.keywords);
 		mEditText.addTextChangedListener(this);
-		
-		//mPrevIntent = new Intent(this, NoActivity.class);	//TODO
-		mNextIntent = new Intent(this, ChannelsActivity.class);
 		
 		startInit();
 		Button next = (Button) findViewById(R.id.ButtonNext);
@@ -339,4 +336,7 @@ public class SearchActivity extends PodcastBaseActivity implements TextWatcher {
 
 	}
 
+	//PodcastTab interface
+	public int iconResource() { return R.drawable.search_big_pic; }
+	public int tabLabelResource(boolean isLandscape) { return R.string.channel_bar_button_search; }
 }

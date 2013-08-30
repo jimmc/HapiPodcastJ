@@ -28,7 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class DownloadActivity extends PodcastBaseActivity {
+public class DownloadActivity extends PodcastBaseActivity implements PodcastTab {
 
 	private static final int MENU_RESTART = Menu.FIRST + 1;
 
@@ -110,8 +110,6 @@ public class DownloadActivity extends PodcastBaseActivity {
 
 		Intent intent = getIntent();
 		intent.setData(ItemColumns.URI);
-		mPrevIntent = new Intent(this, EpisodesActivity.class);
-		//mNextIntent = new Intent(this, NoActivity.class);	//TODO
 		
 		TabsHelper.setEpisodeTabClickListeners(this, R.id.episode_bar_download_button);
 		findViewById(R.id.dl_group).setOnClickListener(new CurrentClickListener());
@@ -386,4 +384,8 @@ public class DownloadActivity extends PodcastBaseActivity {
 
 		super.startInit();
 	}
+	
+	//PodcastTab interface
+	public int iconResource() { return R.drawable.download_big_pic; }
+	public int tabLabelResource(boolean isLandscape) { return R.string.episode_bar_button_download; }
 }

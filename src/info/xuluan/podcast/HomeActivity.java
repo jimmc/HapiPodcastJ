@@ -32,6 +32,15 @@ public class HomeActivity extends HapiActivity {
 	private static final int MENU_SETTINGS = Menu.FIRST + 1;
 	private static final int MENU_DEBUG = Menu.FIRST + 2;
 
+	private static Class[] channelActivities = {
+			SearchActivity.class, AddChannelActivity.class,
+			ChannelsActivity.class, BackupChannelsActivity.class
+	};
+	private static Class[] episodeActivities = {
+			EpisodesActivity.class, DownloadActivity.class,
+			ChannelActivity.class, PlayerActivity.class
+	};
+	
 	public static boolean isShowDebugMenu() {
 		return showDebugMenu;
 	}
@@ -40,6 +49,30 @@ public class HomeActivity extends HapiActivity {
 	}
 	public static void toggleShowDebugMenu() {
 		setShowDebugMenu(!showDebugMenu);
+	}
+
+	public static Intent nextIntent(Activity sender) {
+		return adjacentIntent(sender,1); }
+	public static Intent prevIntent(Activity sender) {
+		return adjacentIntent(sender,-1); }
+	public static Intent adjacentIntent(Activity sender, int delta) {
+		Intent intent = adjacentIntent(sender, delta, channelActivities);
+		if (intent==null)
+			intent = adjacentIntent(sender, delta, episodeActivities);
+		return intent;
+	}
+	public static Intent adjacentIntent(Activity sender, int delta, Class[] activities) {
+		for (int i=0; i<activities.length; i++) {
+			if (sender.getClass()==activities[i]) {
+				i += delta;
+				if (i<0)
+					i += activities.length;
+				else if (i>=activities.length)
+					i -= activities.length;
+				return new Intent(sender,activities[i]);
+			}
+		}
+		return null;
 	}
 	
 	@Override
@@ -60,29 +93,23 @@ public class HomeActivity extends HapiActivity {
 
 		LabeledFrameHelper cfh = new LabeledFrameHelper(this,"Channels",orientation);
 		ll.addView(cfh.frame());
-		cfh.addIntentButton(R.drawable.search_big_pic,
-				R.string.channel_bar_button_search, SearchActivity.class);
-		cfh.addIntentButton(R.drawable.channel_add_big_pic,
-				R.string.channel_bar_button_add, AddChannelActivity.class);
-		cfh.addIntentButton(R.drawable.channel_big_pic,
-				R.string.channel_bar_button_manage,
-				R.string.channel_bar_button_manage_l,
-				ChannelsActivity.class);
-		cfh.addIntentButton(R.drawable.backup_big_pic,
-				R.string.channel_bar_button_backup, BackupChannelsActivity.class);
+		for (Class clz : channelActivities) {
+			try {
+				PodcastTab tab = (PodcastTab)(clz.newInstance());
+				cfh.addIntentButton(tab.iconResource(), tab.tabLabelResource(isLandscape), clz);
+			} catch (Exception ex) {}
+		}
 		if (isLandscape)
 			cfh.frame().setLayoutParams(layoutParams);
 
 		LabeledFrameHelper efh = new LabeledFrameHelper(this,"Episodes",orientation);
 		ll.addView(efh.frame());
-		efh.addIntentButton(R.drawable.playlist_big_pic,
-				R.string.episode_bar_button_library, EpisodesActivity.class);
-		efh.addIntentButton(R.drawable.download_big_pic,
-				R.string.episode_bar_button_download, DownloadActivity.class);
-		efh.addIntentButton(R.drawable.episode_big_pic,
-				R.string.episode_bar_button_channel, ChannelActivity.class);
-		efh.addIntentButton(R.drawable.player3_big_pic,
-				R.string.episode_bar_button_play, PlayerActivity.class);
+		for (Class clz : episodeActivities) {
+			try {
+				PodcastTab tab = (PodcastTab)(clz.newInstance());
+				efh.addIntentButton(tab.iconResource(), tab.tabLabelResource(isLandscape), clz);
+			} catch (Exception ex) {}
+		}
 		if (isLandscape)
 			efh.frame().setLayoutParams(layoutParams);
 	}
