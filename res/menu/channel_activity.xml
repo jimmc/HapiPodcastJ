@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/unsubscribe"
+          android:icon="@android:drawable/ic_menu_close_clear_cancel"
+          android:title="@string/unsubscribe"
+          />
+    <item android:id="@+id/suspend"
+          android:icon="@android:drawable/ic_menu_revert"
+          android:title="@string/menu_suspend"
+          />
+    <item android:id="@+id/auto_download"
+          android:icon="@android:drawable/ic_menu_set_as"
+          android:title="@string/auto_download"
+          />
+</menu>

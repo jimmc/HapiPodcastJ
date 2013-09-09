@@ -21,16 +21,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class EpisodesActivity extends PodcastBaseActivity implements PodcastTab {
-
-	private static final int MENU_REFRESH = Menu.FIRST + 1;
-	private static final int MENU_SORT = Menu.FIRST + 2;
-	private static final int MENU_SELECT = Menu.FIRST + 3;
 
 	private static final int MENU_ITEM_VIEW_CHANNEL = Menu.FIRST + 8;
 	private static final int MENU_ITEM_DETAILS = Menu.FIRST + 9;
@@ -84,16 +81,9 @@ public class EpisodesActivity extends PodcastBaseActivity implements PodcastTab 
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, MENU_REFRESH, 0,
-				getResources().getString(R.string.menu_update)).setIcon(
-				android.R.drawable.ic_menu_rotate);
-		menu.add(0, MENU_SORT, 1,
-				getResources().getString(R.string.menu_sort)).setIcon(
-				android.R.drawable.ic_menu_agenda);	
-		menu.add(0, MENU_SELECT, 2,
-				getResources().getString(R.string.menu_select)).setIcon(
-				android.R.drawable.ic_menu_today);			
-		return true;
+	    MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.episodes_activity, menu);
+        return true;
 	}
 
 	/*
@@ -115,10 +105,10 @@ public class EpisodesActivity extends PodcastBaseActivity implements PodcastTab 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case MENU_REFRESH:
+		case R.id.refresh:
 			mServiceBinder.start_update();
 			return true;
-		case MENU_SORT:
+		case R.id.sort:
 			 new AlertDialog.Builder(this)
              .setTitle("Chose Sort Mode")
              .setSingleChoiceItems(R.array.sort_select, (int) pref_order, new DialogInterface.OnClickListener() {
@@ -142,7 +132,7 @@ public class EpisodesActivity extends PodcastBaseActivity implements PodcastTab 
              })
             .show();
 			return true;
-		case MENU_SELECT:
+		case R.id.select:
 			 new AlertDialog.Builder(this)
             .setTitle("Chose Select Mode")
             .setSingleChoiceItems(R.array.select_select, (int) pref_select, new DialogInterface.OnClickListener() {
@@ -165,21 +155,6 @@ public class EpisodesActivity extends PodcastBaseActivity implements PodcastTab 
             })
            .show();
 			return true;
-		/*
-		case MENU_DISPLAY:
- 			if(mCursor!=null)
- 				mCursor.close();
- 			pref_where = 1- pref_where;
-
- 			SharedPreferences prefsPrivate = getSharedPreferences(Pref.HAPI_PREFS_FILE_NAME, Context.MODE_PRIVATE);
-			Editor prefsPrivateEditor = prefsPrivate.edit();
-			prefsPrivateEditor.putLong("pref_where", pref_where);
-			prefsPrivateEditor.commit();
-			
- 			mCursor = managedQuery(ItemColumns.URI, PROJECTION,getWhere(), null, getOrder());
- 			mAdapter.changeCursor(mCursor);
- 			return true;
-		*/		
 		}
 		return super.onOptionsItemSelected(item);
 	}

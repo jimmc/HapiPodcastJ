@@ -1,11 +1,19 @@
 package info.xuluan.podcast;
 
+import info.xuluan.podcast.provider.FeedItem;
+import info.xuluan.podcast.provider.ItemColumns;
+import info.xuluan.podcast.provider.Subscription;
+import info.xuluan.podcast.provider.SubscriptionColumns;
+import info.xuluan.podcast.service.PlayerService;
+import info.xuluan.podcast.utils.DialogMenu;
+import info.xuluan.podcast.utils.Log;
+import info.xuluan.podcast.utils.StrUtils;
 import info.xuluan.podcastj.R;
+
 import java.text.DecimalFormat;
 import java.util.HashMap;
 
 import android.app.AlertDialog;
-import android.app.ListActivity;
 import android.app.Service;
 import android.content.ComponentName;
 import android.content.ContentUris;
@@ -23,25 +31,16 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.SystemClock;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
+import android.widget.SeekBar.OnSeekBarChangeListener;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.SeekBar.OnSeekBarChangeListener;
-import info.xuluan.podcast.provider.FeedItem;
-import info.xuluan.podcast.provider.ItemColumns;
-import info.xuluan.podcast.provider.Subscription;
-import info.xuluan.podcast.provider.SubscriptionColumns;
-import info.xuluan.podcast.service.PlayerService;
-import info.xuluan.podcast.service.PodcastService;
-import info.xuluan.podcast.utils.DialogMenu;
-import info.xuluan.podcast.utils.IconCursorAdapter;
-import info.xuluan.podcast.utils.Log;
-import info.xuluan.podcast.utils.StrUtils;
 
 
 public class PlayerActivity  extends HapiListActivity implements PodcastTab, Flingable
@@ -50,21 +49,11 @@ public class PlayerActivity  extends HapiListActivity implements PodcastTab, Fli
 	protected final Log log = Log.getLog(getClass());
 	protected static ComponentName mService = null;
 	
-	private static final int MENU_OPEN_AUDIO = Menu.FIRST + 1;
-	private static final int MENU_REPEAT = Menu.FIRST + 2;
-	private static final int MENU_LOAD_ALL = Menu.FIRST + 3;
-	private static final int MENU_LOAD_BY_CHANNEL = Menu.FIRST + 4;	
-	private static final int MENU_REMOVE_ALL = Menu.FIRST + 5;
-	
 	private static final int MENU_PLAY = Menu.FIRST + 6;
 	private static final int MENU_DETAILS = Menu.FIRST + 7;	
 	private static final int MENU_REMOVE = Menu.FIRST + 8;	
-
 	private static final int MENU_MOVE_UP = Menu.FIRST + 9;	
 	private static final int MENU_MOVE_DOWN = Menu.FIRST + 10;	
-	
-	private static final int STATE_MAIN = 0;
-	private static final int STATE_VIEW = 1;
 	
 	private long rwnd_interval = 7*1000;
 	private long ffwd_interval = 30*1000;
@@ -487,19 +476,8 @@ public class PlayerActivity  extends HapiListActivity implements PodcastTab, Fli
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, MENU_REPEAT, 0,
-				getResources().getString(R.string.menu_repeat)).setIcon(
-				android.R.drawable.ic_menu_rotate);
-		menu.add(0, MENU_LOAD_ALL, 1,
-				getResources().getString(R.string.menu_load_all)).setIcon(
-				android.R.drawable.ic_menu_agenda);		
-		menu.add(0, MENU_LOAD_BY_CHANNEL, 2,
-				getResources().getString(R.string.menu_load_by_channel)).setIcon(
-				R.drawable.ic_menu_mark);		
-		menu.add(0, MENU_REMOVE_ALL, 3,
-				getResources().getString(R.string.menu_remove_all)).setIcon(
-				R.drawable.ic_menu_clear_playlist);			
-	
+	    MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.player_activity, menu);
 		return true;
 	}
 	
@@ -507,7 +485,7 @@ public class PlayerActivity  extends HapiListActivity implements PodcastTab, Fli
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 
-		case MENU_REPEAT:
+		case R.id.repeat:
 			getPref();
 			 new AlertDialog.Builder(this)
              .setTitle("Chose Repeat Mode")
@@ -525,13 +503,13 @@ public class PlayerActivity  extends HapiListActivity implements PodcastTab, Fli
              })
             .show();
 			return true;
-		case MENU_LOAD_ALL:
+		case R.id.load_all:
 			loadItem(null);
  			return true;	
-		case MENU_REMOVE_ALL:
+		case R.id.remove_all:
 			removeAll() ;
  			return true;	 
-		case MENU_LOAD_BY_CHANNEL:
+		case R.id.load_by_channel:
 			 loadChannel();
 
  			return true; 			

@@ -20,17 +20,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
 public class ChannelActivity extends PodcastBaseActivity implements PodcastTab {
-
-	private static final int MENU_UNSUBSCRIBE = Menu.FIRST + 1;
-	private static final int MENU_SUSPEND = Menu.FIRST + 2;
-	private static final int MENU_AUTO_DOWNLOAD = Menu.FIRST + 3;
-
 	
 	private static final int MENU_ITEM_DETAILS = Menu.FIRST + 9;
 	private static final int MENU_ITEM_START_DOWNLOAD = Menu.FIRST + 10;
@@ -129,25 +125,16 @@ public class ChannelActivity extends PodcastBaseActivity implements PodcastTab {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, MENU_UNSUBSCRIBE, 0,
-				getResources().getString(R.string.unsubscribe)).setIcon(
-				android.R.drawable.ic_menu_close_clear_cancel);
-		
-		menu.add(0, MENU_SUSPEND, 0, "Suspend").setIcon(
-				android.R.drawable.ic_menu_revert);
-		
-		menu.add(0, MENU_AUTO_DOWNLOAD, 0,"Auto Download").setIcon(
-				android.R.drawable.ic_menu_set_as);
-		
-	
-		return true;
+	    MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.channel_activity, menu);
+        return true;
 	}
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         super.onPrepareOptionsMenu(menu);
         
-        MenuItem item = menu.findItem(MENU_AUTO_DOWNLOAD);
+        MenuItem item = menu.findItem(R.id.auto_download);
 		String auto;
 		if(mChannel.auto_download==0){
 			auto = getResources().getString(R.string.menu_auto_download);
@@ -156,7 +143,7 @@ public class ChannelActivity extends PodcastBaseActivity implements PodcastTab {
 		}        
         item.setTitle(auto);
         
-        MenuItem suspendItem = menu.findItem(MENU_SUSPEND);
+        MenuItem suspendItem = menu.findItem(R.id.suspend);
 		String susp;
 		if(mChannel.suspended==0){
 			susp = getResources().getString(R.string.menu_suspend);
@@ -171,9 +158,9 @@ public class ChannelActivity extends PodcastBaseActivity implements PodcastTab {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-		case MENU_UNSUBSCRIBE:
+		case R.id.unsubscribe:
 		
-		new AlertDialog.Builder(ChannelActivity.this)
+			new AlertDialog.Builder(ChannelActivity.this)
                 .setTitle(R.string.unsubscribe_channel)
                 .setPositiveButton(R.string.menu_ok, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
@@ -189,12 +176,12 @@ public class ChannelActivity extends PodcastBaseActivity implements PodcastTab {
                 .show();
 			return true;
 			
-		case MENU_AUTO_DOWNLOAD:
+		case R.id.auto_download:
 			mChannel.auto_download = 1-mChannel.auto_download;
 			mChannel.update(getContentResolver());	
 			return true;			
 
-		case MENU_SUSPEND:
+		case R.id.suspend:
 			mChannel.suspended = 1 - mChannel.suspended;
 			if(mChannel.suspended==1){
 				Toast.makeText(ChannelActivity.this, R.string.suspend_hint,
@@ -205,7 +192,8 @@ public class ChannelActivity extends PodcastBaseActivity implements PodcastTab {
 				
 			}
 			mChannel.update(getContentResolver());	
-
+			return true;
+			
 		}
 		return super.onOptionsItemSelected(item);
 	}

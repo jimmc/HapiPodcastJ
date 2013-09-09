@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item android:id="@+id/repeat"
+          android:icon="@android:drawable/ic_menu_rotate"
+          android:title="@string/menu_repeat"
+          />
+    <item android:id="@+id/load_all"
+          android:icon="@android:drawable/ic_menu_agenda"
+          android:title="@string/menu_load_all"
+          />
+    <item android:id="@+id/load_by_channel"
+          android:icon="@drawable/ic_menu_mark"
+          android:title="@string/menu_load_by_channel"
+          />
+    <item android:id="@+id/remove_all"
+          android:icon="@drawable/ic_menu_clear_playlist"
+          android:title="@string/menu_remove_all"
+          />
+</menu>
