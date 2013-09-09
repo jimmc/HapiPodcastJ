@@ -194,6 +194,10 @@ public class ChannelActivity extends PodcastBaseActivity implements PodcastTab {
 			mChannel.update(getContentResolver());	
 			return true;
 			
+		case R.id.details:
+			Subscription.view(this, mChannel.id);
+			return true;
+			
 		}
 		return super.onOptionsItemSelected(item);
 	}
