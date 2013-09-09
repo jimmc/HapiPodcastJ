@@ -65,7 +65,8 @@ public class BackupChannelsActivity extends HapiActivity implements PodcastTab, 
 		});
 		
 		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_backup_button);
-        findViewById(R.id.topView).setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
+		if (PodcastBaseActivity.ENABLE_FLING_TABS)
+        	findViewById(R.id.topView).setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
 	}
 	
 	@Override

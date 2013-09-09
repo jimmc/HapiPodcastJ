@@ -12,8 +12,9 @@ import android.os.IBinder;
 import android.widget.SimpleCursorAdapter;
 
 public class PodcastBaseActivity extends HapiListActivity implements Flingable {
+	public static final boolean ENABLE_FLING_TABS = false;
+
 	public static final int COLUMN_INDEX_TITLE = 1;
-	
 
 	protected  static PodcastService mServiceBinder = null;
 	protected final Log log = Log.getLog(getClass());
@@ -96,8 +97,9 @@ public class PodcastBaseActivity extends HapiListActivity implements Flingable {
 
 		Intent bindIntent = new Intent(this, PodcastService.class);
 		bindService(bindIntent, serviceConnection, Context.BIND_AUTO_CREATE);
-				
-        getListView().setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
+		
+		if (ENABLE_FLING_TABS)
+			getListView().setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
 	}
 
 	//Flingable interface

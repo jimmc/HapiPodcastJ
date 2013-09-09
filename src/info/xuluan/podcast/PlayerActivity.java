@@ -430,7 +430,8 @@ public class PlayerActivity  extends HapiListActivity implements PodcastTab, Fli
 */
 		setListAdapter(mAdapter);
 
-        getListView().setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
+        if (PodcastBaseActivity.ENABLE_FLING_TABS)
+        	getListView().setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
 	}   
 	
 	@Override

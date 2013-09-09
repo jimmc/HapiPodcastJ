@@ -55,7 +55,8 @@ public class AddChannelActivity extends HapiActivity implements PodcastTab, Flin
 		});
 		
 		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_add_button);
-        findViewById(R.id.topView).setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
+		if (PodcastBaseActivity.ENABLE_FLING_TABS)
+        	findViewById(R.id.topView).setOnTouchListener((new FlingGestureDetector(this).createOnTouchListener()));	
 	}
 
 	@Override
