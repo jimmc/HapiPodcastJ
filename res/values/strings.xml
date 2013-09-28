@@ -12,9 +12,11 @@
 	<string name="title_search_channel">Search Channel</string>	
 	<string name="title_backup">Backup Channels</string>	
 
+	<string name="button_import">Import</string>
+    <string name="button_export">Export</string>	
 	<string name="button_opml_import">Import from OPML</string>
     <string name="button_opml_export">Export to OPML</string>	
-
+    
     <string name="channel">Channel</string>
     <string name="channel_bar_button_add">Add</string>
     <string name="channel_bar_button_backup">Backup</string>

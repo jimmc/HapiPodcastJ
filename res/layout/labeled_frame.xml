@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LabeledFrameTop"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/framed_border"
+    >
+
+    <LinearLayout
+        android:id="@+id/LabeledFrameMid"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/borderText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Border Label"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:layout_marginBottom="0pt"
+            android:background="@drawable/black"
+            android:paddingLeft="3pt"
+            android:paddingRight="3pt"/>
+
+        <FrameLayout
+            android:id="@+id/LabeledFrameContainer"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+        
+    </LinearLayout>
+
+</FrameLayout>

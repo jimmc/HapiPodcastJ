@@ -1,3 +1,12 @@
+Hapi Podcast J  v1.2.1.104+
+
+Enhancements
+
+* The Channel Episodes activity now includes a menu command to go to the
+  Channel Details activity.
+
+----------
+
 Hapi Podcast J  v1.2.1.104  2013-03-30
 
 Enhancements
@@ -20,7 +29,7 @@ Enhancements
 * Download:
   + Tapping on the currently downloading episode now brings up the same
     menu as the items in the downloading queue, allowing you to cancel,
-    pause or get details about the episode being dowloaded.
+    pause or get details about the episode being downloaded.
 * Settings:
   + Current values are displayed in the Settings screen.
   + Items have been rearranged and placed into groups.

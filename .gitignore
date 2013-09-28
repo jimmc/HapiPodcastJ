@@ -1,3 +1,6 @@
+Arch
 bin
 gen
+private
 project.properties
+.DS_Store
