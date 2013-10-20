@@ -175,6 +175,7 @@
 	
     <string-array name="debug_commands">
         <item>DB downgrade(13)</item>
+        <item>Toggle Debug Logging</item>
     </string-array>    
     	
 </resources>

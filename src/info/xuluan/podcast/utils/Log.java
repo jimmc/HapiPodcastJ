@@ -10,6 +10,7 @@ public class Log {
 	public final static int  ERROR = 4;
 	
 	public final static int  DEFAULT_LEVEL = 3;
+	private static int initialLevel = DEFAULT_LEVEL;
 	
 	private final String clazz;
 	
@@ -25,10 +26,17 @@ public class Log {
 	public static Log getLog(Class<?> clazz) {
 		return new Log(clazz);
 	}
+	
+	public static void setInitialLevel(int level) {
+		initialLevel = level;
+	}
+	public static int initialLevel() {
+		return initialLevel;
+	}
 
 	public Log(Class<?> clazz) {
 		this.clazz = "[" + clazz.getSimpleName() + "] ";
-		level = DEFAULT_LEVEL;
+		level = initialLevel;
 	}
 	
 	public void verbose(String message) {

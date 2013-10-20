@@ -1,7 +1,7 @@
 package info.xuluan.podcast;
 
-import info.xuluan.podcast.provider.ItemColumns;
 import info.xuluan.podcast.provider.PodcastOpenHelper;
+import info.xuluan.podcast.utils.Log;
 import info.xuluan.podcastj.R;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,9 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
@@ -134,6 +132,11 @@ public class HomeActivity extends HapiActivity {
 				dbDowngrade(13);
 		    	Toast.makeText(HomeActivity.this, "DB downgraded to version 13", Toast.LENGTH_SHORT).show();
 		    	break;
+			case 1:	//Toggle Debug Logging
+				toggleDebugLogging();
+				Toast.makeText(HomeActivity.this,
+						"Initial Log Level is now "+Log.initialLevel(), Toast.LENGTH_SHORT).show();
+				break;
 			default:
 		    	Toast.makeText(HomeActivity.this, "Selected: "+select, Toast.LENGTH_SHORT).show();
 		    	break;
@@ -171,6 +174,10 @@ public class HomeActivity extends HapiActivity {
 		PodcastOpenHelper mHelper = new PodcastOpenHelper(this,version);
 		/*SQLiteDatabase db =*/ mHelper.getWritableDatabase();
 		//by this point, we should have already called the downgrade method in PodcastOpenHelper
+    }
+    
+    private void toggleDebugLogging() {
+    	Log.setInitialLevel(Log.initialLevel()==Log.DEFAULT_LEVEL?Log.DEBUG:Log.DEFAULT_LEVEL);
     }
 }
 
