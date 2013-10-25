@@ -1,12 +1,16 @@
 package info.xuluan.podcast;
 
-import info.xuluan.podcastj.R;
 import info.xuluan.podcast.provider.Subscription;
 import info.xuluan.podcast.provider.SubscriptionColumns;
 import info.xuluan.podcast.utils.Log;
+import info.xuluan.podcastj.R;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,6 +22,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class ChannelDetailsActivity extends HapiActivity {
@@ -43,6 +49,8 @@ public class ChannelDetailsActivity extends HapiActivity {
 			finish();
 			return;
 		}
+		Map<Integer,Integer> countsByStatusMap = mChannel.getEpisodeCounts(this);
+		log.debug("Episode counts by status: "+countsByStatusMap);
 		
 		// set title:
 		setTitle(mChannel.title);
@@ -61,6 +69,33 @@ public class ChannelDetailsActivity extends HapiActivity {
 		setViewContent(R.id.auto_download_view,
 				"auto download:"+(mChannel.auto_download!=0?"yes":"no"));
 
+		int episodeTotalCount = 0;
+		ArrayList<Map<String,String>> countsAdapterList = new ArrayList<Map<String,String>>();
+		int numberOfCounts = countsByStatusMap.size();
+		Integer[] statusKeys = countsByStatusMap.keySet().toArray(new Integer[numberOfCounts]);
+		Arrays.sort(statusKeys);
+		for (Integer status : statusKeys) {
+			final Integer count = countsByStatusMap.get(status);
+			final int icon = EpisodeIcons.mapToIcon(status);
+			countsAdapterList.add(new HashMap<String,String>() {{
+				put("statusIcon",Integer.toString(icon));
+				put("count",Integer.toString(count));
+			}});
+			episodeTotalCount += count;
+		}
+
+		String[] countsAdapterFrom = { "statusIcon", "count" };
+		int[] countsAdapterTo = { R.id.icon, R.id.text1 };
+		SimpleAdapter countsAdapter = new SimpleAdapter(this, countsAdapterList,
+				R.layout.count_item, countsAdapterFrom, countsAdapterTo);
+		LinearLayout countsByStatusList = (LinearLayout)findViewById(R.id.countsByStatus);
+		for (int ii=0; ii<countsAdapterList.size(); ii++) {
+			View listItem = countsAdapter.getView(ii,null,countsByStatusList);
+			countsByStatusList.addView(listItem);
+		}
+
+		String episodeComment = "Number of episodes: "+episodeTotalCount;
+		setViewContent(R.id.comment, episodeComment);
 		episodes_btn = (Button) findViewById(R.id.ButtonEpisodes);			
 		episodes_btn.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {

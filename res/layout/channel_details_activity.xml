@@ -134,6 +134,20 @@
 		        android:paddingLeft="6dip"
 		        android:paddingRight="6dip"
 		        android:textSize="18sp" />
+
+	    	<HorizontalScrollView 
+				android:id="@+id/countscrollview" 
+				android:layout_width="wrap_content" 
+				android:layout_height="wrap_content">
+		    		    
+			    <LinearLayout
+			        android:orientation="horizontal"
+			        android:id="@+id/countsByStatus"
+			        android:layout_width="wrap_content"
+			        android:layout_height="wrap_content"
+			        />
+		    </HorizontalScrollView>
+	        
 		</LinearLayout>
 	</ScrollView>
 

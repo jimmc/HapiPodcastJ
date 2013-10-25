@@ -10,14 +10,18 @@ import android.provider.BaseColumns;
 
 public class ItemColumns implements BaseColumns {
 
+	//green
 	public static final int ITEM_STATUS_UNREAD = 0;
 	public static final int ITEM_STATUS_READ = 1;
 	public static final int ITEM_STATUS_MAX_READING_VIEW = 10;
+
+	//blue
 	public static final int ITEM_STATUS_DOWNLOAD_PAUSE = 15;
 	public static final int ITEM_STATUS_DOWNLOAD_QUEUE = 20;
 	public static final int ITEM_STATUS_DOWNLOADING_NOW = 21;
-
 	public static final int ITEM_STATUS_MAX_DOWNLOADING_VIEW = 30;
+
+	//orange
 	public static final int ITEM_STATUS_NO_PLAY = 50;
 	public static final int ITEM_STATUS_PLAY_READY = 51;
 	public static final int ITEM_STATUS_PLAYING_NOW = 52;
@@ -26,9 +30,12 @@ public class ItemColumns implements BaseColumns {
 	//KEEP status has been replaced by the KEEP database column starting in DB version 13,
 	//so is no longer used except for upgrading from version 12, which strings are all in this file.
 	private static final int ITEM_STATUS_KEEP = 63;
+	
+	//red
 	public static final int ITEM_STATUS_PLAYED = 66;
 	public static final int ITEM_STATUS_MAX_PLAYLIST_VIEW = 100;
-	
+
+	//red
 	public static final int ITEM_STATUS_MIN_DELETE = 190;
 	public static final int ITEM_STATUS_DELETE = 195;	
 	public static final int ITEM_STATUS_DELETED = 200;

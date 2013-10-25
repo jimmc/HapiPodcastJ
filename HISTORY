@@ -2,8 +2,12 @@ Hapi Podcast J  v1.2.1.104+
 
 Enhancements
 
-* The Channel Episodes activity now includes a menu command to go to the
-  Channel Details activity.
+* The Channel Episodes screen now includes a menu command to go to the
+  Channel Details screen.
+* The Channel Details screen now includes a count of the number of
+  episodes in that channel and breakdown counts by status.
+* For development purposes, a Toggle Debug Logging command has been
+  added to the hidden Debug menu.
 
 ----------
 

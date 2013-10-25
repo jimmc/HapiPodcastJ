@@ -1,12 +1,16 @@
 package info.xuluan.podcast.provider;
 
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 
 public class Subscription {
@@ -210,6 +214,30 @@ public class Subscription {
 		}
 	}
 
+	public Map<Integer,Integer> getEpisodeCounts(Context context) {
+		PodcastOpenHelper dbOpenHelper = new PodcastOpenHelper(context);
+		SQLiteDatabase db = dbOpenHelper.getReadableDatabase();
+		String table = ItemColumns.TABLE_NAME;
+		String where = ItemColumns.SUBS_ID + " = " + id;
+		String groupBy = ItemColumns.STATUS;
+		Cursor cursor = null;
+		Map<Integer,Integer> countByStatus = new HashMap<Integer,Integer>();
+		try {
+			String query = "select count (*),"+groupBy+" from "+table+
+					" where "+where+" group by "+groupBy;
+			cursor = db.rawQuery(query, null);
+			while (cursor.moveToNext()) {
+				int count = cursor.getInt(0);
+				int status = cursor.getInt(1);
+				countByStatus.put(status, count);
+			}
+		} finally {
+			if (cursor != null)
+				cursor.close();
+		}
+		return countByStatus;
+	}
+	
 	private static void fetchFromCursor(Subscription sub, Cursor cursor) {
 		//assert cursor.moveToFirst();
 		//cursor.moveToFirst();
