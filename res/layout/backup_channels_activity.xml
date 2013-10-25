@@ -83,37 +83,39 @@
 	        android:id="@+id/opmlLinearLayout"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:orientation="vertical" >
+	        android:orientation="horizontal" >
         
 		    <Button
-		        android:id="@+id/importButton"
-		        android:layout_width="match_parent"
+		        android:id="@+id/importOpmlButton"
+		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
-		        android:text="@string/button_opml_import" />
+		        android:layout_weight="1"
+		        android:text="@string/button_import" />
 		
 		    <Button
-		        android:id="@+id/exportButton"
-		        android:layout_width="match_parent"
+		        android:id="@+id/exportOpmlButton"
+		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
-		        android:text="@string/button_opml_export"/>
+		        android:layout_weight="1"
+		        android:text="@string/button_export"/>
 	    </LinearLayout>
 	</view>
-<!--	
+	
     <view
         class="info.xuluan.podcast.utils.LabeledFrame"
-        android:id="@+id/xmlFrame"
+        android:id="@+id/zipFrame"
         android:layout_width="match_parent"
-        android:layout_height="80dip"
+        android:layout_height="wrap_content"
         android:background="@drawable/black"
-        app:frameLabel="XML"
+        app:frameLabel="ZIP"
     >
         
  	   <Button
-	        android:id="@+id/exportXmlButton"
+	        android:id="@+id/importZipButton"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-    	    android:text="@string/button_export"
+    	    android:text="@string/button_import"
     	    />
     </view>
--->    
+   
 </LinearLayout>

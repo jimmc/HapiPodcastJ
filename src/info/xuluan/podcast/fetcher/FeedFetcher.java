@@ -226,7 +226,7 @@ public class FeedFetcher {
 			if (item.offset != 0) {
 				String sProperty = "bytes=" + item.offset + "-";
 				httpConnection.setRequestProperty("RANGE", sProperty);
-				System.out.println(sProperty);
+				log.debug(sProperty);
 				oSavedFile.seek(item.offset);
 			}
 

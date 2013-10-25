@@ -119,7 +119,7 @@ public class ChannelsActivity extends PodcastBaseActivity implements PodcastTab 
 				getResources().getString(R.string.menu_episodes));
 
 		String auto;
-		if(subs.auto_download==0){
+		if(subs.autoDownload==0){
 			auto = getResources().getString(R.string.menu_auto_download);
 		}else{
 			auto = getResources().getString(R.string.menu_manual_download);
@@ -216,8 +216,8 @@ public class ChannelsActivity extends PodcastBaseActivity implements PodcastTab 
     					subs_id);
     			if (subs == null)
     				return;			
-    			subs.auto_download = 1 - subs.auto_download;
-    			if(subs.auto_download==1){
+    			subs.autoDownload = 1 - subs.autoDownload;
+    			if(subs.autoDownload==1){
 					Toast.makeText(ChannelsActivity.this, R.string.auto_download_hint,
 							Toast.LENGTH_LONG).show();	    				
     			}else{

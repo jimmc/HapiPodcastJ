@@ -2,12 +2,20 @@ Hapi Podcast J  v1.2.1.104+
 
 Enhancements
 
-* The Channel Episodes screen now includes a menu command to go to the
-  Channel Details screen.
+* The Channel Episodes activity now includes a Details command in the menu.
 * The Channel Details screen now includes a count of the number of
   episodes in that channel and breakdown counts by status.
+* Import/export-zip capability has been added. This allows transferring
+  podcast episodes from one phone to another.
+  + The Channel Details and Episode Details screens now include menu commands
+    to export zip files.
+  + The Backup screen now includes a button to import those zip files.
 * For development purposes, a Toggle Debug Logging command has been
   added to the hidden Debug menu.
+
+Other Changes
+
+* The minimum supported Android version has been changed from 1.5 to 2.2.
 
 ----------
 

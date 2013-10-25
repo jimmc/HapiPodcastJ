@@ -42,9 +42,9 @@ public class SubsTest extends TestCase {
         assertTrue(subs.link==null);
         assertTrue(subs.comment=="");        
         assertTrue(subs.lastUpdated==-1);
-        assertTrue(subs.fail_count==-1);
+        assertTrue(subs.failCount==-1);
         assertTrue(subs.lastItemUpdated==-1);
-        assertTrue(subs.auto_download==-1);        
+        assertTrue(subs.autoDownload==-1);        
     }
 
     public void testSubsNew2() throws Exception {
@@ -58,8 +58,8 @@ public class SubsTest extends TestCase {
         assertTrue(subs.link==url);
         assertTrue(subs.comment=="");          
         assertTrue(subs.lastUpdated==-1);
-        assertTrue(subs.fail_count==-1);
+        assertTrue(subs.failCount==-1);
         assertTrue(subs.lastItemUpdated==-1);
-        assertTrue(subs.auto_download==-1);   
+        assertTrue(subs.autoDownload==-1);   
     }    
 }

@@ -4,5 +4,14 @@
           android:icon="@android:drawable/ic_menu_delete"
           android:title="@string/menu_unsubscribe"
           />
-
+    
+    <item android:id="@+id/exportAllToZip"
+          android:icon="@android:drawable/ic_menu_save"
+          android:title="@string/menu_export_all_to_zip"
+          />
+    <item android:id="@+id/exportUnplayedToZip"
+          android:icon="@android:drawable/ic_menu_save"
+          android:title="@string/menu_export_unplayed_to_zip"
+          />
+    
 </menu>

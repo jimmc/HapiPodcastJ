@@ -39,6 +39,9 @@
     <string name="menu_played_by">Played by</string>
     <string name="menu_add_to_playlist">Add To Playlist</string>
     <string name="menu_export_audio_file">Export audio file</string>
+    <string name="menu_export_to_zip">Export to zip</string>
+    <string name="menu_export_all_to_zip">Export all to zip</string>
+    <string name="menu_export_unplayed_to_zip">Export unplayed to zip</string>
     <string name="menu_backup_channels">Backup Channels</string>
 
     <string name="menu_details">Details</string>

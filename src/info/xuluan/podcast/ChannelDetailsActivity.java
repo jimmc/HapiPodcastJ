@@ -65,9 +65,9 @@ public class ChannelDetailsActivity extends HapiActivity {
 		setViewContent(R.id.last_item_updated_view,
 				"item:"+getTimeString(mChannel.lastItemUpdated));
 		setViewContent(R.id.fail_count_view,
-				"fail_count:"+Long.toString(mChannel.fail_count));
+				"fail_count:"+Long.toString(mChannel.failCount));
 		setViewContent(R.id.auto_download_view,
-				"auto download:"+(mChannel.auto_download!=0?"yes":"no"));
+				"auto download:"+(mChannel.autoDownload!=0?"yes":"no"));
 
 		int episodeTotalCount = 0;
 		ArrayList<Map<String,String>> countsAdapterList = new ArrayList<Map<String,String>>();
@@ -147,8 +147,7 @@ public class ChannelDetailsActivity extends HapiActivity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 	    MenuInflater inflater = getMenuInflater();
-	    //TODO - implement menu items
-        //inflater.inflate(R.menu.channel_details_activity, menu);
+        inflater.inflate(R.menu.channel_details_activity, menu);
         return true;
 	}
 	
@@ -164,11 +163,14 @@ public class ChannelDetailsActivity extends HapiActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 
-		/*
-		case R.id.unsubscribe:
-			mChannel.unsubscribe(this);
+		case R.id.exportAllToZip:
+			mChannel.exportAllToZipFile(this);
 			return true;
-  		*/
+			
+		case R.id.exportUnplayedToZip:
+			mChannel.exportUnplayedToZipFile(this);
+			return true;
+			
 		}
 		setStatusIcon();
 		return super.onOptionsItemSelected(item);

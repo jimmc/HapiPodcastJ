@@ -7,14 +7,14 @@
 	<key>ApplicationVersion</key>
 	<array>
 		<string>com.omnigroup.OmniGraffle</string>
-		<string>139.16.0.171715</string>
+		<string>139.18.0.187838</string>
 	</array>
 	<key>AutoAdjust</key>
 	<false/>
 	<key>BackgroundGraphic</key>
 	<dict>
 		<key>Bounds</key>
-		<string>{{0, 0}, {100, 100}}</string>
+		<string>{{0, 0}, {50, 44}}</string>
 		<key>Class</key>
 		<string>SolidGraphic</string>
 		<key>ID</key>
@@ -38,7 +38,7 @@
 	<key>CanvasOrigin</key>
 	<string>{0, 0}</string>
 	<key>CanvasSize</key>
-	<string>{100, 100}</string>
+	<string>{50, 44}</string>
 	<key>ColumnAlign</key>
 	<integer>1</integer>
 	<key>ColumnSpacing</key>
@@ -55,7 +55,7 @@
 	<array>
 		<dict>
 			<key>Bounds</key>
-			<string>{{6, 18}, {88, 76}}</string>
+			<string>{{6, 18}, {38, 20}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -94,7 +94,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{12, 99}, {76, 1}}</string>
+			<string>{{12, 43}, {26, 1}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -129,7 +129,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{20, 0}, {60, 1}}</string>
+			<string>{{20, 0}, {10, 1}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -164,7 +164,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{99, 2}, {1, 86}}</string>
+			<string>{{49, 2}, {1, 30}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -199,7 +199,7 @@
 		</dict>
 		<dict>
 			<key>Bounds</key>
-			<string>{{0, 32}, {1, 48}}</string>
+			<string>{{0, 24}, {1, 8}}</string>
 			<key>Class</key>
 			<string>ShapedGraphic</string>
 			<key>ID</key>
@@ -287,7 +287,7 @@
 	<key>MasterSheets</key>
 	<array/>
 	<key>ModificationDate</key>
-	<string>2013-09-25 23:43:37 +0000</string>
+	<string>2013-10-02 00:28:30 +0000</string>
 	<key>Modifier</key>
 	<string>Jim McBeath</string>
 	<key>NotesVisible</key>
@@ -380,7 +380,7 @@
 		<key>SidebarWidth</key>
 		<integer>116</integer>
 		<key>VisibleRegion</key>
-		<string>{{-13.75, -9.75}, {128.25, 121.5}}</string>
+		<string>{{-38.75, -37.75}, {128.25, 121.5}}</string>
 		<key>Zoom</key>
 		<real>4</real>
 		<key>ZoomValues</key>

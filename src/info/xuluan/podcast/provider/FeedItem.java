@@ -5,11 +5,20 @@ import info.xuluan.podcast.PlayerActivity;
 import info.xuluan.podcast.utils.FileUtils;
 import info.xuluan.podcast.utils.Log;
 import info.xuluan.podcast.utils.SDCardMgr;
+import info.xuluan.podcast.utils.ZipExporter;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -111,8 +120,8 @@ public class FeedItem {
 		}
 	}
 
-	public static FeedItem getBySQL(ContentResolver context,String where,String order) 
-	{
+	public static FeedItem getBySQL(ContentResolver context,
+			String where, String[] args, String order) {
 		FeedItem item = null;
 		Cursor cursor = null;
 	
@@ -121,7 +130,7 @@ public class FeedItem {
 					ItemColumns.URI,
 					ItemColumns.ALL_COLUMNS,
 					where,
-					null,
+					args,
 					order);
 			if (cursor.moveToFirst()) {
 				item = FeedItem.getByCursor(cursor);
@@ -134,31 +143,19 @@ public class FeedItem {
 						
 	}
 	
+	public static FeedItem getBySQL(ContentResolver context,String where,String order) {
+		return getBySQL(context, where, null, order);
+	}
+	
+	public static FeedItem getByResource(ContentResolver context, String res) {
+		String where = ItemColumns.RESOURCE + " =?";
+		String[] args = new String[] { res };
+		return getBySQL(context, where, args, null);
+	}
+
 	public static FeedItem getById(ContentResolver context, long id) {
-		Cursor cursor = null;
-		FeedItem item = null;
-		try {
-			String where = ItemColumns._ID + " = " + id;
-
-			cursor = context.query(ItemColumns.URI, ItemColumns.ALL_COLUMNS,
-					where, null, null);
-			if (cursor.moveToFirst()) {
-				item = new FeedItem();
-				fetchFromCursor(item, cursor);
-
-				cursor.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		} finally {
-
-			if (cursor != null)
-				cursor.close();
-
-		}
-
-		return item;
+		String where = ItemColumns._ID + " = " + id;
+		return getBySQL(context, where, null);
 	}
 
 	public static FeedItem getByCursor(Cursor cursor) {
@@ -194,7 +191,6 @@ public class FeedItem {
 		sub_id = -1;
 		
 		m_date = -1;
-
 	}
 	
 	public void updateOffset(ContentResolver context, long i)
@@ -202,7 +198,6 @@ public class FeedItem {
 		offset = (int)i;
 		update = -1;
 		update(context);
-		
 	}
 	
 	public void playingOrPaused(boolean isPlaying, ContentResolver context)
@@ -255,8 +250,7 @@ public class FeedItem {
 			status = ItemColumns.ITEM_STATUS_PLAY_READY;
 		}
 		update = -1;
-		update(context);
-		
+		update(context);	
 	}
 	
 	public void addtoPlaylist(ContentResolver context)
@@ -377,7 +371,11 @@ public class FeedItem {
 			if (keep >= 0)
 				cv.put(ItemColumns.KEEP, keep);
 
-			return context.insert(ItemColumns.URI, cv);
+			Uri newUri = context.insert(ItemColumns.URI, cv);
+    		log.debug("Uri for new item is "+newUri);
+    		String idString = newUri.getLastPathSegment();
+    		id = Integer.valueOf(idString);
+    		return newUri;
 
 		} finally {
 		}
@@ -411,13 +409,13 @@ public class FeedItem {
 	}
 
 	public void export(Activity act) {
-		String filename = FileUtils.get_export_file_name(this.title, this.id);
+		String filename = FileUtils.getExportFileName(this.title, this.id, fileType());
 		filename = SDCardMgr.getExportDir()+"/"+filename;
 		log.error(filename);   			
 			 Toast.makeText(act, "Please wait... ", 
 				 Toast.LENGTH_LONG).show();  
 			 
-		boolean b  = FileUtils.copy_file(this.pathname,filename);
+		boolean b  = FileUtils.copyFile(this.pathname,filename);
 		if(b)
 		 Toast.makeText(act, "Exported audio file to : "+ filename, 
 				 Toast.LENGTH_LONG).show();
@@ -425,19 +423,163 @@ public class FeedItem {
 			 Toast.makeText(act, "Export failed ", 
 				 Toast.LENGTH_LONG).show();    				
 	}
+
+	public void exportToZipFile(Activity act) {
+		final Subscription sub = Subscription.getById(act.getContentResolver(),sub_id);
+		String filename = ZipExporter.getExportZipFileName(this.title + "_" + this.id);
+		ZipExporter.ContentWriter cw = new ZipExporter.ContentWriter() {
+			public void writeContent(ZipOutputStream zos) throws IOException{
+				sub.exportMetaToZip(zos);	//start by exporting the subscription details
+				exportToZipStream(zos,sub);
+			}
+		};
+		ZipExporter.exportToZipFile(act, filename, cw);
+	}
 	
+	public void exportToZipStream(ZipOutputStream zos, Subscription sub) throws IOException {
+		exportMetaToZip(zos, sub);
+		exportMusicToZip(zos);
+	}
+
+	private void exportMetaToZip(ZipOutputStream zos, Subscription sub) throws IOException {
+		String filename = FileUtils.getExportFileName(this.title, this.id, "xml");
+		ZipEntry ze = new ZipEntry(filename);
+		zos.putNextEntry(ze);
+		PrintWriter pw = new PrintWriter(zos);
+		writeXml(pw, sub);
+		pw.flush();
+		zos.closeEntry();
+	}
+	
+	private void exportMusicToZip(ZipOutputStream zos) throws IOException {
+		boolean isDownloaded = (status > ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW);
+		boolean isDeleted = (status >= ItemColumns.ITEM_STATUS_MIN_DELETE);
+		boolean contentAvailable = isDownloaded && !isDeleted;
+		if (!contentAvailable)
+			return;	//no content to output
+		String filename = FileUtils.getExportFileName(this.title, this.id, fileType());
+		FileInputStream fileInputStream = null;
+		try {
+            File readFile = new File(this.pathname);
+            fileInputStream = new FileInputStream(readFile);
+
+			ZipEntry ze = new ZipEntry(filename);
+			zos.putNextEntry(ze);
+			FileUtils.copyFile(fileInputStream,zos);
+			zos.closeEntry();
+		} finally {
+            try {
+                if (fileInputStream != null) {
+                    fileInputStream.close();
+                }
+            } catch (Exception ex) {}
+		}
+	}
+
+	private void writeXml(PrintWriter out, Subscription sub) {
+		int episodeLevel = 1;
+		out.print("<episode>\n");
+		
+		int subcriptionLevel = episodeLevel + 1;
+		ZipExporter.writeTagLine(out,"subscription",episodeLevel,true);
+		ZipExporter.writeXmlField(out,"id",Long.toString(sub_id),subcriptionLevel);
+		ZipExporter.writeXmlField(out,SubscriptionColumns.TITLE,sub.title,subcriptionLevel);
+		ZipExporter.writeXmlField(out,SubscriptionColumns.URL,sub.url,subcriptionLevel);
+		ZipExporter.writeTagLine(out,"subscription",episodeLevel,false);
+		
+		ZipExporter.writeXmlField(out,"id",Long.toString(id),episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.URL,url,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.MEDIA_URI,uri,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.TYPE,type,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.TITLE,title,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.SUB_TITLE,sub_title,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.AUTHOR,author,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.DATE,date,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.CONTENT,content,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.RESOURCE,resource,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.DURATION,duration,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.PATHNAME,pathname,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.CREATED,created,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.OFFSET,offset,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.LENGTH,length,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.STATUS,status,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.KEEP,keep,episodeLevel);
+		ZipExporter.writeXmlField(out,ItemColumns.FAIL_COUNT,failcount,episodeLevel);
+		out.print("</episode>");
+	}
+
+	private void loadXmlFields(Map<String, String> contents) {
+		uri = contents.get(ItemColumns.MEDIA_URI);
+		type = contents.get(ItemColumns.TYPE);
+		title = contents.get(ItemColumns.TITLE);
+		sub_title = contents.get(ItemColumns.SUB_TITLE);
+		author = contents.get(ItemColumns.AUTHOR);
+		date = contents.get(ItemColumns.DATE);
+		content = contents.get(ItemColumns.CONTENT);
+		resource = contents.get(ItemColumns.RESOURCE);
+		duration = contents.get(ItemColumns.DURATION);
+		//We don't change the pathname - that will get updated when we actually read in the mp3 file.
+		//If this is an existing record, there will be a pathname that points to the old file.
+		//That file will be deleted when we read in the new file.
+		//TODO - might need to delete it here if the imported data indicates that the episode
+		// data is not yet downloaded or already deleted.
+		//pathname = contents.get(ItemColumns.PATHNAME);
+		String createdStr = contents.get(ItemColumns.CREATED);
+		if (createdStr!=null) {
+			created = Long.valueOf(createdStr);
+		}
+		String offsetStr = contents.get(ItemColumns.OFFSET);
+		if (offsetStr!=null) {
+			offset = Integer.valueOf(offsetStr);
+		}
+		String lengthStr = contents.get(ItemColumns.LENGTH);
+		if (lengthStr!=null) {
+			length = Long.valueOf(lengthStr);
+		}
+		String statusStr = contents.get(ItemColumns.STATUS);
+		if (statusStr!=null) {
+			status = Integer.valueOf(statusStr);
+		}
+		String keepStr = contents.get(ItemColumns.KEEP);
+		if (keepStr!=null) {
+			keep = Integer.valueOf(keepStr);
+		}
+		String failCountStr = contents.get(ItemColumns.FAIL_COUNT);
+		if (failCountStr!=null) {
+			failcount = Integer.valueOf(failCountStr);
+		}
+	}
+	
+	//Given a map of fields read from XML, find or create a Subscription
+    public static FeedItem getOrAddEpisode(ContentResolver context,
+    		Map<String,String> contents, Subscription sub) {
+    	String res = contents.get(ItemColumns.RESOURCE);
+    	if (res==null) {
+    		throw new RuntimeException("No resource for episode");
+    	}
+    	FeedItem item = FeedItem.getByResource(context, res);
+    	if (item==null) {
+    		item = new FeedItem();
+    		item.loadXmlFields(contents);
+    		item.sub_id = sub.id;
+    		item.log.debug("Creaed new FeedItem id="+item.id+" sub_id="+item.sub_id+" for resource="+res);
+    		item.insert(context);
+    	} else {
+    		item.log.debug("Found existing FeedItem id="+item.id+" for resource="+res);
+    		item.loadXmlFields(contents);
+    		item.sub_id = sub.id;
+    		item.update(context);
+    	}    	
+    	return item;
+    }
+    
 	public long getDate() {
 		//log.debug(" getDate() start");
-		
 		if(m_date<0){
 			m_date  = parse();
-			//log.debug(" getDate() end " + default_format);
-			
-			
+			//log.debug(" getDate() end " + default_format);	
 		}
-			
 		return m_date;
-
 	}
 
 	private long parse() {
@@ -447,10 +589,7 @@ public class FeedItem {
 			.getTime();
 		} catch (ParseException e) {
 			log.debug(" first fail");
-		}
-
-
-		
+		}	
 
 		for (String format : DATE_FORMATS) {
 			try {
@@ -508,6 +647,10 @@ public class FeedItem {
 		return title;
 	}
 
+	public String fileType() {
+		return "mp3";
+	}
+	
 	public String getType() {
 		if (type == null) {
 			return "audio/mpeg";
@@ -520,15 +663,11 @@ public class FeedItem {
 		return "audio/mpeg";
 	}
 	
-	public void play(Activity act){
-		
+	public void play(Activity act) {
 		//item.play(ReadActivity.this);
 		Intent intent = new Intent(act, PlayerActivity.class);
 		intent.putExtra("item_id", id);
 		act.startActivity(intent);
-		
-		return;
-
 	}
 	
 	public void delFile(ContentResolver context){
@@ -554,10 +693,8 @@ public class FeedItem {
 				}
 			} catch (Exception e) {
 				log.warn("del file failed : " + pathname + "  " + e);
-
 			}
 		}		
-
 	}
 	
 	private String getMailBody(){
@@ -577,7 +714,7 @@ public class FeedItem {
 	{
 		if (pathname.equals("")) {
 			pathname = SDCardMgr.getDownloadDir()
-					+ "/podcast_" + id + ".mp3";
+					+ "/podcast_" + id + "." + fileType();
 		}
 		status = ItemColumns.ITEM_STATUS_DOWNLOADING_NOW;
 		update(context);

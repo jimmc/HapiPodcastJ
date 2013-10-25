@@ -3,30 +3,38 @@ package info.xuluan.podcast.utils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+
+import android.text.Html;
 
 public class FileUtils {
-	public static boolean copy_file(String src, String dst)
+	public static void copyFile(InputStream inputStream, OutputStream outputStream)
+			throws IOException {
+		byte[] buffer = new byte[1024];
+		while (true) {
+			int bytesRead = inputStream.read(buffer);
+			if (bytesRead <= 0) {
+				break;
+			}
+			outputStream.write(buffer, 0, bytesRead);
+		}
+		outputStream.flush();
+	}
+	
+	public static boolean copyFile(String src, String dst)
 	{
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
         boolean b=true;
         try {
             File readFile = new File(src);
-
             File writeFile = new File(dst);
-
             fileInputStream = new FileInputStream(readFile);
-
             fileOutputStream = new FileOutputStream(writeFile);
-
-            byte[] buffer = new byte[1024];
-            while (true) {
-                int bytesRead = fileInputStream.read(buffer);
-                if (bytesRead == -1) {
-                    break;
-                }
-                fileOutputStream.write(buffer, 0, bytesRead);
-            }
+            copyFile(fileInputStream, fileOutputStream);
         } catch (Exception ex) {
             ex.printStackTrace();
             b = false;
@@ -46,11 +54,10 @@ public class FileUtils {
         return b;
 	}
 	
-	public static String get_export_file_name(String title, long id)
+	public static String getExportFileName(String title, long id, String fileType)
 	{
-		title = title.replaceAll("[\\s\\\\:\\<\\>\\[\\]\\*\\|\\/\\?\\{\\}]+", "_");		
-
-		return title+"_"+id+".mp3";
+		title = title.replaceAll("[\\s\\\\:\\<\\>\\[\\]\\*\\|\\/\\?\\{\\}\\'\\\"]+", "_");		
+		return title+"_"+id+"."+fileType;
 	}
-
+	
 }

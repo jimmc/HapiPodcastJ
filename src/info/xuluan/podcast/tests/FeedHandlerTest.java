@@ -75,13 +75,13 @@ public class FeedHandlerTest extends android.test.ProviderTestCase<PodcastProvid
     	FeedHandler handler = new FeedHandler(context,10);
     	
     	Subscription sub = new Subscription();
-    	sub.fail_count = 0;
+    	sub.failCount = 0;
     	handler.updateFail(sub);
-    	assertTrue(sub.fail_count==1);
+    	assertTrue(sub.failCount==1);
     	
-    	sub.fail_count = 3;
+    	sub.failCount = 3;
     	handler.updateFail(sub);
-    	assertTrue(sub.fail_count==0);   	
+    	assertTrue(sub.failCount==0);   	
     }
     
     public void testUpdateFeedFirst() throws Exception {

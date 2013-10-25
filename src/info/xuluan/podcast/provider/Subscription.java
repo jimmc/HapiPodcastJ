@@ -1,7 +1,16 @@
 package info.xuluan.podcast.provider;
 
+import info.xuluan.podcast.utils.FileUtils;
+import info.xuluan.podcast.utils.Log;
+import info.xuluan.podcast.utils.ZipExporter;
+import info.xuluan.podcast.utils.ZipImporter;
+
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -18,7 +27,8 @@ public class Subscription {
 	public final static int ADD_SUCCESS = 0;
 	public final static int ADD_FAIL_DUP = -1;
 	public final static int ADD_FAIL_UNSUCCESS = -2;
-	
+
+	private final Log log = Log.getLog(getClass());
 	
 	public long id;
 	public String title;
@@ -29,8 +39,8 @@ public class Subscription {
 	public String description;
 	public long lastUpdated;
 	public long lastItemUpdated;
-	public long fail_count;
-	public long auto_download;
+	public long failCount;
+	public long autoDownload;
 	public long suspended;
 
 	public static void view(Activity act, long channel_id) {
@@ -44,14 +54,15 @@ public class Subscription {
 		act.startActivity(new Intent(Intent.ACTION_EDIT, uri));
 	}
 
-	public static Subscription getBySQL(ContentResolver context,String where,String order) 
-	{
+	public static Subscription getBySQL(ContentResolver context,
+			String where, String[] args, String order) {
+		
 		Subscription sub = null;
 		Cursor cursor = null;
 	
 		try {		
 			cursor = context.query(SubscriptionColumns.URI,
-					SubscriptionColumns.ALL_COLUMNS, where, null, order);
+					SubscriptionColumns.ALL_COLUMNS, where, args, order);
 			if (cursor.moveToFirst()) {
 				sub =Subscription.getByCursor(cursor);
 			}
@@ -62,30 +73,21 @@ public class Subscription {
 		return sub;			
 	}
 	
+	public static Subscription getBySQL(ContentResolver context, String where, String order) {
+		return getBySQL(context, where, null, order);
+	}
+	
 	public static Subscription getByUrl(ContentResolver context, String url) {
-		Cursor cursor = null;
-		try {
-			cursor = context.query(SubscriptionColumns.URI,
-					SubscriptionColumns.ALL_COLUMNS, SubscriptionColumns.URL
-							+ "=?", new String[] { url }, null);
-			if (cursor.moveToFirst()) {
-				Subscription sub = new Subscription();
-				fetchFromCursor(sub, cursor);
-				cursor.close();
-				return sub;
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		} finally {
-			if (cursor != null)
-				cursor.close();
-		}
-
-		return null;
-
+		String where = SubscriptionColumns.URL + "=?";
+		String[] args = new String[] { url };
+		return getBySQL(context, where, args, null);
 	}
 
+	public static Subscription getById(ContentResolver context, long id) {
+		String where = SubscriptionColumns._ID + " = " + id;
+		return getBySQL(context, where, null);
+	}
+	
 	public static Subscription getByCursor(Cursor cursor) {
 		//if (cursor.moveToFirst() == false)
 		//	return null;
@@ -94,32 +96,6 @@ public class Subscription {
 		return sub;
 	}
 
-	public static Subscription getById(ContentResolver context, long id) {
-		Cursor cursor = null;
-		Subscription sub = null;
-
-		try {
-			String where = SubscriptionColumns._ID + " = " + id;
-
-			cursor = context.query(SubscriptionColumns.URI,
-					SubscriptionColumns.ALL_COLUMNS, where, null, null);
-			if (cursor.moveToFirst()) {
-				sub = new Subscription();
-				fetchFromCursor(sub, cursor);
-				cursor.close();
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-
-		} finally {
-			if (cursor != null)
-				cursor.close();
-		}
-
-		return sub;
-
-	}
-	
 	private void init() {
 		id = -1;
 		title = null;
@@ -128,9 +104,9 @@ public class Subscription {
 		comment = "";
 		description = null;
 		lastUpdated = -1;
-		fail_count = -1;
+		failCount = -1;
 		lastItemUpdated = -1;
-		auto_download = -1;
+		autoDownload = -1;
 		suspended = -1;
 	}
 	
@@ -148,13 +124,10 @@ public class Subscription {
 	}	
 	
 	public int subscribe(ContentResolver context){
-		Subscription sub = Subscription.getByUrl(
-				context, url);
+		Subscription sub = Subscription.getByUrl(context, url);
 		if (sub != null) {
 			return ADD_FAIL_DUP;
 		}
-
-
 
 		ContentValues cv = new ContentValues();
 		cv.put(SubscriptionColumns.TITLE, title);
@@ -168,8 +141,7 @@ public class Subscription {
 			return ADD_FAIL_UNSUCCESS;
 		}
 		
-		return ADD_SUCCESS;
-			
+		return ADD_SUCCESS;	
 	}
 
 	public void delete(ContentResolver context) {
@@ -188,21 +160,21 @@ public class Subscription {
 			if (description != null)
 				cv.put(SubscriptionColumns.DESCRIPTION, description);
 
-			if(fail_count<=0){
+			if(failCount<=0){
 				lastUpdated = Long.valueOf(System.currentTimeMillis());
 			}else{
 				lastUpdated = 0;
 			}
 				cv.put(SubscriptionColumns.LAST_UPDATED, lastUpdated);
 			
-			if (fail_count >= 0)
-				cv.put(SubscriptionColumns.FAIL_COUNT, fail_count);
+			if (failCount >= 0)
+				cv.put(SubscriptionColumns.FAIL_COUNT, failCount);
 
 			if (lastItemUpdated >= 0)
 				cv.put(SubscriptionColumns.LAST_ITEM_UPDATED, lastItemUpdated);
 
-			if (auto_download >= 0)
-				cv.put(SubscriptionColumns.AUTO_DOWNLOAD, auto_download);
+			if (autoDownload >= 0)
+				cv.put(SubscriptionColumns.AUTO_DOWNLOAD, autoDownload);
 			
 			if (suspended >= 0)
 				cv.put(SubscriptionColumns.SUSPENDED, suspended);
@@ -252,14 +224,117 @@ public class Subscription {
 				.getColumnIndex(SubscriptionColumns.COMMENT));		
 		sub.description = cursor.getString(cursor
 				.getColumnIndex(SubscriptionColumns.DESCRIPTION));		
-		sub.fail_count = cursor.getLong(cursor
+		sub.failCount = cursor.getLong(cursor
 				.getColumnIndex(SubscriptionColumns.FAIL_COUNT));
 		sub.lastItemUpdated = cursor.getLong(cursor
 				.getColumnIndex(SubscriptionColumns.LAST_ITEM_UPDATED));
-		sub.auto_download = cursor.getLong(cursor
+		sub.autoDownload = cursor.getLong(cursor
 				.getColumnIndex(SubscriptionColumns.AUTO_DOWNLOAD));
 		sub.suspended = cursor.getLong(cursor
 				.getColumnIndex(SubscriptionColumns.SUSPENDED));
 	}
+
+	public void exportAllToZipFile(Activity act) {
+		exportToZipFile(act, true);
+	}
+	
+	public void exportUnplayedToZipFile(Activity act) {
+		exportToZipFile(act, false);
+	}
+		
+	public void exportToZipFile(final Activity act, final boolean all) {
+		String filename = ZipExporter.getExportZipFileName(this.title + "_" + this.id);
+		ZipExporter.ContentWriter cw = new ZipExporter.ContentWriter() {
+			public void writeContent(ZipOutputStream zos) throws IOException{
+				exportToZipStream(act,zos,all);
+			}
+		};
+		ZipExporter.exportToZipFile(act, filename, cw);
+	}
+	
+	public void exportToZipStream(Activity act, ZipOutputStream zos, boolean all) throws IOException {
+		exportMetaToZip(zos);	//export the header first
+		exportEpisodesToZip(act, zos, all);
+	}
+	
+	private void exportEpisodesToZip(Activity act, ZipOutputStream zos, boolean all) throws IOException {
+		String baseWhere = "subs_id="+id;
+		String where;
+		if (all)
+			where = baseWhere;	//write out all episodes
+		else {
+			//write out all episodes that we have downloaded but not yet listened to
+			String statusWhere = "status>"+ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW+" AND "+
+					"status<="+ItemColumns.ITEM_STATUS_PLAY_PAUSE;
+			where = "("+baseWhere+") AND ("+statusWhere+")";
+		}
+		String order = null;	//we don't care yet about order
+		Cursor cursor = act.getContentResolver().query(ItemColumns.URI,
+				ItemColumns.ALL_COLUMNS, where, null, order);
+		while (cursor.moveToNext()) {
+			FeedItem episode = FeedItem.getByCursor(cursor);
+			episode.exportToZipStream(zos, this);
+		}
+		cursor.close();
+	}
+	
+	public void exportMetaToZip(ZipOutputStream zos) throws IOException {
+		String filename = FileUtils.getExportFileName(this.title, this.id, "xml");
+		ZipEntry ze = new ZipEntry(filename);
+		zos.putNextEntry(ze);
+		PrintWriter pw = new PrintWriter(zos);
+		writeXml(pw);
+		pw.flush();
+		zos.closeEntry();
+	}
+
+	private void writeXml(PrintWriter out) {
+		int subcriptionLevel = 1;
+		out.print("<subscription>\n");
+		
+		ZipExporter.writeXmlField(out, "id", Long.toString(id), subcriptionLevel);
+		ZipExporter.writeXmlField(out, SubscriptionColumns.TITLE, title, subcriptionLevel);
+		ZipExporter.writeXmlField(out, SubscriptionColumns.URL, url, subcriptionLevel);
+		ZipExporter.writeXmlField(out, SubscriptionColumns.LINK, link, subcriptionLevel);
+		ZipExporter.writeXmlField(out, SubscriptionColumns.LAST_UPDATED, lastUpdated, subcriptionLevel);
+		ZipExporter.writeXmlField(out, SubscriptionColumns.COMMENT, comment, subcriptionLevel);
+		ZipExporter.writeXmlField(out, SubscriptionColumns.DESCRIPTION, description, subcriptionLevel);
+		ZipExporter.writeXmlField(out, SubscriptionColumns.LAST_ITEM_UPDATED, lastItemUpdated, subcriptionLevel);
+		ZipExporter.writeXmlField(out, SubscriptionColumns.FAIL_COUNT, failCount, subcriptionLevel);
+		ZipExporter.writeXmlField(out, SubscriptionColumns.AUTO_DOWNLOAD, autoDownload, subcriptionLevel);
+		ZipExporter.writeXmlField(out, SubscriptionColumns.SUSPENDED, suspended, subcriptionLevel);
+		
+		out.print("</subscription>");
+	}
+
+	//Given a map of fields read from XML, find or create a Subscription
+    public static Subscription getOrAddSubscription(ContentResolver context, Map<String,String> contents) {
+    	String url = contents.get(SubscriptionColumns.URL);
+    	if (url==null) {
+    		throw new RuntimeException("No url for subscription");
+    	}
+		Subscription sub = new Subscription(url);
+		sub.title = contents.get(SubscriptionColumns.TITLE);
+		sub.link = contents.get(SubscriptionColumns.LINK);
+		sub.lastUpdated = ZipImporter.parseLong(contents.get(SubscriptionColumns.LAST_UPDATED));
+		sub.comment = contents.get(SubscriptionColumns.COMMENT);
+		sub.description = contents.get(SubscriptionColumns.DESCRIPTION);
+		
+		int rc = sub.subscribe(context);
+		switch (rc) {
+		case ADD_SUCCESS:
+			sub.log.debug("New subscription created");
+			sub.lastItemUpdated = ZipImporter.parseLong(contents.get("lastItemUpdated"));
+			sub.failCount = ZipImporter.parseLong(contents.get("failCount"));
+			sub.autoDownload = ZipImporter.parseLong(contents.get("autoDownload"));
+			sub.suspended = ZipImporter.parseLong(contents.get("suspended"));
+			return sub;
+		case ADD_FAIL_DUP:
+			sub.log.debug("Found existing subscription");
+			return sub;
+		default:
+			throw new RuntimeException("no subscription");	//TBD - better message or handling
+		}
+    }
 
 }

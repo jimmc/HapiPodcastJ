@@ -184,7 +184,7 @@ public class PodcastService extends Service {
 							break;
 						FeedHandler handler = new FeedHandler(getContentResolver(),pref_max_valid_size);
 						add_num = handler.update(sub);
-						if((add_num>0)&&(sub.auto_download>0))
+						if((add_num>0)&&(sub.autoDownload>0))
 							do_download(false);
 
 						sub = findSubscription();

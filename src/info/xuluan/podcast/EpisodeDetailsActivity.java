@@ -214,6 +214,7 @@ public class EpisodeDetailsActivity extends HapiActivity {
         inflater.inflate(R.menu.episode_details_activity, menu);
         return true;
 	}
+	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		mItem = getFeedItem();
@@ -227,7 +228,7 @@ public class EpisodeDetailsActivity extends HapiActivity {
 		boolean isDownloaded =
 				(mItem.status > ItemColumns.ITEM_STATUS_MAX_DOWNLOADING_VIEW);
 		boolean isDeleted =
-				(mItem.status < ItemColumns.ITEM_STATUS_DELETE);
+				(mItem.status >= ItemColumns.ITEM_STATUS_MIN_DELETE);
 		boolean contentAvailable = isDownloaded && !isDeleted;
     	menu.findItem(R.id.add_to_playlist).setVisible(contentAvailable);
     	menu.findItem(R.id.played_by).setVisible(contentAvailable);
@@ -259,6 +260,9 @@ public class EpisodeDetailsActivity extends HapiActivity {
 			return true;
 		case R.id.export:
 			mItem.export(this);
+			return true;
+		case R.id.exportToZip:
+			mItem.exportToZipFile(this);
 			return true;
 		case R.id.keep:
 			mItem.markKeep(getContentResolver());

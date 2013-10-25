@@ -20,6 +20,10 @@
           android:icon="@android:drawable/ic_menu_save"
           android:title="@string/menu_export_audio_file"
           />
+    <item android:id="@+id/exportToZip"
+          android:icon="@android:drawable/ic_menu_save"
+          android:title="@string/menu_export_to_zip"
+          />
     <item android:id="@+id/keep"
           android:icon="@android:drawable/ic_menu_add"
           android:title="@string/menu_keep"

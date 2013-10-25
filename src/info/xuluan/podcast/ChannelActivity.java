@@ -136,7 +136,7 @@ public class ChannelActivity extends PodcastBaseActivity implements PodcastTab {
         
         MenuItem item = menu.findItem(R.id.auto_download);
 		String auto;
-		if(mChannel.auto_download==0){
+		if(mChannel.autoDownload==0){
 			auto = getResources().getString(R.string.menu_auto_download);
 		}else{
 			auto = getResources().getString(R.string.menu_manual_download);
@@ -177,7 +177,7 @@ public class ChannelActivity extends PodcastBaseActivity implements PodcastTab {
 			return true;
 			
 		case R.id.auto_download:
-			mChannel.auto_download = 1-mChannel.auto_download;
+			mChannel.autoDownload = 1-mChannel.autoDownload;
 			mChannel.update(getContentResolver());	
 			return true;			
 

@@ -75,10 +75,10 @@ public class FeedHandler  {
 	
 	public void updateFail(Subscription sub) {
 				
-		if(sub.fail_count<REPEAT_UPDATE_FEED_COUNT){
-			sub.fail_count++;
+		if(sub.failCount<REPEAT_UPDATE_FEED_COUNT){
+			sub.failCount++;
 		}else{
-			sub.fail_count=0;
+			sub.failCount=0;
 		}
 		sub.update(cr);
 	}
@@ -106,7 +106,7 @@ public class FeedHandler  {
 
 		}
 		
-		subscription.fail_count = 0;
+		subscription.failCount = 0;
 		subscription.title = listener.getFeedTitle();
 		subscription.description = listener.getFeedDescription();
 		subscription.lastItemUpdated = update_date;
@@ -120,7 +120,7 @@ public class FeedHandler  {
 		Long sub_id = subscription.id;
 
 		item.sub_id = sub_id;
-		if(subscription.auto_download>0){
+		if(subscription.autoDownload>0){
 			item.status = ItemColumns.ITEM_STATUS_DOWNLOAD_QUEUE;
 		}
 		
