@@ -50,6 +50,8 @@ public class BackupChannelsActivity extends HapiActivity implements PodcastTab, 
 	public static String OPML_FILE = "hapi_podcast.opml"; 
 	
 	private final Log log = Log.getLog(getClass());
+	
+	public static boolean importExportZipEabled = false;
 
 	//Map from zip entry base name to FeedItem so that when we get an MP3 file
 	//in the zip stream we know to which episode it belongs.
@@ -94,6 +96,10 @@ public class BackupChannelsActivity extends HapiActivity implements PodcastTab, 
 				importZip();
 			}
 		});
+		if (!BackupChannelsActivity.importExportZipEabled) {
+			View zipFrame = (View)findViewById(R.id.zipFrame);
+			zipFrame.setVisibility(View.GONE);
+		}
 		
 		TabsHelper.setChannelTabClickListeners(this, R.id.channel_bar_backup_button);
 		if (PodcastBaseActivity.ENABLE_FLING_TABS)

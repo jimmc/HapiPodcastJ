@@ -137,6 +137,13 @@ public class HomeActivity extends HapiActivity {
 				Toast.makeText(HomeActivity.this,
 						"Initial Log Level is now "+Log.initialLevel(), Toast.LENGTH_SHORT).show();
 				break;
+			case 2:	//Toggle Import/Export Zip
+				toggleImportExportZip();
+				Toast.makeText(HomeActivity.this,
+						"Import/Export Zip is now " +
+						(BackupChannelsActivity.importExportZipEabled? "enabled" : "disabled"),
+						Toast.LENGTH_SHORT).show();
+				break;
 			default:
 		    	Toast.makeText(HomeActivity.this, "Selected: "+select, Toast.LENGTH_SHORT).show();
 		    	break;
@@ -178,6 +185,10 @@ public class HomeActivity extends HapiActivity {
     
     private void toggleDebugLogging() {
     	Log.setInitialLevel(Log.initialLevel()==Log.DEFAULT_LEVEL?Log.DEBUG:Log.DEFAULT_LEVEL);
+    }
+    
+    private void toggleImportExportZip() {
+    	BackupChannelsActivity.importExportZipEabled = !BackupChannelsActivity.importExportZipEabled;
     }
 }
 

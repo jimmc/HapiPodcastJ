@@ -236,6 +236,9 @@ public class EpisodeDetailsActivity extends HapiActivity {
     	menu.findItem(R.id.mark_new).setVisible(isDownloaded);
     	menu.findItem(R.id.keep).setVisible(mItem.keep==0);
     	menu.findItem(R.id.unkeep).setVisible(mItem.keep!=0);   
+		if (!BackupChannelsActivity.importExportZipEabled) {
+	    	menu.findItem(R.id.exportToZip).setVisible(false);
+		}
 	}
 
 	@Override

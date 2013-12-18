@@ -154,7 +154,10 @@ public class ChannelDetailsActivity extends HapiActivity {
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		mChannel = getChannel();
-        //setMenuItemsVisibility(menu);
+		if (!BackupChannelsActivity.importExportZipEabled) {
+	    	menu.findItem(R.id.exportAllToZip).setVisible(false);
+	    	menu.findItem(R.id.exportUnplayedToZip).setVisible(false);
+		}
 		setStatusIcon();
         return true;
 	}

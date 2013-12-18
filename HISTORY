@@ -5,8 +5,10 @@ Enhancements
 * The Channel Episodes activity now includes a Details command in the menu.
 * The Channel Details screen now includes a count of the number of
   episodes in that channel and breakdown counts by status.
-* Import/export-zip capability has been added. This allows transferring
-  podcast episodes from one phone to another.
+* Import/export-zip capability has been added.
+  This allows transferring podcast episodes from one phone to another.
+  This feature is currently hidden behind a debugging option, as it is
+  not yet complete (it runs in the foreground and can not be interupted).
   + The Channel Details and Episode Details screens now include menu commands
     to export zip files.
   + The Backup screen now includes a button to import those zip files.
